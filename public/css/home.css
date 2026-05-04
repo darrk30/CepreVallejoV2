@@ -1,0 +1,350 @@
+:root {
+    --gold: #c9a84c;
+    --gold-lt: #f0d080;
+    --gold-pale: #fef9ec;
+    --gold-border: #e8d5a0;
+
+    /* Paleta principal — violeta slate + turquesa suave + blanco cálido */
+    --s1-bg: #ffffff;
+    /* Servicios     */
+    --s2-bg: #f0f4ff;
+    /* Nosotros      — azul lavanda suave */
+    --s3-bg: #fff8f0;
+    /* Ciclos        — durazno muy suave */
+    --s4-bg: #f0f4ff;
+    /* Docentes      — menta pálida */
+    --s5-bg: #f0f4ff;
+    /* Convenios     — lila pálido */
+
+    --blue: #1b3d7a;
+    --teal: #0f766e;
+    --purple: #f0f4ff;
+    --coral: #c2410c;
+
+    --text: #1e293b;
+    --gray: #64748b;
+    --border: rgba(201, 168, 76, 0.25);
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+.academia-root {
+    font-family: "Nunito", sans-serif;
+    color: var(--text);
+    background: #fff;
+    overflow-x: hidden;
+}
+
+.hand {
+    font-family: "Handlee", cursive;
+}
+
+/* ---- Scroll reveal ---- */
+.reveal {
+    opacity: 0;
+    transform: translateY(44px);
+    transition:
+        opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.visible {
+    opacity: 1;
+    transform: none;
+}
+
+.reveal-left {
+    opacity: 0;
+    transform: translateX(-56px);
+    transition:
+        opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-left.visible {
+    opacity: 1;
+    transform: none;
+}
+
+.reveal-right {
+    opacity: 0;
+    transform: translateX(56px);
+    transition:
+        opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-right.visible {
+    opacity: 1;
+    transform: none;
+}
+
+/* Stagger */
+.stagger > * {
+    opacity: 0;
+    transform: translateY(32px);
+    transition:
+        opacity 0.6s ease,
+        transform 0.6s ease;
+}
+
+.stagger.visible > *:nth-child(1) {
+    opacity: 1;
+    transform: none;
+    transition-delay: 0.05s;
+}
+
+.stagger.visible > *:nth-child(2) {
+    opacity: 1;
+    transform: none;
+    transition-delay: 0.15s;
+}
+
+.stagger.visible > *:nth-child(3) {
+    opacity: 1;
+    transform: none;
+    transition-delay: 0.25s;
+}
+
+.stagger.visible > *:nth-child(4) {
+    opacity: 1;
+    transform: none;
+    transition-delay: 0.35s;
+}
+
+.stagger.visible > *:nth-child(5) {
+    opacity: 1;
+    transform: none;
+    transition-delay: 0.45s;
+}
+
+.stagger.visible > *:nth-child(6) {
+    opacity: 1;
+    transform: none;
+    transition-delay: 0.55s;
+}
+
+/* ---- Utils ---- */
+.gold-rule {
+    display: block;
+    width: 52px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-lt));
+    border-radius: 2px;
+    margin: 14px auto 0;
+}
+
+.gold-rule.left {
+    margin-left: 0;
+}
+
+.section-label {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    padding: 5px 16px;
+    border: 1.5px solid var(--gold-border);
+    border-radius: 999px;
+    background: var(--gold-pale);
+}
+
+/* ---- Cards ---- */
+.card {
+    background: #fff;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 20px;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+}
+
+.card:hover {
+    transform: translateY(-8px);
+    box-shadow:
+        0 20px 50px rgba(201, 168, 76, 0.2),
+        0 4px 16px rgba(0, 0, 0, 0.07);
+    border-color: var(--gold);
+}
+
+/* ---- Swiper ---- */
+.swiper-pagination-bullet {
+    background: var(--gold) !important;
+    opacity: 0.35;
+}
+
+.swiper-pagination-bullet-active {
+    background: var(--gold) !important;
+    opacity: 1;
+    width: 28px !important;
+    border-radius: 4px !important;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+    color: var(--gold) !important;
+}
+
+/* ---- Wave ---- */
+.wave-divider svg {
+    display: block;
+    width: 100%;
+}
+
+/* ---- Float animation ---- */
+@keyframes floatY {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-14px);
+    }
+}
+
+.float1 {
+    animation: floatY 6s ease-in-out infinite;
+}
+
+.float2 {
+    animation: floatY 8s ease-in-out infinite;
+    animation-delay: 1.5s;
+}
+
+.float3 {
+    animation: floatY 5s ease-in-out infinite;
+    animation-delay: 0.8s;
+}
+
+/* ---- Section BG blobs ---- */
+.blob {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    filter: blur(60px);
+    opacity: 0.35;
+}
+
+/* ---- Gradient text ---- */
+.text-gold {
+    background: linear-gradient(135deg, #a07820, var(--gold-lt));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ---- Ciclo card ---- */
+.ciclo-card {
+    background: #fff;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 24px;
+    transition: all 0.4s ease;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.ciclo-card:hover {
+    border-color: var(--gold);
+    box-shadow: 0 20px 60px rgba(201, 168, 76, 0.18);
+    transform: translateY(-2px);
+}
+
+/* Overflow control for swipers */
+.servicesSwiper,
+.teachersSwiper,
+.conventionsSwiper {
+    overflow: visible !important;
+    clip-path: inset(-120px -120px -120px -120px);
+}
+
+.overflow-x-clip {
+    overflow-x: clip;
+}
+
+[x-cloak] {
+    display: none !important;
+}
+
+/* Decorative dots grid */
+.dots-bg {
+    background-image: radial-gradient(
+        circle,
+        rgba(201, 168, 76, 0.25) 1px,
+        transparent 1px
+    );
+    background-size: 24px 24px;
+}
+
+.coursesSwiper {
+    overflow: visible !important;
+    clip-path: inset(-50px -50px -50px -50px);
+}
+
+.overflow-x-clip {
+    overflow-x: clip;
+}
+
+/* Aplicar a todas las secciones que tengan un ID */
+section[id] {
+    scroll-margin-top: 100px;
+    /* Ajusta este valor a la altura exacta de tu Navbar */
+    scroll-behavior: smooth;
+    /* Para que el movimiento sea fluido y no un salto brusco */
+}
+
+/* Opcional: Si el Navbar en móvil es más alto que en PC, puedes usar un Media Query */
+@media (max-width: 768px) {
+    section[id] {
+        scroll-margin-top: 80px;
+        /* Altura específica para celulares */
+    }
+}
+
+/* CSS DETALLES DEL CURSO */
+[x-cloak] {
+    display: none !important;
+}
+
+@keyframes shine {
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.animate-shine {
+    animation: shine 1.5s infinite;
+}
+
+/* CSS NAVBAR */
+[x-cloak] {
+    display: none !important;
+}
+html {
+    scroll-behavior: smooth;
+}
+
+.nav-link {
+    @apply text-[11px] font-black uppercase tracking-widest transition-all duration-300;
+}
+
+.active-nav {
+    @apply text-blue-600 border-b-2 border-blue-600;
+}
+
+.inactive-nav {
+    @apply text-gray-500 hover:text-blue-600;
+}
+
+/* Padding para evitar que el banner se esconda */
+body {
+    padding-top: 80px;
+}
+@media (min-width: 768px) {
+    body {
+        padding-top: 96px;
+    }
+}
