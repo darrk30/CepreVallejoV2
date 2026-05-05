@@ -36,10 +36,7 @@ class CourseForm
                                     ->label('Código Identificador')
                                     ->required()
                                     ->default(function () {
-                                        // Agregamos withTrashed() para contar los registros eliminados suavemente
-                                        $nextId = (\App\Models\Course::withTrashed()->max('id') ?? 0) + 1;
-
-                                        // Opcional: str_pad para que se vea más profesional (ej: CURS-001)
+                                        $nextId = (Course::withTrashed()->max('id') ?? 0) + 1;
                                         return "CURS-" . str_pad($nextId, 3, '0', STR_PAD_LEFT);
                                     })
                                     ->unique('courses', 'codigo', ignoreRecord: true)

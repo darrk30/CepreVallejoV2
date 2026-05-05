@@ -52,6 +52,21 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasMany(Inscription::class);
     }
 
+    public function librosCreados()
+    {
+        return $this->hasMany(Libro::class);
+    }
+
+    public function videosCreados()
+    {
+        return $this->hasMany(Video::class);
+    }
+
+    public function anunciosCreados()
+    {
+        return $this->hasMany(Anuncio::class);
+    }
+
     public function canAccessPanel(Panel $panel): bool
     {
         // En producción, podrías restringirlo por correo o rol
