@@ -26,10 +26,10 @@ class UserResource extends Resource
     protected static string | UnitEnum | null $navigationGroup = 'Usuarios';
 
     // 1. Nombre en la barra lateral (Sidebar)
-    protected static ?string $navigationLabel = 'Colaboradores';
+    protected static ?string $navigationLabel = 'Usuarios';
 
     // 4. Título en plural (cambia el encabezado "Users" y las migas de pan)
-    protected static ?string $pluralModelLabel = 'Colaboradores';
+    protected static ?string $pluralModelLabel = 'Usuarios';
 
     // 5. Título en singular (cambia el texto del botón "Crear user" a "Crear usuario")
     protected static ?string $modelLabel = 'Usuario';

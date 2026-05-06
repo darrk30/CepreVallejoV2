@@ -69,6 +69,8 @@ class LibroForm
                                 ->image()
                                 ->directory('libros/portadas')
                                 ->imageEditor()
+                                ->optimize('webp', 80)
+                                ->maxImageWidth(1200)
                                 ->columnSpanFull(),
 
                             TextInput::make('url')

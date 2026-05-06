@@ -34,4 +34,20 @@ class CicloCourse extends Pivot
     }
 
 
+    /**
+     * RELACIÓN FALTANTE: De pivote a Curso
+     */
+    public function course()
+    {
+        return $this->belongsTo(Course::class, 'course_id');
+    }
+
+    /**
+     * RELACIÓN FALTANTE: De pivote a Ciclo Académico
+     */
+    public function academicCycle()
+    {
+        return $this->belongsTo(AcademicCycle::class, 'ciclo_id');
+    }
+
 }

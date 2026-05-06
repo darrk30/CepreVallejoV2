@@ -39,7 +39,9 @@ class AnunciosForm
                     ->label('Banner / Imagen')
                     ->image()
                     ->directory('anuncios/banners')
-                    ->imageEditor(),
+                    ->imageEditor()
+                    ->optimize('webp', 80)
+                    ->maxImageWidth(1200),
 
                 TextInput::make('url')
                     ->label('Enlace de Acción (Opcional)')

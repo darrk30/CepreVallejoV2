@@ -72,6 +72,9 @@ class CourseForm
                                 FileUpload::make('imagen_path')
                                     ->label('Imagen de Portada')
                                     ->image()
+                                    ->imageEditor()
+                                    ->optimize('webp', 80)
+                                    ->maxImageWidth(1200)
                                     ->directory('courses-images')
                                     ->imageEditor()
                                     ->required(),

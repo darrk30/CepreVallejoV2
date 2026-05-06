@@ -55,7 +55,9 @@ class ConventionForm
                                     ->label('Logo de la Institución')
                                     ->image()
                                     ->directory('convenios/logos')
-                                    ->imageEditor(),
+                                    ->imageEditor()
+                                    ->optimize('webp', 80)
+                                    ->maxImageWidth(1200),
 
                                 Select::make('estado_convenio')
                                     ->label('Estado del Acuerdo')

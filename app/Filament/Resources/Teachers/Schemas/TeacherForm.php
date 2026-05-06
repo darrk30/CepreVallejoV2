@@ -27,9 +27,11 @@ class TeacherForm
                                 FileUpload::make('imagen_path')
                                     ->label('Foto de Perfil')
                                     ->image()
+                                    ->imageEditor()
+                                    ->optimize('webp', 80)
+                                    ->maxImageWidth(1200)
                                     ->directory('docentes/fotos')
                                     ->avatar()
-                                    ->imageEditor()
                                     ->columnSpan(1), // Ocupa 1/3 del espacio
 
                                 Grid::make(1)

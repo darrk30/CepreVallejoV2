@@ -36,8 +36,10 @@ class AcademicServiceForm
                         FileUpload::make('imagen_path')
                             ->label('Imagen Representativa')
                             ->image()
-                            ->directory('servicios_academicos')
                             ->imageEditor()
+                            ->optimize('webp', 80)
+                            ->maxImageWidth(1200)
+                            ->directory('servicios_academicos')
                             ->columnSpan(1),
 
                         Select::make('estado')
