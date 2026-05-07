@@ -122,7 +122,7 @@ document.querySelectorAll('section[id]').forEach((section) => {
                                         Estudiantes</span>
                                 </div>
                             </a>
-                            <a href="{{ config('app.url') }}/admin"
+                            <a href="{{ config('app.url') }}/profesor"
                                 class="group flex items-center gap-4 px-5 py-2 hover:bg-amber-50 transition-all duration-300">
                                 <div
                                     class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center group-hover:bg-amber-600 group-hover:text-white transition-all duration-300 shadow-sm">

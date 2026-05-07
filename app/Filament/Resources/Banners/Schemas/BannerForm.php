@@ -24,8 +24,6 @@ class BannerForm
                             ->directory('banners/desktop')
                             ->required()
                             ->imageEditor()
-                            ->optimize('webp', 80)
-                            ->maxImageWidth(1200)
                             ->columnSpan(1),
 
                         FileUpload::make('imagen_mobile_path')
@@ -33,8 +31,6 @@ class BannerForm
                             ->image()
                             ->directory('banners/mobile')
                             ->imageEditor()
-                            ->optimize('webp', 80)
-                            ->maxImageWidth(1200)
                             ->columnSpan(1),
                     ])->columnSpanFull(),
 

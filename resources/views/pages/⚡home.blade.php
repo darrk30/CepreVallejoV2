@@ -58,60 +58,55 @@ new class extends Component {
      1. BANNER — fondo degradado vibrante + olas
 ============================================================ --}}
     @if ($banners->count() > 0)
-        <section wire:ignore class="relative w-full group"
-            style="background:linear-gradient(135deg,#EEF2FF 0%,#FEF9EC 55%,#FFF0E6 100%)">
+        <!-- Agregamos h-full para que ocupe el alto total del padre si este lo tiene definido -->
+        {{-- Sección de Banner Principal --}}
+        <section wire:ignore class="relative w-full group overflow-hidden bg-white">
 
-            {{-- Blobs decorativos flotantes --}}
-            <div class="blob float1"
-                style="width:380px;height:380px;top:-80px;right:5%;background:radial-gradient(circle,#C9A84C44,transparent 70%)">
-            </div>
-            <div class="blob float2"
-                style="width:260px;height:260px;bottom:30px;left:3%;background:radial-gradient(circle,#6D28D933,transparent 70%)">
-            </div>
-            <div class="blob float3"
-                style="width:180px;height:180px;top:40px;left:20%;background:radial-gradient(circle,#0F766E22,transparent 70%)">
-            </div>
+            {{-- Swiper Container --}}
+            {{-- Ajustamos la altura: h-[320px] en móvil y hasta h-[480px] en desktop --}}
+            <div class="swiper mySwiper w-full h-[420px] md:h-[500px] lg:h-[580px] relative z-10"
+                style="--swiper-navigation-color:#C9A84C;
+               --swiper-pagination-color:#C9A84C;
+               --swiper-navigation-size:22px;">
 
-            {{-- Swiper --}}
-            <div class="swiper mySwiper w-full relative z-10"
-                style="height:clamp(300px,52vw,520px);
-                --swiper-navigation-color:#C9A84C;
-                --swiper-pagination-color:#C9A84C;
-                --swiper-navigation-size:22px;">
                 <div class="swiper-wrapper">
                     @foreach ($banners as $index => $banner)
-                        <div class="swiper-slide relative w-full h-full">
+                        <div class="swiper-slide w-full h-full bg-white">
                             @if ($banner->enlace)
-                                <a href="{{ $banner->enlace }}" target="_blank"
-                                    class="absolute inset-0 z-10 cursor-pointer" aria-label="Ir al enlace"></a>
+                                <a href="{{ $banner->enlace }}" target="_blank" class="absolute inset-0 z-20"></a>
                             @endif
-                            <picture class="relative z-[2] w-full h-full flex items-center justify-center">
-                                <source media="(min-width:768px)"
+
+                            <picture class="w-full h-full flex items-center justify-center">
+                                {{-- Imagen para Desktop --}}
+                                <source media="(min-width: 768px)"
                                     srcset="{{ Storage::url($banner->imagen_desktop_path) }}">
+
+                                {{-- Imagen para Mobile (o fallback) --}}
                                 <img src="{{ Storage::url($banner->imagen_mobile_path ?? $banner->imagen_desktop_path) }}"
-                                    alt="Banner {{ $index + 1 }}"
-                                    class="w-full h-full object-contain pointer-events-none">
+                                    alt="Banner {{ $index + 1 }}" {{-- PRIORIDAD ALTURA: object-contain evita que se corte el texto de los lados --}}
+                                    class="w-full h-full object-contain md:object-fill pointer-events-none">
                             </picture>
                         </div>
                     @endforeach
                 </div>
 
-                <div class="swiper-button-next !w-11 !h-11 !rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 !mr-4 md:!mr-8 after:!text-sm"
-                    style="background:rgba(255,255,255,.85);border:1.5px solid var(--gold-border);box-shadow:0 4px 16px rgba(0,0,0,.1)">
+                {{-- Flechas de Navegación (Solo visibles en hover) --}}
+                <div class="swiper-button-next !w-12 !h-12 !rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 !mr-4 shadow-lg after:!text-lg"
+                    style="background:rgba(255,255,255,0.9); border:1px solid #e5e7eb;">
                 </div>
-                <div class="swiper-button-prev !w-11 !h-11 !rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 !ml-4 md:!ml-8 after:!text-sm"
-                    style="background:rgba(255,255,255,.85);border:1.5px solid var(--gold-border);box-shadow:0 4px 16px rgba(0,0,0,.1)">
+                <div class="swiper-button-prev !w-12 !h-12 !rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 !ml-4 shadow-lg after:!text-lg"
+                    style="background:rgba(255,255,255,0.9); border:1px solid #e5e7eb;">
                 </div>
-                <div class="swiper-pagination !bottom-5 z-20"></div>
+
+                {{-- Paginación --}}
+                <div class="swiper-pagination !bottom-6"></div>
             </div>
 
-            {{-- Onda inferior: transición al blanco limpio --}}
-            <div class="wave-divider relative z-20 -mt-1 pointer-events-none">
+            {{-- Decoración: Onda inferior suave para conectar con la siguiente sección --}}
+            <div class="absolute bottom-0 left-0 w-full z-20 pointer-events-none">
                 <svg viewBox="0 0 1440 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"
-                    style="height:100px">
-                    <path
-                        d="M0,30 C200,100 400,0 600,50 C800,100 1000,10 1200,55 C1320,80 1400,35 1440,55 L1440,100 L0,100 Z"
-                        fill="#FFFFFF" />
+                    class="w-full h-[40px] md:h-[70px]">
+                    <path d="M0,50 C300,100 600,0 900,50 C1200,100 1440,20 1440,50 L1440,100 L0,100 Z" fill="#FFFFFF" />
                 </svg>
             </div>
         </section>
