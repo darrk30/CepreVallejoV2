@@ -106,8 +106,6 @@ class ConfigurarInstitucion extends Page implements HasForms
                                     ->label('Logo de la Institución')
                                     ->image()
                                     ->imageEditor()
-                                    ->optimize('webp', 80)
-                                    ->maxImageWidth(1200)
                                     ->directory('institucion/logo')
                                     ->columnSpanFull(),
                             ]),
