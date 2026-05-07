@@ -33,8 +33,8 @@ class TeacherCourseContentDetail extends Model
         return $this->belongsTo(TeacherCourseContent::class, 'teacher_course_content_id');
     }
 
-    public function exam(): BelongsTo
+    public function exam()
     {
-        return $this->belongsTo(Exam::class);
+        return $this->hasOne(Exam::class, 'teacher_course_content_detail_id');
     }
 }

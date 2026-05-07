@@ -627,6 +627,28 @@
             white-space: nowrap;
         }
 
+        /* Badge de exámenes activos en la cabecera de sección */
+        .sec-exam-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.66rem;
+            font-weight: 700;
+            color: var(--amber) !important;
+            background: var(--amber-bg) !important;
+            border: 1px solid var(--amber-bd);
+            padding: 2px 8px;
+            border-radius: 100px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .sec-exam-badge svg {
+            width: 11px;
+            height: 11px;
+            flex-shrink: 0;
+        }
+
         /* Descripción de sección */
         .sec-desc {
             font-size: 0.78rem;
@@ -748,6 +770,37 @@
             flex-wrap: wrap;
             gap: 7px;
             align-items: center;
+        }
+
+        /* Examen activo — enlace badge */
+        .res-exam {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.71rem;
+            font-weight: 600;
+            font-family: 'Bricolage Grotesque', sans-serif;
+            color: var(--amber) !important;
+            background: var(--amber-bg) !important;
+            border: 1px solid var(--amber-bd);
+            padding: 3px 10px;
+            border-radius: 100px;
+            text-decoration: none !important;
+            white-space: nowrap;
+            transition: opacity .15s, transform .15s;
+            cursor: pointer;
+        }
+
+        .res-exam:hover {
+            opacity: .82;
+            transform: translateY(-1px);
+            text-decoration: none !important;
+        }
+
+        .res-exam svg {
+            width: 11px;
+            height: 11px;
+            flex-shrink: 0;
         }
 
         /* Archivo */
@@ -970,6 +1023,18 @@
                             <span class="sec-meta">{{ $section->details->count() }}
                                 tema{{ $section->details->count() !== 1 ? 's' : '' }}</span>
 
+                            @php $activeExams = $section->details->filter(fn($d) => isset($d->exam) && $d->exam && $d->exam->estado === 'activo')->count(); @endphp
+                            @if ($activeExams > 0)
+                                <span class="sec-exam-badge">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="2" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" />
+                                    </svg>
+                                    {{ $activeExams }} examen{{ $activeExams !== 1 ? 'es' : '' }}
+                                </span>
+                            @endif
+
                             {{-- ── ACCIONES DESKTOP ── --}}
                             <div class="aula-actions-desktop">
 
@@ -1170,6 +1235,19 @@
                                                     <span x-text="openVideo ? 'Ocultar video' : 'Ver video'"></span>
                                                 </button>
                                             @endif
+
+                                            @php $exam = $detail->exam ?? null; @endphp
+                                            @if ($exam && $exam->estado === 'activo')
+                                                <a href="{{ \App\Filament\Profesor\Pages\TakeExam::getUrl(['examId' => $exam->id]) }}"
+                                                    class="res-exam" title="{{ $exam->titulo }}">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" />
+                                                    </svg>
+                                                    {{ $exam->titulo }}
+                                                </a>
+                                            @endif
                                         </div>
 
                                         @if ($detail->url_video)
@@ -1257,15 +1335,15 @@
 
     <script>
         /* ══════════════════════════════════════════════════════════
-               buildEmbedUrl — convierte cualquier URL de video a embed
-               Soporta:
-                 · youtube.com/watch?v=ID
-                 · youtu.be/ID
-                 · youtube.com/shorts/ID
-                 · youtube.com/embed/ID  (ya es embed, la devuelve tal cual)
-                 · vimeo.com/ID
-                 · URL directa de archivo (mp4, webm…) — se devuelve igual
-            ══════════════════════════════════════════════════════════ */
+                   buildEmbedUrl — convierte cualquier URL de video a embed
+                   Soporta:
+                     · youtube.com/watch?v=ID
+                     · youtu.be/ID
+                     · youtube.com/shorts/ID
+                     · youtube.com/embed/ID  (ya es embed, la devuelve tal cual)
+                     · vimeo.com/ID
+                     · URL directa de archivo (mp4, webm…) — se devuelve igual
+                ══════════════════════════════════════════════════════════ */
         function buildEmbedUrl(url) {
             if (!url) return '';
             url = url.trim();

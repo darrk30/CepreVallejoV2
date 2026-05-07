@@ -25,12 +25,56 @@ class ManageCourseContent extends Page implements HasActions
     protected string $view = 'filament.profesor.pages.manage-course-content';
     protected static bool $shouldRegisterNavigation = false;
 
-    public ?int $assignmentId = null;
+    // ── Slug con parámetro de ruta ────────────────────────────
+    protected static ?string $slug = 'virtual-classroom/{courseSlug}';
 
-    public function mount(): void
+    public ?string $courseSlug  = null;
+    public ?int    $assignmentId = null;
+
+    public function mount(string $courseSlug): void
     {
-        $this->assignmentId = request()->query('record');
-        if (!$this->assignmentId) abort(404);
+        $this->courseSlug = $courseSlug;
+
+        $teacher = auth()->user()?->teacher;
+
+        if (!$teacher) {
+            abort(403);
+        }
+
+        $assignment = CicloCourseTeacher::with([
+            'cicloCourse.course',
+            'cicloCourse.academicCycle',
+        ])
+            ->where('teacher_id', $teacher->id)
+            ->whereHas('cicloCourse.course', fn($q) => $q->where('slug', $courseSlug))
+            ->first();
+
+        if (!$assignment) {
+            abort(404);
+        }
+
+        $this->assignmentId = $assignment->id;
+    }
+
+    // ── Breadcrumb ────────────────────────────────────────────
+
+    public function getBreadcrumbs(): array
+    {
+        $assignment = $this->assignment;
+        $courseName = $assignment?->cicloCourse?->course?->nombre ?? 'Curso';
+        $cycleName  = $assignment?->cicloCourse?->academicCycle?->nombre ?? 'Ciclo';
+
+        return [
+            VirtualClassroom::getUrl() => 'Mi Aula Virtual',
+            '#'                        => "{$cycleName} · {$courseName}",
+        ];
+    }
+
+    // ── Título de la página (tab del navegador) ───────────────
+
+    public function getTitle(): string
+    {
+        return $this->assignment?->cicloCourse?->course?->nombre ?? 'Contenido del Curso';
     }
 
     /* ── PROPIEDADES ── */
@@ -46,7 +90,10 @@ class ManageCourseContent extends Page implements HasActions
     public function getSectionsProperty()
     {
         return TeacherCourseContent::where('ciclo_course_teacher_id', $this->assignmentId)
-            ->with(['details' => fn($q) => $q->orderBy('orden')])
+            ->with([
+                'details' => fn($q) => $q->orderBy('orden'),
+                'details.exam', // ← agregar esto
+            ])
             ->orderBy('orden')
             ->get();
     }

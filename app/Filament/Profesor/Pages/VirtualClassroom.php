@@ -22,7 +22,6 @@ class VirtualClassroom extends Page
     {
         // 1. Obtenemos el profesor vinculado al usuario actual
         $teacher = Auth::user()->teacher;
-
         // 2. Si no hay profesor, retornamos una colección vacía
         if (!$teacher) {
             return collect();

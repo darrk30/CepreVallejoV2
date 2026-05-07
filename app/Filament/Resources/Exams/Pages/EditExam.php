@@ -19,36 +19,63 @@ class EditExam extends EditRecord
     }
 
     /**
-     * PASO 1: Llenar el formulario con los datos del contenido relacionado
+     * Pre-llenar el formulario con los datos del detalle y su sección padre.
      */
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        // Accedemos al contenido a través de la relación definida en el modelo Exam
-        $content = $this->record->teacherCourseContent;
+        // Detalle (tema) al que pertenece el examen
+        $detail = $this->record->detail; // relación en Exam
 
-        if ($content) {
-            $data['ciclo_course_teacher_id'] = $content->ciclo_course_teacher_id;
-            $data['content_titulo'] = $content->titulo;
-            $data['content_descripcion'] = $content->descripcion;
+        if ($detail) {
+            $data['detail_titulo']      = $detail->titulo;
+            $data['detail_descripcion'] = $detail->descripcion;
+
+            // Sección (content) padre del detalle
+            $content = $detail->content; // relación en TeacherCourseContentDetail
+            if ($content) {
+                $data['ciclo_course_teacher_id'] = $content->ciclo_course_teacher_id;
+                $data['content_titulo']          = $content->titulo;
+                $data['content_descripcion']     = $content->descripcion;
+            }
         }
 
         return $data;
     }
 
     /**
-     * PASO 2: Actualizar tanto el Contenido como el Examen al guardar
+     * Actualizar los 3 niveles al guardar.
      */
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        // 1. Actualizamos el registro de TeacherCourseContent relacionado
-        $record->teacherCourseContent->update([
-            'ciclo_course_teacher_id' => $data['ciclo_course_teacher_id'],
-            'titulo' => $data['content_titulo'],
-            'descripcion' => $data['content_descripcion'],
-        ]);
+        $detail  = $record->detail;
+        $content = $detail?->content;
 
-        // 2. Actualizamos los datos propios del Examen (preguntas, duración, etc.)
-        $record->update($data);
+        // 1. Actualizar la Sección
+        if ($content) {
+            $content->update([
+                'ciclo_course_teacher_id' => $data['ciclo_course_teacher_id'],
+                'titulo'                  => $data['content_titulo'],
+                'descripcion'             => $data['content_descripcion'] ?? null,
+            ]);
+        }
+
+        // 2. Actualizar el Tema
+        if ($detail) {
+            $detail->update([
+                'titulo'      => $data['detail_titulo'],
+                'descripcion' => $data['detail_descripcion'] ?? null,
+            ]);
+        }
+
+        // 3. Actualizar el Examen
+        $record->update([
+            'titulo'            => $data['titulo'],
+            'descripcion'       => $data['descripcion'] ?? null,
+            'duracion_minutos'  => $data['duracion_minutos'],
+            'intentos_maximos'  => $data['intentos_maximos'],
+            'puntaje_minimo'    => $data['puntaje_minimo'],
+            'estado'            => $data['estado'],
+        ]);
 
         return $record;
     }

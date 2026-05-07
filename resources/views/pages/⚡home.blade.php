@@ -132,7 +132,7 @@ new class extends Component {
 
                 <div class="text-center mb-14 reveal">
                     <span class="section-label">Lo que ofrecemos</span>
-                    <h2 class="hand text-5xl md:text-6xl font-bold mt-5" style="color:var(--blue)">
+                    <h2 class="hand text-5xl md:text-5xl font-bold mt-5" style="color:var(--blue)">
                         Servicios <span class="text-gold">Académicos</span>
                     </h2>
                     <span class="gold-rule"></span>
@@ -156,11 +156,12 @@ new class extends Component {
                                             style="background:linear-gradient(90deg,var(--gold),var(--gold-lt))"></div>
                                         <div
                                             class="px-6 py-5 flex flex-col items-center text-center flex-grow justify-center">
-                                            <h3 class="text-sm font-extrabold uppercase tracking-widest mb-2"
+                                            <h3 class="text-lg font-extrabold uppercase tracking-widest mb-2"
                                                 style="color:var(--blue)">
                                                 {{ $servicio->titulo }}
                                             </h3>
-                                            <p class="text-xs leading-relaxed line-clamp-3" style="color:var(--gray)">
+                                            <p class="text-xs md:text-base leading-relaxed line-clamp-4"
+                                                style="color:var(--gray)">
                                                 {{ $servicio->descripcion }}
                                             </p>
                                         </div>
@@ -225,8 +226,9 @@ new class extends Component {
                         {{ $institucion->razon_social ?? 'Nuestra Academia' }}
                     </p>
                     <span class="gold-rule left" style="margin-bottom:0"></span>
-                    <div class="prose prose-sm max-w-none mt-7 leading-relaxed" style="color:var(--gray)">
-                        {!! $institucion->nosotros ?? '<p>Inicia tu preparación con los mejores.</p>' !!}
+                    <div class="render-html prose-lg md:prose-xl max-w-none mt-7 leading-relaxed prose-slate prose-p:text-slate-900 prose-li:text-slate-900 prose-strong:text-slate-900"
+                        style="color: var(--gray);">
+                        {!! $institucion->nosotros !!}
                     </div>
                 </div>
             </div>
@@ -255,7 +257,7 @@ new class extends Component {
 
             <div class="text-center max-w-2xl mx-auto mb-16 reveal">
                 <span class="section-label">Matrículas abiertas</span>
-                <h2 class="hand text-5xl md:text-6xl font-bold mt-4 mb-2" style="color:var(--blue)">
+                <h2 class="hand text-5xl md:text-5xl font-bold mt-4 mb-2" style="color:var(--blue)">
                     Ciclos <span class="text-gold">Académicos</span>
                 </h2>
                 <span class="gold-rule"></span>
@@ -305,8 +307,9 @@ new class extends Component {
                                                 @endphp
                                                 <span style="color:var(--gold)">{!! $icono !!}</span>
                                             </div>
-                                            <span class="text-sm"
-                                                style="color:var(--gray)">{{ $detalle->nombre }}</span>
+                                            <span class="text-sm md:text-base font-medium" style="color:var(--gray)">
+                                                {{ $detalle->nombre }}
+                                            </span>
                                         </li>
                                     @endforeach
                                 </ul>
@@ -316,8 +319,10 @@ new class extends Component {
                             <div class="p-7 lg:w-[28%] flex flex-col items-center justify-center gap-5"
                                 style="background:var(--gold-pale)">
                                 <div class="text-center">
-                                    <span class="text-[10px] font-extrabold tracking-widest uppercase block mb-1"
-                                        style="color:var(--gold)">Inversión</span>
+                                    <span class="text-xs font-black tracking-widest uppercase block mb-1"
+                                        style="color:var(--gold)">
+                                        Inversión
+                                    </span>
                                     <div class="flex items-start justify-center gap-1">
                                         <span class="font-extrabold text-lg mt-1" style="color:var(--gold)">S/</span>
                                         <span class="hand text-5xl font-bold"
@@ -361,7 +366,8 @@ new class extends Component {
                     <div class="text-center mb-14">
                         <span class="text-blue-600 font-bold tracking-widest uppercase text-xs">Plan de estudios</span>
                         <h2 class="text-4xl md:text-5xl font-extrabold mt-5 text-blue-900">
-                            Cursos del <span class="text-yellow-500">{{ $ciclo->nombre }}</span>
+                            Cursos del <span class="hand text-5xl md:text-5xl font-bold mt-4 text-gold"
+                                style="color:var(--gold)">{{ $ciclo->nombre }}</span>
                         </h2>
                         <div class="w-16 h-1 bg-yellow-500 mx-auto mt-6 rounded-full"></div>
                     </div>
@@ -388,12 +394,12 @@ new class extends Component {
                                             <!-- Contenido -->
                                             <div class="px-6 py-2 flex flex-col items-center text-center">
                                                 <h3
-                                                    class="text-2xl font-bold text-gray-800 mb-2 group-hover:text-blue-700 transition-colors">
+                                                    class="text-2xl font-bold text-slate-900 mb-2 group-hover:text-blue-700 transition-colors">
                                                     {{ $curso->nombre }}
                                                 </h3>
 
                                                 <p
-                                                    class="text-gray-500 text-2xs leading-relaxed line-clamp-3 mb-6 font-medium">
+                                                    class="text-gray-700 text-sm md:text-base leading-relaxed line-clamp-3 mb-6 font-medium">
                                                     {{ $curso->descripcion ?? 'Contenido especializado para tu preparación.' }}
                                                 </p>
 
@@ -445,7 +451,7 @@ new class extends Component {
 
                 <div class="text-center mb-14 reveal">
                     <span class="section-label">Excelencia educativa</span>
-                    <h2 class="hand text-5xl md:text-6xl font-bold mt-4" style="color:var(--blue)">
+                    <h2 class="hand text-5xl md:text-5xl font-bold mt-4" style="color:var(--blue)">
                         Nuestra <span class="text-gold">Plana Docente</span>
                     </h2>
                     <span class="gold-rule"></span>
@@ -472,7 +478,7 @@ new class extends Component {
                                             style="color:var(--text)">
                                             {{ $docente->user->name }}
                                         </h3>
-                                        <p class="text-xs leading-relaxed line-clamp-3 italic mb-5"
+                                        <p class="text-sm leading-relaxed line-clamp-3 italic mb-5"
                                             style="color:var(--gray)">
                                             "{{ $docente->biografia ?? 'Docente especializado en la formación preuniversitaria.' }}"
                                         </p>
@@ -526,7 +532,7 @@ new class extends Component {
 
                 <div class="text-center mb-14 reveal">
                     <span class="section-label">Alianzas estratégicas</span>
-                    <h2 class="hand text-5xl md:text-6xl font-bold mt-4" style="color:var(--blue)">
+                    <h2 class="hand text-5xl md:text-5xl font-bold mt-4" style="color:var(--blue)">
                         Convenios <span class="text-gold">Institucionales</span>
                     </h2>
                     <span class="gold-rule"></span>

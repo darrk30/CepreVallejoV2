@@ -1,7 +1,7 @@
 <x-filament-panels::page>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Handlee&family=Nunito:wght@300;400;600;700;800;900&display=swap');
-        
+
         /* ── MODO CLARO (variables en .cr) ── */
         .cr {
             --c-surface: #ffffff;
@@ -351,7 +351,6 @@
     </style>
 
     <div class="cr">
-
         {{-- Header --}}
         <div class="cr-ph">
             <div>
@@ -407,7 +406,7 @@
                                 {{-- <p class="cr-desc">Gestiona lecciones, material educativo y exámenes para este curso en
                                     el presente ciclo.</p> --}}
                                 {{-- <a href="{{ route('filament.profesor.resources.teacher-course-contents.index', ['tableFilters[ciclo_course_teacher_id][value]' => $assignment->id]) }}" --}}
-                                <a href="{{ route('filament.profesor.pages.manage-course-content', ['record' => $assignment->id]) }}"
+                                <a href="{{ \App\Filament\Profesor\Pages\ManageCourseContent::getUrl(['courseSlug' => $course->slug]) }}"
                                     class="cr-btn">
                                     Entrar al Aula
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"

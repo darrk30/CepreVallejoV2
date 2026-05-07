@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete(); // El Alumno
             
             $table->decimal('puntaje_obtenido', 5, 2)->default(0.00);
-            
+            $table->integer('duracion_minutos_restantes')->nullable();
             // Guardamos las respuestas en formato JSON para auditoría rápida
             // Ejemplo: {"pregunta_1": "opcion_5", "pregunta_2": "opcion_2"}
             $table->json('respuestas_enviadas')->nullable();

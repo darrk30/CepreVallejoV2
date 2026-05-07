@@ -30,7 +30,7 @@ class ProfesorPanelProvider extends PanelProvider
             ->profile()
             ->login()
             ->colors([
-                'primary' => Color::Cyan,
+                'primary' => '#4340d0',
             ])
             ->discoverResources(in: app_path('Filament/Profesor/Resources'), for: 'App\Filament\Profesor\Resources')
             ->discoverPages(in: app_path('Filament/Profesor/Pages'), for: 'App\Filament\Profesor\Pages')

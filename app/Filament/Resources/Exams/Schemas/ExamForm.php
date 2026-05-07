@@ -3,22 +3,17 @@
 namespace App\Filament\Resources\Exams\Schemas;
 
 use App\Models\CicloCourseTeacher;
-use App\Models\TeacherCourseContent;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Components\Wizard;
 use Filament\Schemas\Components\Wizard\Step;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
 class ExamForm
@@ -28,30 +23,24 @@ class ExamForm
         return $schema
             ->components([
                 Wizard::make([
-                    // PASO 1: CREACIÓN DEL CONTENIDO
-                    Step::make('Contenido del Profesor')
-                        ->description('Asigna el curso y crea la lección para el examen.')
+
+                    // ── PASO 1: SECCIÓN ──────────────────────────────────
+                    Step::make('Sección')
+                        ->description('Selecciona la asignación y crea la sección.')
                         ->schema([
                             Select::make('ciclo_course_teacher_id')
                                 ->label('Asignación: Ciclo - Curso - Profesor')
                                 ->options(function () {
-                                    // Cargamos las relaciones necesarias: 
-                                    // Docente -> Usuario (para el nombre)
-                                    // Pivote CicloCourse -> Curso
-                                    // Pivote CicloCourse -> Ciclo Académico
                                     return CicloCourseTeacher::with([
                                         'teacher.user',
                                         'cicloCourse.course',
-                                        'cicloCourse.academicCycle'
+                                        'cicloCourse.academicCycle',
                                     ])
                                         ->get()
                                         ->mapWithKeys(function ($item) {
-                                            // Accedemos a los datos a través de la cadena de relaciones
                                             $ciclo = $item->cicloCourse->academicCycle->nombre ?? 'Ciclo S/N';
                                             $curso = $item->cicloCourse->course->nombre ?? 'Curso S/N';
                                             $profe = $item->teacher->user->name ?? 'Profesor S/N';
-
-                                            // Formato solicitado: CICLO - CURSO - TEACHER
                                             return [$item->id => "{$ciclo} - {$curso} - {$profe}"];
                                         });
                                 })
@@ -60,22 +49,36 @@ class ExamForm
                                 ->columnSpanFull(),
 
                             TextInput::make('content_titulo')
-                                ->label('Título del Tema / Lección')
-                                ->placeholder('Ej: Semana 04: Ecuaciones de Segundo Grado')
+                                ->label('Título de la Sección')
+                                ->placeholder('Ej: Semana 04')
                                 ->required(),
 
                             Textarea::make('content_descripcion')
-                                ->label('Descripción del Contenido')
+                                ->label('Descripción de la Sección')
                                 ->rows(2),
                         ]),
 
-                    // PASO 2: CREACIÓN DEL EXAMEN Y PREGUNTAS
+                    // ── PASO 2: TEMA ─────────────────────────────────────
+                    Step::make('Tema')
+                        ->description('Crea el tema específico al que pertenece el examen.')
+                        ->schema([
+                            TextInput::make('detail_titulo')
+                                ->label('Título del Tema')
+                                ->placeholder('Ej: Ecuaciones de Segundo Grado')
+                                ->required()
+                                ->columnSpanFull(),
 
+                            Textarea::make('detail_descripcion')
+                                ->label('Descripción del Tema')
+                                ->placeholder('Breve descripción del contenido del tema...')
+                                ->rows(3)
+                                ->columnSpanFull(),
+                        ]),
 
-                    Step::make('Detalles del Examen')
+                    // ── PASO 3: EXAMEN Y PREGUNTAS ────────────────────────
+                    Step::make('Examen')
                         ->description('Define las preguntas y configuración del test.')
                         ->schema([
-                            // Configuración General del Examen
                             Grid::make(2)
                                 ->schema([
                                     Textarea::make('titulo')
@@ -84,7 +87,7 @@ class ExamForm
                                         ->required(),
                                     Select::make('estado')
                                         ->options([
-                                            'activo' => 'Activo',
+                                            'activo'   => 'Activo',
                                             'borrador' => 'Borrador',
                                         ])
                                         ->default('borrador'),
@@ -106,7 +109,6 @@ class ExamForm
                                         ->default(10.5),
                                 ]),
 
-                            // Banco de Preguntas
                             Repeater::make('questions')
                                 ->relationship('questions')
                                 ->label('Banco de Preguntas')
@@ -114,7 +116,6 @@ class ExamForm
                                 ->cloneable()
                                 ->itemLabel(fn(array $state): ?string => $state['texto_pregunta'] ?? 'Nueva Pregunta')
                                 ->schema([
-                                    // Fila: Pregunta y Puntos
                                     Grid::make(12)
                                         ->schema([
                                             Textarea::make('texto_pregunta')
@@ -132,12 +133,10 @@ class ExamForm
                                         ->label('¿Usar imagen?')
                                         ->live()
                                         ->afterStateHydrated(function (Checkbox $component, Get $get) {
-                                            // Mantenemos la inteligencia: si hay imagen, se marca solo
                                             if ($get('imagen_path')) {
                                                 $component->state(true);
                                             }
-                                        })
-                                        ->columnSpan(1),
+                                        }),
 
                                     FileUpload::make('imagen_path')
                                         ->label('Imagen de apoyo')
@@ -149,28 +148,24 @@ class ExamForm
                                         ->columnSpanFull()
                                         ->visible(fn(Get $get): bool => (bool) $get('config_show_image')),
 
-                                    // Alternativas (Sub-Repeater)
                                     Repeater::make('options')
                                         ->relationship('options')
                                         ->label('Alternativas')
-                                        ->grid(2) // Dos columnas para que sea compacto
+                                        ->grid(2)
                                         ->schema([
                                             Textarea::make('texto_opcion')
                                                 ->label('Texto de la Opción')
                                                 ->required(),
 
-                                            Grid::make(2) // Mantiene la fila dividida en dos
+                                            Grid::make(2)
                                                 ->schema([
                                                     Checkbox::make('es_correcta')
                                                         ->label('¿Es la correcta?')
-                                                        // Nota: Checkbox no usa onColor, usa el estilo por defecto de tu tema
                                                         ->columnSpan(1),
-
                                                     Checkbox::make('config_show_image_opt')
                                                         ->label('¿Usar imagen?')
                                                         ->live()
                                                         ->afterStateHydrated(function (Checkbox $component, Get $get) {
-                                                            // Mantenemos la inteligencia: si hay imagen, se marca solo
                                                             if ($get('imagen_path')) {
                                                                 $component->state(true);
                                                             }
@@ -191,10 +186,9 @@ class ExamForm
                                         ->addActionLabel('Añadir Alternativa'),
                                 ])
                                 ->addActionLabel('Añadir Pregunta al Examen'),
-                        ])
+                        ]),
                 ])
-                    ->columnSpanFull()
-                    ->submitAction(new \Illuminate\Support\HtmlString('<button type="submit" class="fi-btn fi-btn-size-md fi-btn-color-primary">Guardar Contenido y Examen</button>')),
+                    ->columnSpanFull(),
             ]);
     }
 }

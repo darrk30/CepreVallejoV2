@@ -38,10 +38,10 @@ class Exam extends Model
     /**
      * Relación con el contenido (clase/tema) al que pertenece.
      */
-    // public function teacherCourseContent(): BelongsTo
-    // {
-    //     return $this->belongsTo(TeacherCourseContent::class, 'teacher_course_content_id');
-    // }
+    public function teacherCourseContent(): BelongsTo
+    {
+        return $this->belongsTo(TeacherCourseContent::class, 'teacher_course_content_id');
+    }
 
     /**
      * Relación con el Usuario (Admin o Profe) que creó el examen.
@@ -51,10 +51,10 @@ class Exam extends Model
         return $this->belongsTo(User::class, 'user_create_id');
     }
 
-    public function detalle()
-    {
-        return $this->hasOne(TeacherCourseContentDetail::class);
-    }
+public function detail(): BelongsTo
+{
+    return $this->belongsTo(TeacherCourseContentDetail::class, 'teacher_course_content_detail_id');
+}
 
     /**
      * Relación con las preguntas (lo crearemos en el siguiente paso).

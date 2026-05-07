@@ -60,24 +60,25 @@ document.querySelectorAll('section[id]').forEach((section) => {
 
             <!-- Menú Desktop -->
             <div class="hidden md:flex items-center space-x-6">
-                <nav class="flex items-center space-x-5 mr-4">
+                <!-- En el Menú Desktop, actualiza las clases condicionales -->
+                <nav class="flex items-center space-x-6 mr-4">
                     <a href="{{ url('/') }}#servicios"
-                        :class="activeSection === 'servicios' ? 'text-blue-600' : 'text-gray-500'"
+                        :class="activeSection === 'servicios' ? 'text-blue-700 scale-105' : 'text-slate-900'"
                         class="nav-link">Servicios</a>
                     <a href="{{ url('/') }}#nosotros"
-                        :class="activeSection === 'nosotros' ? 'text-blue-600' : 'text-gray-500'"
+                        :class="activeSection === 'nosotros' ? 'text-blue-700 scale-105' : 'text-slate-900'"
                         class="nav-link">Nosotros</a>
                     <a href="{{ url('/') }}#ciclos"
-                        :class="activeSection === 'ciclos' ? 'text-blue-600' : 'text-gray-500'"
+                        :class="activeSection === 'ciclos' ? 'text-blue-700 scale-105' : 'text-slate-900'"
                         class="nav-link">Ciclos</a>
                     <a href="{{ url('/') }}#cursos"
-                        :class="activeSection === 'cursos' ? 'text-blue-600' : 'text-gray-500'"
+                        :class="activeSection === 'cursos' ? 'text-blue-700 scale-105' : 'text-slate-900'"
                         class="nav-link">Cursos</a>
                     <a href="{{ url('/') }}#docentes"
-                        :class="activeSection === 'docentes' ? 'text-blue-600' : 'text-gray-500'"
+                        :class="activeSection === 'docentes' ? 'text-blue-700 scale-105' : 'text-slate-900'"
                         class="nav-link">Docentes</a>
                     <a href="{{ url('/') }}#convenios"
-                        :class="activeSection === 'convenios' ? 'text-blue-600' : 'text-gray-500'"
+                        :class="activeSection === 'convenios' ? 'text-blue-700 scale-105' : 'text-slate-900'"
                         class="nav-link">Convenios</a>
                 </nav>
 
@@ -117,7 +118,7 @@ document.querySelectorAll('section[id]').forEach((section) => {
                                     <span
                                         class="text-base font-black text-blue-900 group-hover:text-blue-600 transition-colors">Soy
                                         Alumno</span>
-                                    <span class="text-[9px] text-gray-400 font-bold uppercase tracking-tighter">Acceso
+                                    <span class="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">Acceso
                                         Estudiantes</span>
                                 </div>
                             </a>
@@ -134,7 +135,7 @@ document.querySelectorAll('section[id]').forEach((section) => {
                                     <span
                                         class="text-base font-black text-blue-900 group-hover:text-amber-600 transition-colors">Soy
                                         Docente</span>
-                                    <span class="text-[9px] text-gray-400 font-bold uppercase tracking-tighter">Panel de
+                                    <span class="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">Panel de
                                         Profesores</span>
                                 </div>
                             </a>
@@ -235,7 +236,7 @@ document.querySelectorAll('section[id]').forEach((section) => {
                     <span class="text-[10px] font-black text-blue-600 uppercase tracking-widest">Intranet</span>
                     <span class="text-xs font-bold text-blue-900 mt-0.5">Alumnos</span>
                 </a>
-                <a href="{{ config('app.url') }}/admin"
+                <a href="{{ config('app.url') }}/profesor"
                     class="flex flex-col items-center justify-center p-4 rounded-[2rem] bg-amber-50 border border-amber-100 active:scale-95 transition-all">
                     <div class="w-10 h-10 mb-3 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-lg shadow-amber-200"
                         style="background-color: var(--gold);">
@@ -272,7 +273,7 @@ document.querySelectorAll('section[id]').forEach((section) => {
     }
 
     .nav-link {
-        @apply hover:text-blue-600 text-[11px] font-black uppercase tracking-widest transition-all;
+        @apply hover:text-blue-600 text-[12px] font-black uppercase tracking-widest transition-all;
     }
 
     .dropdown-item {

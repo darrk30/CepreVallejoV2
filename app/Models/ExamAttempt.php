@@ -14,6 +14,7 @@ class ExamAttempt extends Model
         'respuestas_enviadas',
         'fecha_inicio',
         'fecha_fin',
+        'duracion_minutos_restantes',
         'estado',
     ];
 
