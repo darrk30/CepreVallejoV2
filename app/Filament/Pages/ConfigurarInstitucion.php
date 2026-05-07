@@ -105,6 +105,9 @@ class ConfigurarInstitucion extends Page implements HasForms
                                 FileUpload::make('logo_path')
                                     ->label('Logo de la Institución')
                                     ->image()
+                                    ->imageEditor()
+                                    ->optimize('webp', 80)
+                                    ->maxImageWidth(1200)
                                     ->directory('institucion/logo')
                                     ->columnSpanFull(),
                             ]),

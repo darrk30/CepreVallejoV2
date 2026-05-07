@@ -10,10 +10,9 @@ class TeacherCourseContent extends Model
 {
     protected $fillable = [
         'ciclo_course_teacher_id',
-        'titulo',
+        'titulo', // Ej: "Semana 01" o "Introducción"
         'descripcion',
-        'archivo_path',
-        'url_video',
+        'orden', // Para que el profe pueda organizar sus semanas
         'estado',
         'user_create_id',
     ];
@@ -28,6 +27,22 @@ class TeacherCourseContent extends Model
     }
 
     public function asignacionDocente(): BelongsTo
+    {
+        return $this->belongsTo(CicloCourseTeacher::class, 'ciclo_course_teacher_id');
+    }
+
+    public function exams()
+    {
+        return $this->hasMany(Exam::class, 'teacher_course_content_id');
+    }
+
+    // Relación con los temas específicos (Detalles)
+    public function details()
+    {
+        return $this->hasMany(TeacherCourseContentDetail::class, 'teacher_course_content_id');
+    }
+
+    public function cicloCourseTeacher()
     {
         return $this->belongsTo(CicloCourseTeacher::class, 'ciclo_course_teacher_id');
     }

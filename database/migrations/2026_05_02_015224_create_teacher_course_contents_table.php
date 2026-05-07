@@ -20,11 +20,8 @@ return new class extends Migration
                 ->cascadeOnDelete();
 
             $table->string('titulo'); // Ej: "Semana 1: Ecuaciones de primer grado"
+            $table->integer('orden')->default(1); // Ej: "Semana 1: Ecuaciones de primer grado"
             $table->text('descripcion')->nullable(); // Detalles de la tarea o clase
-
-            // Recursos multimedia (Diseño pensando en mobile-first para que el alumno lo descargue fácil)
-            $table->string('archivo_path')->nullable(); // Para PDFs, sílabos o diapositivas
-            $table->string('url_video')->nullable(); // Link a Zoom, YouTube o Drive
 
             $table->string('estado')->default('Activo');
             $table->foreignId('user_create_id')->constrained('users');

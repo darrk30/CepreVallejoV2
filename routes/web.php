@@ -8,3 +8,4 @@ use Illuminate\Support\Facades\Route;
 
 Route::livewire('/', 'pages::home');
 Route::livewire('/curso/{slug}', 'pages::courseview')->name('cursos.show');
+Route::get('/cuenta-suspendida', function () {  return view('errors.suspended'); })->name('suspended');

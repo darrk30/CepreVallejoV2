@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable(['name', 'email', 'password', 'estado'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements FilamentUser
 {
@@ -34,7 +34,7 @@ class User extends Authenticatable implements FilamentUser
 
     public function teacher()
     {
-        return $this->belongsTo(Teacher::class);
+        return $this->hasOne(Teacher::class, 'user_id');
     }
 
     public function student()
@@ -52,12 +52,27 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasMany(Inscription::class);
     }
 
+    public function librosCreados()
+    {
+        return $this->hasMany(Libro::class);
+    }
+
+    public function videosCreados()
+    {
+        return $this->hasMany(Video::class);
+    }
+
+    public function anunciosCreados()
+    {
+        return $this->hasMany(Anuncio::class);
+    }
+
     public function canAccessPanel(Panel $panel): bool
     {
         // En producción, podrías restringirlo por correo o rol
         // Por ahora, para probar, puedes permitir a todos los usuarios autenticados:
-        return true; 
-        
+        return true;
+
         // O algo más seguro:
         // return str_ends_with($this->email, '@tudominio.com');
     }

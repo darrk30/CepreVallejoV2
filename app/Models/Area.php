@@ -26,8 +26,18 @@ class Area extends Model
         });
     }
 
+    public function libros()
+    {
+        return $this->hasMany(Libro::class);
+    }
+
     public function courses(): HasMany
     {
         return $this->hasMany(Course::class);
+    }
+
+    public function videos()
+    {
+        return $this->hasMany(Video::class);
     }
 }

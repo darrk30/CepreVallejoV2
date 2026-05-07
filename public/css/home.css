@@ -21,8 +21,9 @@
     --purple: #f0f4ff;
     --coral: #c2410c;
 
-    --text: #1e293b;
-    --gray: #64748b;
+    --text: #0f172a;  /* Casi negro para títulos */
+    --gray: #334155;  /* Gris oscuro profundo para descripciones */
+    --gray-light: #475569; /* Para textos secundarios, pero aún legible */
     --border: rgba(201, 168, 76, 0.25);
 }
 
@@ -30,15 +31,86 @@ html {
     scroll-behavior: smooth;
 }
 
-.academia-root {
+/* .academia-root {
     font-family: "Nunito", sans-serif;
     color: var(--text);
     background: #fff;
     overflow-x: hidden;
+} */
+.academia-root {
+    font-family: "Vend Sans", sans-serif;
+    color: var(--gray);
+    line-height: 1.6; /* Mejora el espacio entre líneas */
+}
+.hand {
+    font-family: "Vend Sans", cursive;
 }
 
-.hand {
-    font-family: "Handlee", cursive;
+/* Estilos para mostrar contenido de la base de datos tal cual */
+.render-html {
+    font-size: 1.15rem; /* Texto más grande (aprox 18px-19px) */
+    line-height: 1.7;
+    color: #1e293b; /* Slate 800: un gris casi negro muy elegante */
+}
+
+/* Párrafos y espaciado */
+.render-html p {
+    margin-bottom: 1.25rem;
+}
+
+/* Negritas y Cursivas */
+.render-html strong, .render-html b {
+    font-weight: 800;
+    color: #0f172a; /* Slate 900: negro puro para resaltar */
+}
+
+.render-html em, .render-html i {
+    font-style: italic;
+}
+
+/* Títulos (H1, H2, H3...) */
+.render-html h1, .render-html h2, .render-html h3 {
+    color: #0f172a;
+    font-weight: 800;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    display: block;
+    line-height: 1.2;
+}
+
+.render-html h1 { font-size: 2.25rem; } /* Muy grande */
+.render-html h2 { font-size: 1.85rem; }
+.render-html h3 { font-size: 1.5rem; }
+
+/* Listas Ordenadas y Desordenadas */
+.render-html ol, .render-html ul {
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+    padding-left: 2rem; /* Espacio para los números/puntos */
+}
+
+.render-html ol {
+    list-style-type: decimal !important; /* Fuerza los números */
+}
+
+.render-html ul {
+    list-style-type: disc !important; /* Fuerza los puntos */
+}
+
+.render-html li {
+    margin-bottom: 0.5rem;
+    display: list-item; /* Asegura que se comporte como lista */
+}
+
+/* Enlaces */
+.render-html a {
+    color: #2563eb; /* Azul corporativo */
+    text-decoration: underline;
+    font-weight: 600;
+}
+
+.render-html a:hover {
+    color: #1d4ed8;
 }
 
 /* ---- Scroll reveal ---- */
@@ -327,16 +399,20 @@ html {
     scroll-behavior: smooth;
 }
 
+/* Busca y reemplaza estas clases en tu archivo */
 .nav-link {
-    @apply text-[11px] font-black uppercase tracking-widest transition-all duration-300;
+    /* Quitamos el text-gray-500 y usamos uno más oscuro */
+    @apply text-[26px] font-black uppercase tracking-[0.12em] text-slate-900 transition-all duration-300;
 }
 
 .active-nav {
-    @apply text-blue-600 border-b-2 border-blue-600;
+    /* Un azul más vibrante para que se note dónde está el usuario */
+    @apply text-blue-700 border-b-2 border-blue-700;
 }
 
 .inactive-nav {
-    @apply text-gray-500 hover:text-blue-600;
+    /* El estado inactivo ahora es un gris mucho más oscuro (Slate 600) */
+    @apply text-slate-600 hover:text-blue-700;
 }
 
 /* Padding para evitar que el banner se esconda */
