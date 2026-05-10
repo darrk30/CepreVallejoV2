@@ -29,4 +29,16 @@ class CreateStudent extends CreateRecord
 
         return $data;
     }
+
+    protected function afterCreate(): void
+    {
+        // Accedemos al registro recién creado (Teacher)
+        $teacher = $this->record;
+
+        // Accedemos al usuario vinculado y le asignamos el rol
+        // Asegúrate de que el nombre del rol sea exactamente como lo definiste (ej: 'Profesor')
+        if ($teacher->user) {
+            $teacher->user->assignRole('Alumno');
+        }
+    }
 }

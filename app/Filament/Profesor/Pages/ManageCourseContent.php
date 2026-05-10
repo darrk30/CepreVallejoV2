@@ -34,30 +34,22 @@ class ManageCourseContent extends Page implements HasActions
     public function mount(string $courseSlug): void
     {
         $this->courseSlug = $courseSlug;
-
-        $teacher = auth()->user()?->teacher;
-
-        if (!$teacher) {
-            abort(403);
-        }
-
-        $assignment = CicloCourseTeacher::with([
-            'cicloCourse.course',
-            'cicloCourse.academicCycle',
-        ])
-            ->where('teacher_id', $teacher->id)
-            ->whereHas('cicloCourse.course', fn($q) => $q->where('slug', $courseSlug))
+        $assignment = CicloCourseTeacher::query()
+            ->whereHas('cicloCourse.course', function ($query) use ($courseSlug) {
+                $query->where('slug', $courseSlug);
+            })
+            ->with([
+                'cicloCourse.course',
+                'cicloCourse.academicCycle',
+            ])
             ->first();
-
         if (!$assignment) {
-            abort(404);
+            abort(404, 'No se encontró contenido para este curso.');
         }
-
         $this->assignmentId = $assignment->id;
     }
 
     // ── Breadcrumb ────────────────────────────────────────────
-
     public function getBreadcrumbs(): array
     {
         $assignment = $this->assignment;
@@ -106,7 +98,8 @@ class ManageCourseContent extends Page implements HasActions
             CreateAction::make()
                 ->label('Nueva Sección')
                 ->model(TeacherCourseContent::class)
-                ->form([
+                ->visible(fn() => auth()->user()->can('create_section'))
+                ->schema([
                     TextInput::make('titulo')
                         ->label('Nombre de la Sección')
                         ->required()
@@ -130,6 +123,7 @@ class ManageCourseContent extends Page implements HasActions
     #[On('reorderSections')]
     public function reorderSections(array $ids): void
     {
+        abort_unless(auth()->user()->can('order_section'), 403);
         foreach ($ids as $index => $id) {
             TeacherCourseContent::where('id', $id)->update(['orden' => $index + 1]);
         }
@@ -140,6 +134,7 @@ class ManageCourseContent extends Page implements HasActions
     #[On('reorderDetails')]
     public function reorderDetails(int $sectionId, array $ids): void
     {
+        abort_unless(auth()->user()->can('order_topic'), 403);
         foreach ($ids as $index => $id) {
             TeacherCourseContentDetail::where('id', $id)->update(['orden' => $index + 1]);
         }
@@ -176,6 +171,7 @@ class ManageCourseContent extends Page implements HasActions
     {
         return EditAction::make('editSection')
             ->record(fn(array $arguments) => TeacherCourseContent::find($arguments['section_id']))
+            ->visible(fn() => auth()->user()->can('update_section'))
             ->form([
                 TextInput::make('titulo')
                     ->label('Nombre de la Sección')
@@ -193,6 +189,8 @@ class ManageCourseContent extends Page implements HasActions
     {
         return DeleteAction::make('deleteSection')
             ->record(fn(array $arguments) => TeacherCourseContent::find($arguments['section_id']))
+            ->visible(fn() => auth()->user()->can('delete_section'))
+            ->before(fn() => abort_unless(auth()->user()->can('delete_section'), 403))
             ->iconButton();
     }
 
@@ -202,6 +200,7 @@ class ManageCourseContent extends Page implements HasActions
     {
         return Action::make('createSubtopic')
             ->label('Nuevo tema')
+            ->visible(fn() => auth()->user()->can('create_topic'))
             ->schema([
                 TextInput::make('titulo')
                     ->label('Título del tema')
@@ -235,6 +234,7 @@ class ManageCourseContent extends Page implements HasActions
     {
         return EditAction::make('editSubtopic')
             ->record(fn(array $arguments) => TeacherCourseContentDetail::find($arguments['subtopic_id']))
+            ->visible(fn() => auth()->user()->can('update_topic'))
             ->schema([
                 TextInput::make('titulo')
                     ->label('Título del tema')
@@ -259,6 +259,8 @@ class ManageCourseContent extends Page implements HasActions
     {
         return DeleteAction::make('deleteSubtopic')
             ->record(fn(array $arguments) => TeacherCourseContentDetail::find($arguments['subtopic_id']))
+            ->visible(fn() => auth()->user()->can('delete_topic'))
+            ->before(fn() => abort_unless(auth()->user()->can('delete_topic'), 403))
             ->iconButton();
     }
 
@@ -284,6 +286,33 @@ class ManageCourseContent extends Page implements HasActions
         }
 
         return $url;
+    }
+
+    public function manageExamAction(): Action
+    {
+        return Action::make('manageExam')
+            ->visible(function (array $arguments) {
+                $hasExam = TeacherCourseContentDetail::find($arguments['subtopic_id'])?->exam;
+                // Si ya tiene examen, necesita permiso de editar, si no, de crear
+                return $hasExam
+                    ? auth()->user()->can('update_exam')
+                    : auth()->user()->can('create_exam');
+            })
+            ->action(function (array $arguments): void {
+                $detailId = $arguments['subtopic_id'];
+                $hasExam = TeacherCourseContentDetail::find($detailId)?->exam;
+
+                // Validación estricta antes de redireccionar
+                abort_unless(
+                    $hasExam ? auth()->user()->can('update_exam') : auth()->user()->can('create_exam'),
+                    403
+                );
+
+                $this->redirect(CreateExamProfesor::getUrl(['detailId' => $detailId]));
+            })
+            // ... iconos y colores iguales
+            ->iconButton()
+            ->color('warning');
     }
 
     public function getHeading(): string

@@ -39,7 +39,9 @@ new class extends Component {
 
     public function render()
     {
-        return $this->view()->layout('layouts::app');
+        return $this->view()->layout('layouts::app', [
+            'title' => $this->course->nombre . ' | ' . $this->institucion->razon_social,
+        ]);
     }
     // public function render()
     // {

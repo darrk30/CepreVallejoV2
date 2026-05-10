@@ -33,4 +33,23 @@ class CreateTeacher extends CreateRecord
             'user_id' => $user->id,
         ]);
     }
+
+    /**
+     * Se ejecuta justo después de que el Docente y su Usuario 
+     * relacionado han sido creados en la base de datos.
+     */
+    protected function afterCreate(): void
+    {
+        // Accedemos al registro recién creado (Teacher)
+        $teacher = $this->record;
+        if ($teacher->user) {
+            $teacher->user->assignRole('Profesor');
+        }
+    }
+    
+    // Opcional: Redirigir al listado después de crear
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }

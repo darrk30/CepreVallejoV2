@@ -31,6 +31,20 @@ class AnunciosForm
                     ->required()
                     ->native(false),
 
+                Select::make('panel')
+                    ->label('¿Dónde mostrar este anuncio?')
+                    ->options([
+                        'todos' => '✨ Mostrar en Todos',
+                        'alumno' => '🎓 Panel de Alumnos',
+                        'docente' => '👨‍🏫 Panel de Docentes',
+                        'publico' => '🌐 Web Principal (Público)',
+                    ])
+                    ->default('todos')
+                    ->required()
+                    ->native(false)
+                    ->prefixIcon('heroicon-m-tv') // Le da un toque visual elegante
+                    ->helperText('Selecciona el panel específico donde se publicará este anuncio.'),
+
                 RichEditor::make('contenido')
                     ->label('Cuerpo del Anuncio')
                     ->columnSpanFull(),
@@ -53,15 +67,19 @@ class AnunciosForm
                     ->native(false)
                     ->displayFormat('d/m/Y H:i')
                     ->seconds(false)
-                    ->placeholder('Inmediatamente'),
+                    ->placeholder('Inmediatamente')
+                    // Esto coloca la fecha y hora actual al abrir el formulario de creación
+                    ->default(now()),
 
                 DateTimePicker::make('fecha_fin')
                     ->label('Termina el')
                     ->native(false)
                     ->displayFormat('d/m/Y H:i')
                     ->seconds(false)
-                    ->after('fecha_inicio') // Validación lógica
-                    ->placeholder('Nunca (Siempre visible)'),
+                    ->after('fecha_inicio')
+                    ->placeholder('Nunca (Siempre visible)')
+                    // No ponemos ->default(), así se mantiene vacío (null) por defecto
+                    ->nullable(),
 
                 Select::make('estado')
                     ->options([

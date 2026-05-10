@@ -13,6 +13,7 @@ class Anuncio extends Model
         'image_path',
         'url',
         'tipo',
+        'panel',
         'estado',
         'user_create_id',
         'fecha_inicio',

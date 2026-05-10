@@ -16,7 +16,7 @@ class VirtualClassroom extends Page
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowPath;
 
-    // protected static ?string $title = 'Mi Aula Virtual';
+    protected static ?string $title = 'Mi Aula Virtual';
 
     public function getCyclesProperty(): Collection
     {

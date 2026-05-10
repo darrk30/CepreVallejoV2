@@ -11,12 +11,14 @@ use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
 #[Fillable(['name', 'email', 'password', 'estado'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<UserFactory> */
+    use HasRoles;
     use HasFactory, Notifiable;
 
     /**
@@ -39,7 +41,7 @@ class User extends Authenticatable implements FilamentUser
 
     public function student()
     {
-        return $this->belongsTo(Student::class);
+        return $this->hasOne(Student::class, 'user_id');
     }
 
     public function ciclo_academico()
@@ -69,11 +71,11 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        // En producción, podrías restringirlo por correo o rol
-        // Por ahora, para probar, puedes permitir a todos los usuarios autenticados:
-        return true;
-
-        // O algo más seguro:
-        // return str_ends_with($this->email, '@tudominio.com');
+        return match ($panel->getId()) {
+            'admin'    => $this->can('access_admin_panel'),
+            'profesor' => $this->can('access_teacher_panel'),
+            'alumno'   => $this->can('access_student_panel'),
+            default    => false,
+        };
     }
 }

@@ -1,11 +1,11 @@
 document.addEventListener('DOMContentLoaded', function () {
+    // 1. Slider Principal (Suele ser 1 solo slide visible, pero valida si tienes más de 1)
+    const mainSlides = document.querySelectorAll('.mySwiper .swiper-slide').length;
     new Swiper('.mySwiper', {
-        loop: true,
+        loop: mainSlides > 1, // Solo hace loop si hay más de 1
         grabCursor: true,
         effect: 'fade',
-        fadeEffect: {
-            crossFade: true
-        },
+        fadeEffect: { crossFade: true },
         autoplay: {
             delay: 5500,
             disableOnInteraction: false,
@@ -21,58 +21,41 @@ document.addEventListener('DOMContentLoaded', function () {
         },
     });
 
-    /* Carouseles */
-    const cfg = {
-        slidesPerView: 1,
-        spaceBetween: 24,
-        loop: true,
-        grabCursor: true,
-        pagination: {
-            clickable: true
-        },
-        breakpoints: {
-            640: {
-                slidesPerView: 2
+    // 2. Función para inicializar carruseles dinámicos
+    const initDynamicSwiper = (selector) => {
+        const sliderEl = document.querySelector(selector);
+        if (!sliderEl) return;
+
+        const slideCount = sliderEl.querySelectorAll('.swiper-slide').length;
+        
+        // Configuramos el loop dinámico: 
+        // Si en escritorio mostramos 4, necesitamos al menos 5 para que el loop no de error.
+        const canLoop = slideCount > 4; 
+
+        new Swiper(selector, {
+            slidesPerView: 1,
+            spaceBetween: 24,
+            loop: canLoop, 
+            grabCursor: true,
+            pagination: {
+                el: `${selector} .swiper-pagination`,
+                clickable: true
             },
-            1024: {
-                slidesPerView: 3
-            },
-            1280: {
-                slidesPerView: 4
+            breakpoints: {
+                640: { slidesPerView: 2 },
+                1024: { slidesPerView: 3 },
+                1280: { slidesPerView: 4 }
             }
-        }
+        });
     };
-    new Swiper('.servicesSwiper', {
-        ...cfg,
-        pagination: {
-            el: '.servicesSwiper .swiper-pagination',
-            clickable: true
-        }
-    });
 
-    new Swiper('.coursesSwiper', {
-        ...cfg,
-        pagination: {
-            el: '.coursesSwiper .swiper-pagination',
-            clickable: true
-        }
-    });
-    new Swiper('.teachersSwiper', {
-        ...cfg,
-        pagination: {
-            el: '.teachersSwiper .swiper-pagination',
-            clickable: true
-        }
-    });
-    new Swiper('.conventionsSwiper', {
-        ...cfg,
-        pagination: {
-            el: '.conventionsSwiper .swiper-pagination',
-            clickable: true
-        }
-    });
+    // 3. Inicializar cada uno
+    initDynamicSwiper('.servicesSwiper');
+    initDynamicSwiper('.coursesSwiper');
+    initDynamicSwiper('.teachersSwiper');
+    initDynamicSwiper('.conventionsSwiper');
 
-    /* Scroll Reveal */
+    /* --- Intersection Observer (Mantenlo igual) --- */
     const obs = new IntersectionObserver((entries) => {
         entries.forEach(e => {
             if (e.isIntersecting) {
