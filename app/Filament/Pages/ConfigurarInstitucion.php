@@ -48,6 +48,11 @@ class ConfigurarInstitucion extends Page implements HasForms
     public ?array $data = [];
     public ?Institution $institution = null;
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()->can('update_institution');
+    }
+
 
     public function mount(): void
     {
@@ -88,11 +93,6 @@ class ConfigurarInstitucion extends Page implements HasForms
 
                                 RichEditor::make('nosotros')
                                     ->label('Acerca de Nosotros')
-                                    ->textColors([
-                                        '#ef4444' => 'Red',
-                                        '#10b981' => 'Green',
-                                        '#0ea5e9' => 'Sky',
-                                    ])
                                     ->toolbarButtons([
                                         ['bold', 'italic', 'underline', 'strike', 'link'],
                                         [ToolbarButtonGroup::make('Paragraph', ['paragraph', 'h1', 'h2', 'h3'])->textualButtons()],
@@ -115,11 +115,6 @@ class ConfigurarInstitucion extends Page implements HasForms
                             ->icon('heroicon-m-phone')
                             ->columns(2)
                             ->schema([
-                                TextInput::make('telefono')
-                                    ->label('Teléfono Fijo o Celular')
-                                    ->tel()
-                                    ->prefixIcon('heroicon-m-phone'),
-
                                 TextInput::make('whatsapp')
                                     ->label('Número de WhatsApp')
                                     ->tel()
@@ -156,6 +151,31 @@ class ConfigurarInstitucion extends Page implements HasForms
                                     ->url()
                                     ->prefix('https://tiktok.com/@'),
                             ]),
+                        Tab::make('Vision y Mision')
+                            ->icon('heroicon-m-globe-alt')
+                            ->columns(2)
+                            ->schema([
+                               RichEditor::make('vision')
+                                    ->label('Visión')
+                                    ->toolbarButtons([
+                                        ['bold', 'italic', 'underline', 'strike', 'link'],
+                                        [ToolbarButtonGroup::make('Paragraph', ['paragraph', 'h1', 'h2', 'h3'])->textualButtons()],
+                                        [ToolbarButtonGroup::make('Alignment', ['alignStart', 'alignCenter', 'alignEnd', 'alignJustify'])],
+                                        ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
+                                        ['undo', 'redo'],
+                                    ])
+                                    ->columnSpanFull(),
+                                RichEditor::make('mision')
+                                    ->label('Misión')
+                                    ->toolbarButtons([
+                                        ['bold', 'italic', 'underline', 'strike', 'link'],
+                                        [ToolbarButtonGroup::make('Paragraph', ['paragraph', 'h1', 'h2', 'h3'])->textualButtons()],
+                                        [ToolbarButtonGroup::make('Alignment', ['alignStart', 'alignCenter', 'alignEnd', 'alignJustify'])],
+                                        ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
+                                        ['undo', 'redo'],
+                                    ])
+                                    ->columnSpanFull(),
+                            ]),
                     ])->columnSpanFull(),
             ])
             ->statePath('data'); // Guarda todo dentro del array $data
@@ -168,12 +188,14 @@ class ConfigurarInstitucion extends Page implements HasForms
             Action::make('guardar')
                 ->label('Guardar Configuración')
                 ->submit('guardar')
-                ->color('primary'),
+                ->color('primary')
+                ->visible(fn() => auth()->user()->can('update_institution')),
         ];
     }
 
     public function guardar(): void
     {
+        abort_unless(auth()->user()->can('update_institution'), 403);
         $data = $this->form->getState();
 
         if (! $this->institution->exists) {

@@ -3,25 +3,28 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // 1. Ejecutar primero la estructura de seguridad
+        $this->call([
+            PermissionSeeder::class,
+            RoleSeeder::class,
+        ]);
 
-        User::create([
+        // 2. Crear el usuario y guardarlo en una variable
+        $admin = User::create([
             'name' => 'Kevin Daniel',
             'email' => 'kevin@gmail.com',
             'password' => Hash::make('123123123')
         ]);
+
+        // 3. Asignar el rol de Administrador
+        // Asegúrate de que el nombre sea exactamente como lo pusiste en RoleSeeder
+        $admin->assignRole('Administrador');
     }
 }

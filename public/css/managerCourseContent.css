@@ -1,0 +1,978 @@
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap");
+
+/* ══════════════════════════════════════
+       VARIABLES
+    ══════════════════════════════════════ */
+.aula {
+    --surface: #ffffff;
+    --surface2: #f9f8ff;
+    --surface3: #eeecfb;
+    --border: rgba(99, 102, 241, 0.14);
+    --border-m: rgba(99, 102, 241, 0.28);
+    --border-s: rgba(99, 102, 241, 0.07);
+    --text1: #0c0b1a;
+    --text2: #3b3866;
+    --muted: #8b88b0;
+    --accent: #5b5ef4;
+    --accent-h: #4340d0;
+    --accent-gl: rgba(91, 94, 244, 0.18);
+    --accent-bg: rgba(91, 94, 244, 0.07);
+    --green: #059669;
+    --green-bg: rgba(5, 150, 105, 0.08);
+    --green-bd: rgba(5, 150, 105, 0.22);
+    --amber: #d97706;
+    --amber-bg: rgba(217, 119, 6, 0.08);
+    --amber-bd: rgba(217, 119, 6, 0.22);
+    --red: #dc2626;
+    --red-bg: rgba(220, 38, 38, 0.07);
+    --red-bd: rgba(220, 38, 38, 0.2);
+    --handle: #c4c2e0;
+    --sh-sm: 0 1px 4px rgba(79, 70, 229, 0.07), 0 1px 2px rgba(0, 0, 0, 0.04);
+    --sh-md: 0 4px 16px rgba(79, 70, 229, 0.1), 0 2px 6px rgba(0, 0, 0, 0.05);
+    --sh-drop:
+        0 8px 24px rgba(79, 70, 229, 0.13), 0 2px 8px rgba(0, 0, 0, 0.08);
+    --r: 14px;
+    --blue: #2563eb;
+    --blue-bg: #eff6ff;
+    --blue-bd: #dbeafe;
+}
+
+.dark .aula {
+    --surface: #151424;
+    --surface2: #1b1a2e;
+    --surface3: #221f3a;
+    --border: rgba(129, 140, 248, 0.12);
+    --border-m: rgba(129, 140, 248, 0.28);
+    --border-s: rgba(129, 140, 248, 0.06);
+    --text1: #edecf8;
+    --text2: #a9a6cc;
+    --muted: #636086;
+    --accent: #818cf8;
+    --accent-h: #a5b4fc;
+    --accent-gl: rgba(129, 140, 248, 0.22);
+    --accent-bg: rgba(129, 140, 248, 0.08);
+    --green: #34d399;
+    --green-bg: rgba(52, 211, 153, 0.09);
+    --green-bd: rgba(52, 211, 153, 0.22);
+    --amber: #fbbf24;
+    --amber-bg: rgba(251, 191, 36, 0.09);
+    --amber-bd: rgba(251, 191, 36, 0.22);
+    --red: #f87171;
+    --red-bg: rgba(248, 113, 113, 0.09);
+    --red-bd: rgba(248, 113, 113, 0.22);
+    --handle: #3d3a5c;
+    --sh-sm: 0 1px 4px rgba(0, 0, 0, 0.28);
+    --sh-md: 0 4px 16px rgba(0, 0, 0, 0.38);
+    --sh-drop: 0 8px 24px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.aula {
+    font-family: "Bricolage Grotesque", sans-serif;
+    color: var(--text1);
+    padding: 0 0 60px;
+}
+
+/* ── BANNER ── */
+.aula-banner {
+    background: var(--surface) !important;
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 18px 22px;
+    margin-bottom: 22px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: var(--sh-sm);
+}
+
+.aula-banner-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: var(--accent-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.aula-banner-icon svg {
+    width: 20px;
+    height: 20px;
+    color: var(--accent) !important;
+}
+
+.aula-banner-info h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text1) !important;
+    margin: 0 0 2px;
+}
+
+.aula-banner-info p {
+    font-size: 0.76rem;
+    color: var(--muted) !important;
+    margin: 0;
+}
+
+/* ── TOOLBAR ── */
+.aula-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.aula-count {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--muted) !important;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+/* ── BOTONES SORT MODE (toggle) ── */
+.btn-sort {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--accent) !important;
+    background: var(--accent-bg) !important;
+    border: 1px solid var(--border-m) !important;
+    border-radius: 8px;
+    padding: 6px 13px;
+    cursor: pointer;
+    transition:
+        background 0.15s,
+        color 0.15s,
+        border-color 0.15s;
+    font-family: "Bricolage Grotesque", sans-serif;
+    white-space: nowrap;
+}
+
+.btn-sort:hover {
+    background: var(--accent-gl) !important;
+}
+
+.btn-sort.active {
+    background: var(--accent) !important;
+    color: #fff !important;
+    border-color: var(--accent) !important;
+}
+
+.btn-sort.active:hover {
+    background: var(--accent-h) !important;
+}
+
+.btn-sort svg {
+    width: 13px;
+    height: 13px;
+    flex-shrink: 0;
+}
+
+/* ── BOTÓN CONFIRMAR ── */
+.btn-confirm {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #fff !important;
+    background: var(--green) !important;
+    border: 1px solid transparent !important;
+    border-radius: 8px;
+    padding: 6px 13px;
+    cursor: pointer;
+    transition: opacity 0.15s;
+    font-family: "Bricolage Grotesque", sans-serif;
+    white-space: nowrap;
+}
+
+.btn-confirm:hover {
+    opacity: 0.85;
+}
+
+.btn-confirm svg {
+    width: 13px;
+    height: 13px;
+    flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════
+           BOTONES ICONO — DESKTOP
+        ══════════════════════════════════════ */
+
+/* Wrapper de acciones */
+.aula-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.detail-actions {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+    align-items: flex-start;
+    padding-top: 1px;
+}
+
+/* Botón icono base */
+.icon-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    transition:
+        background 0.15s,
+        border-color 0.15s,
+        transform 0.1s,
+        box-shadow 0.15s;
+    flex-shrink: 0;
+    padding: 0;
+}
+
+.icon-btn:hover {
+    background: var(--accent-bg);
+    border-color: var(--border-m);
+    box-shadow: var(--sh-sm);
+}
+
+.icon-btn:active {
+    transform: scale(0.91);
+}
+
+.icon-btn svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    pointer-events: none;
+}
+
+/* Variantes de color */
+.icon-btn.btn-add {
+    color: var(--accent);
+    background: var(--accent-bg);
+    border-color: var(--border-m);
+}
+
+.icon-btn.btn-edit {
+    color: var(--amber);
+    background: var(--amber-bg);
+    border-color: var(--amber-bd);
+}
+
+.icon-btn.btn-del {
+    color: var(--red);
+    background: var(--red-bg);
+    border-color: var(--red-bd);
+}
+
+.icon-btn.btn-sort-icon {
+    color: var(--accent);
+    background: var(--accent-bg);
+    border-color: var(--border-m);
+}
+
+/* Estado activo — cuando ordenar está encendido */
+.icon-btn.active {
+    background: var(--accent) !important;
+    color: #fff !important;
+    border-color: var(--accent) !important;
+}
+
+.icon-btn.active:hover {
+    background: var(--accent-h) !important;
+}
+
+.icon-btn.btn-add:hover {
+    background: var(--accent-gl);
+}
+
+.icon-btn.btn-edit:hover {
+    opacity: 0.85;
+}
+
+.icon-btn.btn-del:hover {
+    opacity: 0.85;
+}
+
+.btn-results:hover {
+    background-color: var(--blue) !important;
+    color: white !important;
+    transform: translateY(-2px);
+}
+
+/* ── TOOLTIP (solo dispositivos con hover) ── */
+@media (hover: hover) {
+    .icon-btn[data-tip]::before,
+    .icon-btn[data-tip]::after {
+        pointer-events: none;
+        position: absolute;
+        left: 50%;
+        opacity: 0;
+        transition:
+            opacity 0.15s,
+            transform 0.15s;
+    }
+
+    /* Burbuja */
+    .icon-btn[data-tip]::after {
+        content: attr(data-tip);
+        bottom: calc(100% + 8px);
+        transform: translateX(-50%) translateY(4px);
+        background: var(--text1);
+        color: var(--surface);
+        font-family: "Bricolage Grotesque", sans-serif;
+        font-size: 0.64rem;
+        font-weight: 600;
+        padding: 4px 8px;
+        border-radius: 6px;
+        white-space: nowrap;
+        z-index: 100;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+    }
+
+    /* Flechita */
+    .icon-btn[data-tip]::before {
+        content: "";
+        bottom: calc(100% + 3px);
+        transform: translateX(-50%) translateY(4px);
+        border: 5px solid transparent;
+        border-top-color: var(--text1);
+        z-index: 100;
+    }
+
+    .icon-btn[data-tip]:hover::after,
+    .icon-btn[data-tip]:hover::before {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* Divisor */
+.sec-divider {
+    width: 1px;
+    height: 18px;
+    background: var(--border);
+    flex-shrink: 0;
+    margin: 0 2px;
+}
+
+/* ══════════════════════════════════════
+           DROPDOWN MÓVIL  ⋯
+        ══════════════════════════════════════ */
+
+/* Ocultar dropdown en desktop, mostrar botones */
+.aula-actions-desktop {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.aula-actions-mobile {
+    display: none;
+    position: relative;
+}
+
+@media (max-width: 640px) {
+    .aula-actions-desktop {
+        display: none !important;
+    }
+
+    .aula-actions-mobile {
+        display: block;
+    }
+}
+
+/* Botón ⋯ */
+.btn-more {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    transition:
+        background 0.15s,
+        border-color 0.15s;
+    flex-shrink: 0;
+    padding: 0;
+}
+
+.btn-more:hover {
+    background: var(--accent-bg);
+    border-color: var(--border-m);
+}
+
+.btn-more svg {
+    width: 14px;
+    height: 14px;
+    color: var(--muted);
+}
+
+/* Panel desplegable */
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 6px);
+    min-width: 160px;
+    background: var(--surface);
+    border: 1px solid var(--border-m);
+    border-radius: 10px;
+    box-shadow: var(--sh-drop);
+    z-index: 200;
+    overflow: hidden;
+    animation: dropIn 0.15s ease;
+}
+
+@keyframes dropIn {
+    from {
+        opacity: 0;
+        transform: translateY(-6px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.dropdown-menu.open {
+    display: block;
+}
+
+/* Items del dropdown */
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    padding: 9px 14px;
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text1);
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.12s;
+    border-bottom: 1px solid var(--border-s);
+}
+
+.dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.dropdown-item:hover {
+    background: var(--surface2) !important;
+}
+
+.dropdown-item svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+}
+
+.dropdown-item.item-add {
+    color: var(--accent);
+}
+
+.dropdown-item.item-edit {
+    color: var(--amber);
+}
+
+.dropdown-item.item-del {
+    color: var(--red);
+}
+
+.dropdown-item.item-sort {
+    color: var(--accent);
+}
+
+.dropdown-item.item-cancel {
+    color: var(--muted);
+}
+
+.dropdown-item.item-confirm {
+    color: var(--green);
+}
+
+/* Separador dentro del dropdown */
+.dropdown-sep {
+    height: 1px;
+    background: var(--border);
+    margin: 2px 0;
+}
+
+/* ── SECTION CARD ── */
+.sec-card {
+    background: var(--surface) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: var(--r);
+    margin-bottom: 14px;
+    box-shadow: var(--sh-sm);
+    transition:
+        box-shadow 0.2s,
+        border-color 0.2s,
+        opacity 0.15s;
+    position: relative;
+    overflow: visible;
+}
+
+.sec-card.dragging {
+    opacity: 0.38;
+}
+
+.sec-card.drag-over-top::before,
+.sec-card.drag-over-bottom::after {
+    content: "";
+    display: block;
+    height: 3px;
+    background: var(--accent);
+    border-radius: 4px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 10;
+}
+
+.sec-card.drag-over-top::before {
+    top: -2px;
+}
+
+.sec-card.drag-over-bottom::after {
+    bottom: -2px;
+}
+
+/* ── SECTION HEAD ── */
+.sec-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-s) !important;
+    flex-wrap: wrap;
+}
+
+/* Handle hamburger */
+.drag-handle {
+    display: none;
+    flex-direction: column;
+    gap: 3px;
+    cursor: grab;
+    padding: 5px 3px;
+    border-radius: 5px;
+    transition: background 0.15s;
+    flex-shrink: 0;
+    user-select: none;
+}
+
+.drag-handle.visible {
+    display: flex;
+}
+
+.drag-handle:active {
+    cursor: grabbing;
+}
+
+.drag-handle span {
+    display: block;
+    width: 16px;
+    height: 2px;
+    background: var(--handle) !important;
+    border-radius: 2px;
+    transition: background 0.15s;
+}
+
+.drag-handle:hover {
+    background: var(--accent-bg) !important;
+}
+
+.drag-handle:hover span {
+    background: var(--accent) !important;
+}
+
+.drag-handle.sm span {
+    width: 13px;
+    height: 1.5px;
+}
+
+.drag-handle.sm {
+    gap: 2.5px;
+}
+
+.sec-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    background: var(--accent-bg) !important;
+    border-radius: 6px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--accent) !important;
+    flex-shrink: 0;
+}
+
+.sec-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text1) !important;
+    flex: 1;
+    letter-spacing: -0.01em;
+    min-width: 80px;
+}
+
+.sec-meta {
+    font-size: 0.68rem;
+    color: var(--muted) !important;
+    white-space: nowrap;
+}
+
+/* Badge de exámenes activos en la cabecera de sección */
+.sec-exam-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.66rem;
+    font-weight: 700;
+    color: var(--amber) !important;
+    background: var(--amber-bg) !important;
+    border: 1px solid var(--amber-bd);
+    padding: 2px 8px;
+    border-radius: 100px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.sec-exam-badge svg {
+    width: 11px;
+    height: 11px;
+    flex-shrink: 0;
+}
+
+/* Descripción de sección */
+.sec-desc {
+    font-size: 0.78rem;
+    color: var(--text2) !important;
+    line-height: 1.5;
+    padding: 8px 16px 10px;
+    border-bottom: 1px solid var(--border-s) !important;
+    background: var(--surface2) !important;
+}
+
+/* ── SORT INDICATOR BAR ── */
+.sort-bar {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    font-size: 0.71rem;
+    font-weight: 600;
+    color: var(--accent) !important;
+    background: var(--accent-bg) !important;
+    border-top: 1px solid var(--border) !important;
+}
+
+.sort-bar.visible {
+    display: flex;
+}
+
+.sort-bar svg {
+    width: 13px;
+    height: 13px;
+    flex-shrink: 0;
+}
+
+.sort-bar span {
+    flex: 1;
+}
+
+/* ── DETAILS ── */
+.details-list {
+    padding: 4px 0;
+}
+
+.detail-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border-s) !important;
+    transition: background 0.12s;
+    position: relative;
+}
+
+.detail-row:last-child {
+    border-bottom: none !important;
+}
+
+.detail-row:hover {
+    background: var(--surface2) !important;
+}
+
+.detail-row.dragging {
+    opacity: 0.35;
+}
+
+.detail-row.drag-over-top::before,
+.detail-row.drag-over-bottom::after {
+    content: "";
+    display: block;
+    height: 2px;
+    background: var(--accent);
+    border-radius: 2px;
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    z-index: 10;
+}
+
+.detail-row.drag-over-top::before {
+    top: 0;
+}
+
+.detail-row.drag-over-bottom::after {
+    bottom: 0;
+}
+
+.detail-num {
+    font-family: "DM Mono", monospace;
+    font-size: 0.63rem;
+    color: var(--muted) !important;
+    min-width: 16px;
+    text-align: right;
+    flex-shrink: 0;
+    margin-top: 3px;
+}
+
+.detail-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.detail-title {
+    font-size: 0.87rem;
+    font-weight: 600;
+    color: var(--text1) !important;
+    margin-bottom: 4px;
+    line-height: 1.3;
+}
+
+.detail-desc {
+    font-size: 0.76rem;
+    color: var(--text2) !important;
+    line-height: 1.55;
+    margin-bottom: 8px;
+    white-space: pre-line;
+}
+
+.detail-resources {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    align-items: center;
+}
+
+/* Examen activo — enlace badge */
+.res-exam {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.71rem;
+    font-weight: 600;
+    font-family: "Bricolage Grotesque", sans-serif;
+    color: var(--amber) !important;
+    background: var(--amber-bg) !important;
+    border: 1px solid var(--amber-bd);
+    padding: 3px 10px;
+    border-radius: 100px;
+    text-decoration: none !important;
+    white-space: nowrap;
+    transition:
+        opacity 0.15s,
+        transform 0.15s;
+    cursor: pointer;
+}
+
+.res-exam:hover {
+    opacity: 0.82;
+    transform: translateY(-1px);
+    text-decoration: none !important;
+}
+
+.res-exam svg {
+    width: 11px;
+    height: 11px;
+    flex-shrink: 0;
+}
+
+/* Archivo */
+.res-file {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.71rem;
+    font-weight: 500;
+    font-family: "DM Mono", monospace;
+    color: var(--green) !important;
+    background: var(--green-bg) !important;
+    border: 1px solid var(--green-bd);
+    padding: 3px 10px;
+    border-radius: 100px;
+    text-decoration: none !important;
+    max-width: 220px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition:
+        opacity 0.15s,
+        transform 0.15s;
+}
+
+.res-file:hover {
+    opacity: 0.8;
+    transform: translateY(-1px);
+    text-decoration: none !important;
+}
+
+.res-file svg {
+    width: 11px;
+    height: 11px;
+    flex-shrink: 0;
+}
+
+/* Video */
+.res-video {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.71rem;
+    font-weight: 600;
+    color: var(--accent) !important;
+    background: var(--accent-bg) !important;
+    border: 1px solid var(--border-m) !important;
+    padding: 3px 10px;
+    border-radius: 100px;
+    cursor: pointer;
+    transition:
+        background 0.15s,
+        transform 0.15s;
+    font-family: "Bricolage Grotesque", sans-serif;
+}
+
+.res-video:hover {
+    background: var(--accent-gl) !important;
+    transform: translateY(-1px);
+}
+
+.res-video svg {
+    width: 12px;
+    height: 12px;
+}
+
+/* iFrame */
+.video-wrap {
+    margin-top: 10px;
+    border-radius: 10px;
+    overflow: hidden;
+    aspect-ratio: 16/9;
+    max-width: 460px;
+    background: #000;
+    box-shadow: var(--sh-md);
+}
+
+.video-wrap iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+}
+
+/* ── EMPTY ── */
+.empty-section {
+    padding: 18px;
+    text-align: center;
+    font-size: 0.76rem;
+    color: var(--muted) !important;
+}
+
+.empty-global {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 60px 32px;
+    text-align: center;
+    background: var(--surface) !important;
+    border: 1.5px dashed var(--border-m);
+    border-radius: var(--r);
+}
+
+.empty-global svg {
+    width: 46px;
+    height: 46px;
+    color: var(--accent) !important;
+    opacity: 0.22;
+    margin-bottom: 14px;
+}
+
+.empty-global h3 {
+    font-size: 0.93rem;
+    font-weight: 700;
+    color: var(--text2) !important;
+    margin: 0 0 4px;
+}
+
+.empty-global p {
+    font-size: 0.76rem;
+    color: var(--muted) !important;
+    margin: 0;
+}
+
+.aula-actions [data-action],
+.detail-actions [data-action] {
+    display: none !important;
+}
+
+/* Ghost de arrastre táctil */
+.touch-ghost {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.78;
+    border-radius: 10px;
+    box-shadow:
+        0 8px 24px rgba(79, 70, 229, 0.18),
+        0 2px 8px rgba(0, 0, 0, 0.12);
+    background: var(--surface);
+    border: 1.5px solid var(--accent);
+    padding: 8px 14px;
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text1);
+    max-width: 260px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transform: rotate(1.5deg);
+}

@@ -1,0 +1,313 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Bricolage+Grotesque:wght@400;500;600;700;800&display=swap'); */
+@import url("https://fonts.googleapis.com/css2?family=Handlee&family=Nunito:wght@300;400;600;700;800;900&display=swap");
+/* ═══════════════════════════════════════
+           VARIABLES — Aula Virtual
+        ═══════════════════════════════════════ */
+.vp-root {
+    --surface: #ffffff;
+    --surface2: #f9f8ff;
+    --surface3: #eeecfb;
+    --border: rgba(99, 102, 241, 0.14);
+    --border-m: rgba(99, 102, 241, 0.28);
+    --text1: #0c0b1a;
+    --text2: #3b3866;
+    --muted: #8b88b0;
+    --accent: #5b5ef4;
+    --accent-h: #4340d0;
+    --accent-gl: rgba(91, 94, 244, 0.18);
+    --accent-bg: rgba(91, 94, 244, 0.07);
+    --accent-bd: rgba(91, 94, 244, 0.25);
+    --green: #059669;
+    --green-bg: rgba(5, 150, 105, 0.08);
+    --green-bd: rgba(5, 150, 105, 0.22);
+    --amber: #d97706;
+    --amber-bg: rgba(217, 119, 6, 0.08);
+    --amber-bd: rgba(217, 119, 6, 0.22);
+    --red: #dc2626;
+    --sh-sm: 0 1px 4px rgba(79, 70, 229, 0.07), 0 1px 2px rgba(0, 0, 0, 0.04);
+    --sh-md: 0 4px 16px rgba(79, 70, 229, 0.1), 0 2px 6px rgba(0, 0, 0, 0.05);
+    --sh-lg:
+        0 12px 40px rgba(79, 70, 229, 0.13), 0 4px 12px rgba(0, 0, 0, 0.07);
+    --r: 14px;
+}
+
+.dark .vp-root {
+    --surface: #151424;
+    --surface2: #1b1a2e;
+    --surface3: #221f3a;
+    --border: rgba(129, 140, 248, 0.12);
+    --border-m: rgba(129, 140, 248, 0.28);
+    --text1: #edecf8;
+    --text2: #a9a6cc;
+    --muted: #636086;
+    --accent: #818cf8;
+    --accent-h: #a5b4fc;
+    --accent-gl: rgba(129, 140, 248, 0.22);
+    --accent-bg: rgba(129, 140, 248, 0.08);
+    --accent-bd: rgba(129, 140, 248, 0.25);
+    --sh-sm: 0 1px 4px rgba(0, 0, 0, 0.28);
+    --sh-md: 0 4px 16px rgba(0, 0, 0, 0.38);
+    --sh-lg: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+
+.vp-root {
+    /* font-family: 'Bricolage Grotesque', sans-serif; */
+    font-family: "Handlee", sans-serif;
+    color: var(--text1);
+    padding-bottom: 48px;
+}
+
+/* ═══════════════════════════════════════
+           LAYOUT
+        ═══════════════════════════════════════ */
+.vp-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 28px;
+}
+
+@media (min-width: 1024px) {
+    .vp-layout {
+        grid-template-columns: 1fr 380px;
+    }
+}
+
+/* ═══════════════════════════════════════
+           REPRODUCTOR
+        ═══════════════════════════════════════ */
+.vp-player-wrap {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    background: #000;
+    border-radius: var(--r);
+    overflow: hidden;
+    box-shadow: var(--sh-lg);
+}
+
+.vp-player-wrap iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* ═══════════════════════════════════════
+           INFO DEL VIDEO PRINCIPAL
+        ═══════════════════════════════════════ */
+.vp-info {
+    margin-top: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 22px 24px;
+    box-shadow: var(--sh-sm);
+}
+
+.vp-area-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    background: var(--accent-bg);
+    border: 1px solid var(--accent-bd);
+    padding: 3px 10px;
+    border-radius: 99px;
+    margin-bottom: 12px;
+}
+
+.vp-title {
+    /* font-family: 'Playfair Display', serif; */
+    font-family: "Handlee", serif;
+    font-size: clamp(1.3rem, 3vw, 1.9rem);
+    font-weight: 800;
+    color: var(--text1);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin: 0 0 10px;
+}
+
+.vp-meta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+}
+
+.vp-meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--muted);
+}
+
+.vp-meta-item svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+}
+
+.vp-description {
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: var(--text2);
+}
+
+/* ═══════════════════════════════════════
+           SIDEBAR RECOMENDADOS
+        ═══════════════════════════════════════ */
+.vp-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.vp-sidebar-title {
+    /* font-family: 'Playfair Display', serif; */
+    font-family: "Handlee", serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text1);
+    margin: 0 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.vp-sidebar-title::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+}
+
+/* Card recomendado */
+.rec-card {
+    display: flex;
+    gap: 12px;
+    padding: 10px;
+    border-radius: var(--r);
+    text-decoration: none !important;
+    transition:
+        background 0.15s,
+        transform 0.15s;
+    border: 1px solid transparent;
+}
+
+.rec-card:hover {
+    background: var(--surface2);
+    border-color: var(--border);
+    transform: translateX(3px);
+    box-shadow: var(--sh-sm);
+}
+
+.rec-thumb-wrap {
+    width: 140px;
+    flex-shrink: 0;
+    aspect-ratio: 16 / 9;
+    border-radius: 9px;
+    overflow: hidden;
+    background: var(--surface3);
+    position: relative;
+}
+
+.rec-thumb-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s;
+}
+
+.rec-card:hover .rec-thumb-img {
+    transform: scale(1.06);
+}
+
+/* Play icon sobre thumb */
+.rec-play {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+    background: rgba(11, 10, 26, 0.35);
+}
+
+.rec-card:hover .rec-play {
+    opacity: 1;
+}
+
+.rec-play-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px var(--accent-gl);
+}
+
+.rec-play-circle svg {
+    width: 14px;
+    height: 14px;
+    color: #fff;
+    margin-left: 2px;
+}
+
+.rec-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-top: 2px;
+}
+
+.rec-area {
+    font-size: 0.58rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+}
+
+.rec-name {
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: var(--text1);
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.rec-desc {
+    font-size: 0.73rem;
+    color: var(--muted);
+    line-height: 1.45;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Divisor entre recomendados */
+.rec-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 4px 10px;
+}

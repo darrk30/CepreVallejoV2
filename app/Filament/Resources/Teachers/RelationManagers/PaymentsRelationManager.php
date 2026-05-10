@@ -2,7 +2,9 @@
 
 namespace App\Filament\Resources\Teachers\RelationManagers;
 
+use App\Filament\Profesor\Pages\MyPayments;
 use App\Filament\Resources\Teachers\TeacherResource;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -13,6 +15,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
@@ -125,6 +128,31 @@ class PaymentsRelationManager extends RelationManager
                     ->mutateDataUsing(function (array $data): array {
                         $data['user_create_id'] = Auth::id();
                         return $data;
+                    })
+                    ->after(function ($record) {
+                        $teacher = $this->getOwnerRecord();
+                        $user = $teacher->user;
+
+                        // VALIDACIÓN: Solo si el usuario existe Y tiene el permiso de ver pagos
+                        if ($user && $user->can('view_pagos_teacher')) {
+
+                            Notification::make()
+                                ->title('Nuevo pago registrado')
+                                ->icon('heroicon-o-currency-dollar')
+                                ->iconColor('success')
+                                ->body("Se ha registrado un pago de S/ " . number_format($record->monto, 2))
+                                ->actions([
+                                    Action::make('view')
+                                        ->label('Ver mis pagos')
+                                        ->link()
+                                        ->color('info')
+                                        ->url(fn() => MyPayments::getUrl(panel: 'profesor')),
+                                ])
+                                ->sendToDatabase($user);
+                        } else {
+                            // Opcional: Log para saber que no se envió por falta de permiso
+                            \Illuminate\Support\Facades\Log::info("El profesor {$teacher->id} no recibió notificación por falta de permiso.");
+                        }
                     }),
             ])
             ->recordActions([

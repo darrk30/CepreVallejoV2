@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Auth;
 
 class Student extends Model
 {
@@ -37,5 +38,14 @@ class Student extends Model
     public function inscripciones()
     {
         return $this->hasMany(Inscription::class);
+    }
+
+    protected static function booted()
+    {
+        static::creating(function ($content) {
+            if (Auth::check()) {
+                $content->user_create_id = Auth::id();
+            }
+        });
     }
 }

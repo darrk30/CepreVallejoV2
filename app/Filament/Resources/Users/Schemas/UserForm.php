@@ -38,6 +38,15 @@ class UserForm
                                     ->required()
                                     ->unique(ignoreRecord: true)
                                     ->prefixIcon('heroicon-m-envelope'),
+                                
+                                Select::make('roles')
+                                    ->label('Asignar Roles')
+                                    ->relationship('roles', 'name') // Relación con Spatie
+                                    ->multiple() // Quitar si solo quieres permitir un rol por usuario
+                                    ->preload()
+                                    ->searchable()
+                                    ->required()
+                                    ->prefixIcon('heroicon-m-shield-check'),
 
                                 Select::make('estado')
                                     ->label('Estado de la cuenta')

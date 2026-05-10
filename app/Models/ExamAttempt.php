@@ -14,15 +14,17 @@ class ExamAttempt extends Model
         'respuestas_enviadas',
         'fecha_inicio',
         'fecha_fin',
-        'duracion_minutos_restantes',
         'estado',
+        'segundos_restantes',
+        'timer_synced_at',   // ← momento en que el JS envió el tiempo por última vez
     ];
 
     protected $casts = [
         'respuestas_enviadas' => 'array',
-        'fecha_inicio' => 'datetime',
-        'fecha_fin' => 'datetime',
-        'puntaje_obtenido' => 'float',
+        'fecha_inicio'        => 'datetime',
+        'fecha_fin'           => 'datetime',
+        'timer_synced_at'     => 'datetime',
+        'puntaje_obtenido'    => 'float',
     ];
 
     /**

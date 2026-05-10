@@ -182,7 +182,8 @@ new class extends Component {
     {{-- ============================================================
      3. NOSOTROS — lavanda suave con blobs
 ============================================================ --}}
-    <section id="nosotros" class="pt-10 relative overflow-hidden" style="background:var(--s2-bg)">
+    <section id="nosotros" class="pt-10 relative overflow-hidden" style="background:var(--s2-bg)"
+        x-data="{ openMV: false }">
 
         {{-- BG blobs --}}
         <div class="blob float1"
@@ -197,14 +198,12 @@ new class extends Component {
 
                 {{-- Image --}}
                 <div class="relative reveal-left">
-                    {{-- Shadow card behind --}}
                     <div class="absolute -bottom-5 -right-5 w-full h-full rounded-3xl pointer-events-none"
                         style="background:linear-gradient(135deg,var(--gold)33,#6D28D918);border:2px solid var(--gold-border);border-radius:24px">
                     </div>
                     <img src="{{ !empty($institucion->logo_path) ? Storage::url($institucion->logo_path) : 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=800&q=80' }}"
                         alt="Nosotros" class="relative rounded-2xl w-full object-contain"
                         style="height:460px;box-shadow:0 24px 64px rgba(27,61,122,.18)">
-                    {{-- Corner accents --}}
                     <div class="absolute -top-3 -left-3 w-12 h-12 rounded-tl-2xl border-t-[3px] border-l-[3px]"
                         style="border-color:var(--gold)"></div>
                     <div class="absolute -bottom-3 -right-3 w-12 h-12 rounded-br-2xl border-b-[3px] border-r-[3px]"
@@ -225,11 +224,78 @@ new class extends Component {
                         style="color: var(--gray);">
                         {!! $institucion->nosotros !!}
                     </div>
+
+                    {{-- BOTÓN DINÁMICO DE MISIÓN Y VISIÓN --}}
+                    <div class="mt-10">
+                        <button @click="openMV = true"
+                            class="cursor-pointer group relative inline-flex items-center gap-3 px-4 py-4 font-bold text-white transition-all duration-300 rounded-2xl shadow-lg hover:shadow-xl active:scale-95"
+                            style="background: var(--blue)">
+                            <span>Nuestra Misión y Visión</span>
+                            <div class="p-1 bg-white/20 rounded-lg group-hover:translate-x-1 transition-transform">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                </svg>
+                            </div>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        {{-- Onda —> s3 durazno --}}
+        {{-- MODAL CON LAS CARTITAS --}}
+        <div x-show="openMV" x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+            x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            class="fixed inset-0 z-[10000] overflow-y-auto bg-slate-900/70 backdrop-blur-md px-4 py-12"
+            style="display: none;">
+
+            <div class="flex min-h-full items-center justify-center">
+
+                <div @click.away="openMV = false" x-show="openMV"
+                    x-transition:enter="transition ease-out duration-300 transform"
+                    x-transition:enter-start="opacity-0 scale-95 translate-y-8"
+                    x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                    class="grid w-full max-w-5xl gap-8 md:grid-cols-2 relative">
+
+                    {{-- Botón Cerrar --}}
+                    <button @click="openMV = false"
+                        class="absolute -top-12 right-0 text-white hover:text-red-400 transition-colors z-50">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+
+                    {{-- Carta: Misión --}}
+                    <div class="mv-card group">
+                        {{-- Imagen de Misión --}}
+                        <div class="mv-image-container">
+                            <img src="{{ asset('img/mission.png') }}" alt="Nuestra Misión" class="mv-img">
+                        </div>
+                        <div class="mv-content prose prose-slate max-w-none">
+                            {!! $institucion->mision !!}
+                        </div>
+                        <div class="mv-glow" style="background: var(--blue)"></div>
+                    </div>
+
+                    {{-- Carta: Visión --}}
+                    <div class="mv-card group">
+                        {{-- Imagen de Visión --}}
+                        <div class="mv-image-container">
+                            <img src="{{ asset('img/vision.png') }}" alt="Nuestra Visión" class="mv-img">
+                        </div>
+                        <div class="mv-content prose prose-slate max-w-none">
+                            {!! $institucion->vision !!}
+                        </div>
+                        <div class="mv-glow" style="background: var(--gold)"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Onda de fondo --}}
         <div class="wave-divider mt-16 pointer-events-none">
             <svg viewBox="0 0 1440 90" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"
                 style="height:90px">
@@ -358,7 +424,10 @@ new class extends Component {
 
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
 
-                    <div class="text-center mb-14">
+                    <div @class([
+                        'text-center mb-14',
+                        'mt-14' => !$loop->first, // Solo agrega mt-14 si NO es el primer elemento
+                    ])>
                         <span class="text-blue-600 font-bold tracking-widest uppercase text-xs">Plan de estudios</span>
                         <h2 class="text-4xl md:text-5xl font-extrabold mt-5 text-blue-900">
                             Cursos del <span class="hand text-5xl md:text-5xl font-bold mt-4 text-gold"
@@ -419,13 +488,15 @@ new class extends Component {
                 </div>
 
                 {{-- Onda —> s4 menta --}}
-                <div class="wave-divider mt-5 pointer-events-none">
-                    <svg viewBox="0 0 1440 90" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"
-                        style="height:90px">
-                        <path d="M0,55 C240,0 480,90 720,40 C960,-10 1200,80 1440,30 L1440,90 L0,90 Z"
-                            fill="#FFFFFF" />
-                    </svg>
-                </div>
+                @if ($loop->last)
+                    <div class="wave-divider mt-5 pointer-events-none">
+                        <svg viewBox="0 0 1440 90" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"
+                            style="height:90px">
+                            <path d="M0,55 C240,0 480,90 720,40 C960,-10 1200,80 1440,30 L1440,90 L0,90 Z"
+                                fill="#FFFFFF" />
+                        </svg>
+                    </div>
+                @endif
             </section>
         @endif
     @endforeach
