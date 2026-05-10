@@ -11,13 +11,18 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         // 1. ROL ADMINISTRADOR
-        $admin = Role::create(['name' => 'Administrador']);
+        $admin = Role::firstOrCreate(
+            ['name' => 'Administrador', 'guard_name' => 'web']
+        );
         // El admin recibe TODOS los permisos creados hasta el momento
-        $admin->givePermissionTo(Permission::all());
+        // syncPermissions es más seguro en seeders porque evita duplicados
+        $admin->syncPermissions(Permission::all());
 
         // 2. ROL PROFESOR
-        $profesor = Role::create(['name' => 'Profesor']);
-        $profesor->givePermissionTo([
+        $profesor = Role::firstOrCreate(
+            ['name' => 'Profesor', 'guard_name' => 'web']
+        );
+        $profesor->syncPermissions([
             'view_aula_virtual',
             'create_section',
             'update_section',
@@ -34,8 +39,10 @@ class RoleSeeder extends Seeder
         ]);
 
         // 3. ROL ALUMNO
-        $alumno = Role::create(['name' => 'Alumno']);
-        $alumno->givePermissionTo([
+        $alumno = Role::firstOrCreate(
+            ['name' => 'Alumno', 'guard_name' => 'web']
+        );
+        $alumno->syncPermissions([
             'view_videoteca',
             'view_biblioteca',
             'view_aula_virtual',
