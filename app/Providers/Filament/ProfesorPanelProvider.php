@@ -63,7 +63,6 @@ class ProfesorPanelProvider extends PanelProvider
                     /* Tu configuración de breadcrumbs */
                     .fi-breadcrumbs {
                         display: block !important;
-                        margin-bottom: 1rem;
                     }
                 </style>
             ')

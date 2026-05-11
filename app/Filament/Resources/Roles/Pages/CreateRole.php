@@ -17,6 +17,7 @@ class CreateRole extends CreateRecord
             ->filter(fn($value, $key) => str_starts_with($key, 'permissions_group_'))
             ->flatten()
             ->filter()
+            ->map(fn($id) => (int) $id)
             ->values()
             ->toArray();
 

@@ -8,9 +8,11 @@
             {{-- ══ REPRODUCTOR + INFO ══ --}}
             <div>
                 <div class="vp-player-wrap">
-                    <iframe src="{{ $this->getEmbedUrl() }}"
-                        allow="autoplay; fullscreen; picture-in-picture"
-                        allowfullscreen></iframe>
+                    <iframe src="{{ $this->getEmbedUrl() }}" frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerpolicy="strict-origin-when-cross-origin" allowfullscreen
+                        style="width: 100%; aspect-ratio: 16/9; border-radius: 12px; border: none;">
+                    </iframe>
                 </div>
 
                 <div class="vp-info">

@@ -22,16 +22,16 @@ class InscriptionResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentCheck;
 
     // 1. Agrupamos en "Usuarios"
-    protected static string | UnitEnum | null $navigationGroup = 'Matriculas';
+    protected static string | UnitEnum | null $navigationGroup = 'Matrícula';
 
     // 3. Personalizamos las etiquetas para que todo aparezca en español
-    protected static ?string $navigationLabel = 'Matricula';
+    protected static ?string $navigationLabel = 'Matrícula';
 
-    protected static ?string $pluralModelLabel = 'Matricula';
+    protected static ?string $pluralModelLabel = 'Matrícula';
 
-    protected static ?string $modelLabel = 'Matricula';
-
-    protected static ?string $recordTitleAttribute = 'Matricula';
+    protected static ?string $modelLabel = 'Matrícula';
+    
+    protected static ?string $recordTitleAttribute = 'Matrícula';
 
     protected static ?int $navigationSort = 1;
 

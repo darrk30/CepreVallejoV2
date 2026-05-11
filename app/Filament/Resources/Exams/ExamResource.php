@@ -23,16 +23,16 @@ class ExamResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentCheck;
 
         // 1. Agrupamos en "Usuarios"
-    protected static string | UnitEnum | null $navigationGroup = 'Examenes';
+    protected static string | UnitEnum | null $navigationGroup = 'Exámenes';
 
     // 3. Personalizamos las etiquetas para que todo aparezca en español
-    protected static ?string $navigationLabel = 'Examenes';
+    protected static ?string $navigationLabel = 'Exámenes';
 
-    protected static ?string $pluralModelLabel = 'Examenes';
+    protected static ?string $pluralModelLabel = 'Exámenes';
 
-    protected static ?string $modelLabel = 'Examene';
+    protected static ?string $modelLabel = 'Exámenes';
 
-    protected static ?string $recordTitleAttribute = 'Examene';
+    protected static ?string $recordTitleAttribute = 'Exámenes';
 
     protected static ?int $navigationSort = 7;
 
