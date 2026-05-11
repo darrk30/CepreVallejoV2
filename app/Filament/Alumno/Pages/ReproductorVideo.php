@@ -44,7 +44,7 @@ class ReproductorVideo extends Page
     public function getEmbedUrl()
     {
         $url = $this->video->url;
-        if (preg_match('/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/', $url, $m)) {
+        if (preg_match('/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([\w-]+)/', $url, $m)) {
             return "https://www.youtube.com/embed/{$m[1]}?autoplay=1";
         }
         return $url;
