@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Inscriptions\Schemas;
 
 use App\Models\AcademicCycle;
 use App\Models\Student;
+use App\Models\Turno;
 use App\Models\User;
 use Carbon\Carbon;
 use Filament\Forms\Components\DatePicker;
@@ -156,6 +157,12 @@ class InscriptionForm
                                 DateTimePicker::make('fecha_inscripcion')
                                     ->label('Fecha/Hora Registro')
                                     ->default(now())->required(),
+
+                                Select::make('turno_id')
+                                    ->label('Turno')
+                                    ->options(Turno::all()->pluck('nombre', 'id'))
+                                    ->searchable()
+                                    ->required(),
                             ]),
                     ])->columnSpanFull(),
 

@@ -976,3 +976,105 @@
     text-overflow: ellipsis;
     transform: rotate(1.5deg);
 }
+/* Contenedor Principal */
+.no-teacher-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4rem 2rem;
+    background-color: #ffffff;
+    border-radius: 1rem;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.no-teacher-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 400px;
+    text-align: center;
+}
+
+/* Círculo del Icono */
+.no-teacher-icon-wrapper {
+    padding: 1.25rem;
+    background-color: #fefce8; /* Yellow 50 */
+    border-radius: 9999px;
+    margin-bottom: 1.5rem;
+}
+
+.no-teacher-icon {
+    width: 3.5rem;
+    height: 3.5rem;
+    color: #ca8a04; /* Yellow 600 */
+}
+
+/* Textos */
+.no-teacher-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #111827;
+    margin: 0 0 0.75rem 0;
+}
+
+.no-teacher-text {
+    font-size: 0.95rem;
+    color: #6b7280;
+    line-height: 1.6;
+    margin: 0 0 2rem 0;
+}
+
+/* Botón Estilo Filament */
+.no-teacher-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.6rem 1.5rem;
+    background-color: #f3f4f6;
+    color: #374151;
+    font-size: 0.875rem;
+    font-weight: 700;
+    border-radius: 0.6rem;
+    text-decoration: none;
+    border: 1px solid #d1d5db;
+    transition: all 0.2s ease;
+}
+
+.no-teacher-btn:hover {
+    background-color: #e5e7eb;
+    border-color: #9ca3af;
+    color: #111827;
+}
+
+/* --- MODO OSCURO (DARK MODE) --- */
+.dark .no-teacher-container {
+    background-color: #111827;
+    border-color: #1f2937;
+}
+
+.dark .no-teacher-icon-wrapper {
+    background-color: rgba(133, 77, 14, 0.2); /* Yellow 900 con opacidad */
+}
+
+.dark .no-teacher-icon {
+    color: #facc15; /* Yellow 400 */
+}
+
+.dark .no-teacher-title {
+    color: #ffffff;
+}
+
+.dark .no-teacher-text {
+    color: #9ca3af;
+}
+
+.dark .no-teacher-btn {
+    background-color: #1f2937;
+    color: #d1d5db;
+    border-color: #374151;
+}
+
+.dark .no-teacher-btn:hover {
+    background-color: #374151;
+    color: #ffffff;
+}

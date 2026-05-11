@@ -12,6 +12,7 @@ class Inscription extends Model
         'codigo',
         'student_id',
         'academic_cycle_id',
+        'turno_id',
         'fecha_inscripcion',
         'monto_pagado',
         'saldo',
@@ -97,5 +98,10 @@ class Inscription extends Model
     public function payments()
     {
         return $this->hasMany(Payment::class);
+    }
+
+    public function turno(): BelongsTo
+    {
+        return $this->belongsTo(Turno::class);
     }
 }

@@ -10,7 +10,7 @@ class CicloCourseTeacher extends Model
 {
     protected $table = 'ciclo_course_teacher';
 
-    protected $fillable = ['ciclo_course_id', 'teacher_id', 'rol', 'estado', 'user_create_id'];
+    protected $fillable = ['ciclo_course_id', 'teacher_id', 'turno_id', 'estado', 'user_create_id'];
 
     public function teacher(): BelongsTo
     {
@@ -25,5 +25,10 @@ class CicloCourseTeacher extends Model
     public function contents(): HasMany
     {
         return $this->hasMany(TeacherCourseContent::class, 'ciclo_course_teacher_id');
+    }
+
+    public function turno(): BelongsTo
+    {
+        return $this->belongsTo(Turno::class);
     }
 }

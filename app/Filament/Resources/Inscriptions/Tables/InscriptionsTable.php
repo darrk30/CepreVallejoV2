@@ -76,6 +76,12 @@ class InscriptionsTable
                     ->prefix('S/ ')
                     ->color(fn($state) => $state > 0 ? 'danger' : 'success')
                     ->weight(FontWeight::Bold),
+
+                TextColumn::make('turno.nombre')
+                    ->label('Turno')
+                    ->badge()
+                    ->color('info')
+                    ->sortable(),
             ])
             ->filters([
                 \Filament\Tables\Filters\SelectFilter::make('academic_cycle_id')

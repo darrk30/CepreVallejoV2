@@ -48,4 +48,9 @@ class Student extends Model
             }
         });
     }
+
+    public function inscriptions()
+    {
+        return $this->hasMany(Inscription::class);
+    }
 }
