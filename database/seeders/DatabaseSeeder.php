@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Turno;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -24,5 +25,15 @@ class DatabaseSeeder extends Seeder
         );
 
         $admin->assignRole('Administrador');
+
+        $turnos = [
+            ['nombre' => 'Mañana'],
+            ['nombre' => 'Tarde'],
+            ['nombre' => 'Noche'],
+        ];
+
+        foreach ($turnos as $turno) {
+            Turno::firstOrCreate(['nombre' => $turno['nombre']], $turno);
+        }
     }
 }

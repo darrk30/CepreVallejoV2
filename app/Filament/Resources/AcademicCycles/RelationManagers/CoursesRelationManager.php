@@ -4,6 +4,7 @@ namespace App\Filament\Resources\AcademicCycles\RelationManagers;
 
 use App\Models\CicloCourse;
 use App\Models\Teacher;
+use App\Models\Turno;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Actions\AttachAction;
@@ -84,43 +85,55 @@ class CoursesRelationManager extends RelationManager
                     ->label('Gestionar Docentes')
                     ->icon('heroicon-m-users')
                     ->modalHeading('Asignar Plana Docente')
-
-                    // 1. Cargamos la data
                     ->fillForm(fn(Model $record): array => [
                         'cicloCourseTeachers' => $record->pivot->cicloCourseTeachers->toArray(),
                     ])
-
-                    // 2. Guardamos (Ya no enviamos el campo 'rol')
                     ->action(function (Model $record, array $data) {
                         $pivot = $record->pivot;
 
-                        $pivot->cicloCourseTeachers()->delete();
+                        // 1. Obtenemos los IDs de los docentes que vienen del formulario
+                        $docentesNuevosIds = collect($data['cicloCourseTeachers'])->pluck('teacher_id')->toArray();
 
+                        // 2. ELIMINAMOS solo a los docentes que fueron quitados del Repeater
+                        // Esto protege a los que se quedan, manteniendo su ID intacto.
+                        $pivot->cicloCourseTeachers()
+                            ->whereNotIn('teacher_id', $docentesNuevosIds)
+                            ->delete();
+
+                        // 3. ACTUALIZAMOS O CREAMOS (Sync)
                         if (!empty($data['cicloCourseTeachers'])) {
                             foreach ($data['cicloCourseTeachers'] as $item) {
-                                $pivot->cicloCourseTeachers()->create([
-                                    'teacher_id' => $item['teacher_id'],
-                                    'user_create_id' => Auth::id(),
-                                    'estado' => 'Activo', // Manteniendo tu estándar de estado
-                                ]);
+                                // updateOrCreate busca por teacher_id. 
+                                // Si existe, solo cambia el turno_id (el ID no cambia, el contenido se salva).
+                                // Si no existe, crea uno nuevo.
+                                $pivot->cicloCourseTeachers()->updateOrCreate(
+                                    ['teacher_id' => $item['teacher_id']], // Condición de búsqueda
+                                    [
+                                        'turno_id' => $item['turno_id'],   // Datos a actualizar
+                                        'user_create_id' => Auth::id(),
+                                        'estado' => 'Activo',
+                                    ]
+                                );
                             }
                         }
                     })
-
-                    // 3. Formulario simplificado
                     ->schema([
                         Repeater::make('cicloCourseTeachers')
                             ->label('Docentes Asignados')
                             ->schema([
                                 Select::make('teacher_id')
                                     ->label('Seleccionar Docente')
-                                    ->options(
-                                        Teacher::with('user')->get()->pluck('user.name', 'id')
-                                    )
+                                    ->options(Teacher::with('user')->get()->pluck('user.name', 'id'))
+                                    ->searchable()
+                                    ->required()
+                                    ->disableOptionsWhenSelectedInSiblingRepeaterItems(), // Evita duplicar el mismo docente
+                                Select::make('turno_id')
+                                    ->label('Turno')
+                                    ->options(Turno::all()->pluck('nombre', 'id'))
                                     ->searchable()
                                     ->required(),
                             ])
-                            ->columns(1) // Lo pasamos a 1 columna para que se vea más limpio
+                            ->columns(2)
                             ->addActionLabel('Añadir otro docente'),
                     ]),
 

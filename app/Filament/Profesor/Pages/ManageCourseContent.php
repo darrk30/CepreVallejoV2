@@ -34,19 +34,32 @@ class ManageCourseContent extends Page implements HasActions
     public function mount(string $courseSlug): void
     {
         $this->courseSlug = $courseSlug;
-        $assignment = CicloCourseTeacher::query()
+        $user = auth()->user();
+
+        $query = CicloCourseTeacher::query()
             ->whereHas('cicloCourse.course', function ($query) use ($courseSlug) {
                 $query->where('slug', $courseSlug);
-            })
-            ->with([
-                'cicloCourse.course',
-                'cicloCourse.academicCycle',
-            ])
-            ->first();
-        if (!$assignment) {
-            abort(404, 'No se encontró contenido para este curso.');
+            });
+
+        if ($user->teacher) {
+            $query->where('teacher_id', $user->teacher->id);
+        } elseif ($user->student) {
+            $lastInscription = $user->student->inscriptions()
+                ->where('estado_pago', '!=', 'Cancelado') // Filtro de pago
+                ->latest()
+                ->first();
+
+            if ($lastInscription && $lastInscription->turno_id) {
+                // Buscamos la asignación que coincida con el turno del alumno
+                $query->where('turno_id', $lastInscription->turno_id);
+            } else {
+                $this->assignmentId = null;
+                return;
+            }
         }
-        $this->assignmentId = $assignment->id;
+
+        $assignment = $query->first();
+        $this->assignmentId = $assignment?->id;
     }
 
     // ── Breadcrumb ────────────────────────────────────────────
@@ -66,7 +79,7 @@ class ManageCourseContent extends Page implements HasActions
 
     public function getTitle(): string
     {
-        return $this->assignment?->cicloCourse?->course?->nombre ?? 'Contenido del Curso';
+        return $this->assignment?->cicloCourse?->course?->nombre ?? 'Sin Asignación';
     }
 
     /* ── PROPIEDADES ── */
@@ -81,19 +94,43 @@ class ManageCourseContent extends Page implements HasActions
 
     public function getSectionsProperty()
     {
-        return TeacherCourseContent::where('ciclo_course_teacher_id', $this->assignmentId)
-            ->with([
-                'details' => fn($q) => $q->orderBy('orden'),
-                'details.exam', // ← agregar esto
-            ])
+        if (!$this->assignmentId) {
+            return collect();
+        }
+
+        $user = auth()->user();
+
+        // Iniciamos la consulta para las secciones de ESTA asignación
+        $query = TeacherCourseContent::where('ciclo_course_teacher_id', $this->assignmentId);
+
+        // IMPORTANTE:
+        // Si es PROFESOR, solo mostramos lo que ÉL creó (para que no vea lo de otros profes del mismo curso)
+        // Si es ALUMNO, mostramos TODO lo que el profesor asignado a su turno haya subido
+        if ($user->teacher) {
+            $query->where('user_create_id', $user->id);
+        }
+
+        return $query->with([
+            'details' => function ($q) use ($user) {
+                // Aplicamos la misma lógica a los temas (subtopics)
+                if ($user->teacher) {
+                    $q->where('user_create_id', $user->id);
+                }
+                $q->orderBy('orden');
+            },
+            'details.exam',
+        ])
             ->orderBy('orden')
             ->get();
     }
-
     /* ── ACCIONES DE CABECERA ── */
 
     protected function getHeaderActions(): array
     {
+        if (!$this->assignmentId) {
+            return [];
+        }
+
         return [
             CreateAction::make()
                 ->label('Nueva Sección')
