@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('ciclo_course_teacher', function (Blueprint $table) {
             $table->id();
             $table->foreignId('ciclo_course_id')->constrained('ciclo_course')->cascadeOnDelete();
-            $table->foreignId('teacher_id')->constrained('users')->cascadeOnDelete(); // O la tabla 'teachers' si la tienes aparte
+            $table->foreignId('teacher_id')->constrained('teacher')->cascadeOnDelete(); // O la tabla 'teachers' si la tienes aparte
             $table->string('estado')->default('Activo');
             $table->foreignId('user_create_id')->constrained('users');
             $table->timestamps();

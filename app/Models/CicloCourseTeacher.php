@@ -10,11 +10,17 @@ class CicloCourseTeacher extends Model
 {
     protected $table = 'ciclo_course_teacher';
 
-    protected $fillable = ['ciclo_course_id', 'teacher_id', 'turno_id', 'estado', 'user_create_id'];
+    protected $fillable = [
+        'ciclo_course_id',
+        'teacher_id',
+        'turno_id',
+        'estado',
+        'user_create_id'
+    ];
 
     public function teacher(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'teacher_id');
+        return $this->belongsTo(Teacher::class, 'teacher_id');
     }
 
     public function cicloCourse(): BelongsTo
