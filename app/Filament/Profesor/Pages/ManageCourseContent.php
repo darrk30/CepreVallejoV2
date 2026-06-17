@@ -15,6 +15,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\FileUpload;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Forms\Components\RichEditor;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\On;
 
@@ -243,9 +244,16 @@ class ManageCourseContent extends Page implements HasActions
                     ->label('Título del tema')
                     ->required()
                     ->maxLength(255),
-                Textarea::make('descripcion')
+                RichEditor::make('descripcion')
                     ->label('Descripción')
-                    ->rows(2),
+                    ->toolbarButtons([
+                        'bold',
+                        'italic',
+                        'underline',
+                        'strike',
+                        'link',
+                    ])
+                    ->columnSpanFull(),
                 FileUpload::make('archivo_path')
                     ->label('Archivo (PDF, PPT, etc.)')
                     ->directory('material-cepre')
@@ -277,9 +285,16 @@ class ManageCourseContent extends Page implements HasActions
                     ->label('Título del tema')
                     ->required()
                     ->maxLength(255),
-                Textarea::make('descripcion')
+                RichEditor::make('descripcion')
                     ->label('Descripción')
-                    ->rows(2),
+                    ->toolbarButtons([
+                        'bold',
+                        'italic',
+                        'underline',
+                        // 'strike',
+                        'link',
+                    ])
+                    ->columnSpanFull(),
                 FileUpload::make('archivo_path')
                     ->label('Archivo')
                     ->directory('material-cepre')

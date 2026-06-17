@@ -2,6 +2,12 @@
 /* ============================================================
    Exámenes Ordinarios — Gaming UI (White Mode)
    ============================================================ */
+.eo-page, 
+.eo-layout,
+.eo-modal-backdrop {
+    font-family: "Handlee", sans-serif;
+}
+
 :root {
     --eo-bg: #f0f2fa;
     --eo-card: #ffffff;
@@ -20,6 +26,7 @@
     --eo-bronze: #92400e;
     --eo-radius: 16px;
 }
+
 
 /* ── Base ─────────────────────────────────────────────────── */
 .eo-page {

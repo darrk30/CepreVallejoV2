@@ -3,7 +3,8 @@
    MIS INTENTOS — Estilos
    Incluir en el blade: <link rel="stylesheet" href="{{ asset('css/mis-intentos.css') }}">
    ============================================================ */
-body{
+.mi-layout, 
+.mi-modal {
     font-family: "Handlee", sans-serif;
 }
 /* ── Layout ─────────────────────────────────────────────────── */

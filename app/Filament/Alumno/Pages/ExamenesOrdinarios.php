@@ -50,6 +50,7 @@ class ExamenesOrdinarios extends Page
             ])
             ->toArray();
     }
+    
 
     // ── Seleccionar examen ───────────────────────────────────────
     public function seleccionarExamen(int $id): void

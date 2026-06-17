@@ -238,7 +238,9 @@
 
                             {{-- DESCRIPCIÓN de sección --}}
                             @if (!empty($section->descripcion))
-                                <div class="sec-desc">{{ $section->descripcion }}</div>
+                                <div class="sec-desc">
+                                    {!! $section->descripcion !!}
+                                </div>
                             @endif
 
                             {{-- SORT BAR --}}
@@ -268,7 +270,7 @@
                                         <div class="detail-content">
                                             <div class="detail-title">{{ $detail->titulo }}</div>
                                             @if (!empty($detail->descripcion))
-                                                <div class="detail-desc">{{ $detail->descripcion }}</div>
+                                                <div class="detail-desc">{!! $detail->descripcion !!}</div>
                                             @endif
                                             <div class="detail-resources">
 

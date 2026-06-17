@@ -1078,3 +1078,13 @@
     background-color: #374151;
     color: #ffffff;
 }
+
+
+.detail-desc a {
+    color: #2563eb; /* Un tono de azul clásico para enlaces */
+    text-decoration: underline;
+}
+
+.detail-desc a:hover {
+    color: #1d4ed8; /* Un azul un poco más oscuro al pasar el mouse */
+}

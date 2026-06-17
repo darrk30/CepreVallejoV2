@@ -72,9 +72,9 @@
     justify-content: space-between;
     gap: 20px;
     flex-wrap: wrap;
-    padding: 0px 0 24px;
+    padding: 0px 0 10px;
     border-bottom: 1px solid var(--border);
-    margin-bottom: 28px;
+    margin-bottom: 5px;
 }
 
 .bv-masthead-left {

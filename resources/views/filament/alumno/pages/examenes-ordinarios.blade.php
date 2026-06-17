@@ -5,7 +5,7 @@
 
     <div class="eo-page">
         <div class="eo-layout">
-
+            
             {{-- ══════════════════════════════════════════════════════
                  PANEL IZQUIERDO — quest log de exámenes
             ══════════════════════════════════════════════════════ --}}
@@ -163,65 +163,65 @@
                 {{-- PODIO TOP 3 --}}
                 <div class="eo-podio">
 
-    {{-- Plata (#2) --}}
-    @if($top2)
-    <div class="eo-podio-slot eo-podio-slot-2">
-        <div class="eo-podio-avatar">
-            <div class="eo-podio-circle eo-podio-circle-2 {{ $top2['es_yo'] ? 'eo-avatar-me-podio' : '' }}">
-                {{ strtoupper(implode('', array_map(fn($w) => $w[0], array_slice(explode(' ', $top2['nombre']), 0, 2)))) }}
-            </div>
-            @if($top2['es_yo'])
-                <div class="eo-podio-me-badge">TÚ</div>
-            @endif
-        </div>
-        <div class="eo-podio-name {{ $top2['es_yo'] ? 'eo-rank-name-me' : '' }}" title="{{ $top2['nombre'] }}">
-            {{ $top2['nombre'] }}
-        </div>
-        <div class="eo-podio-pts">{{ number_format($top2['puntaje']) }}</div>
-        <div class="eo-podio-base eo-podio-base-2">#2</div>
-    </div>
-    @endif
+                    {{-- Plata (#2) --}}
+                    @if($top2)
+                    <div class="eo-podio-slot eo-podio-slot-2">
+                        <div class="eo-podio-avatar">
+                            <div class="eo-podio-circle eo-podio-circle-2 {{ $top2['es_yo'] ? 'eo-avatar-me-podio' : '' }}">
+                                {{ strtoupper(implode('', array_map(fn($w) => $w[0], array_slice(explode(' ', $top2['nombre']), 0, 2)))) }}
+                            </div>
+                            @if($top2['es_yo'])
+                            <div class="eo-podio-me-badge">TÚ</div>
+                            @endif
+                        </div>
+                        <div class="eo-podio-name {{ $top2['es_yo'] ? 'eo-rank-name-me' : '' }}" title="{{ $top2['nombre'] }}">
+                            {{ $top2['nombre'] }}
+                        </div>
+                        <div class="eo-podio-pts">{{ number_format($top2['puntaje']) }}</div>
+                        <div class="eo-podio-base eo-podio-base-2">#2</div>
+                    </div>
+                    @endif
 
-    {{-- Oro (#1) --}}
-    @if($top1)
-    <div class="eo-podio-slot eo-podio-slot-1">
-        <div class="eo-podio-avatar">
-            <div class="eo-podio-crown">👑</div>
-            <div class="eo-podio-circle eo-podio-circle-1 {{ $top1['es_yo'] ? 'eo-avatar-me-podio' : '' }}">
-                {{ strtoupper(implode('', array_map(fn($w) => $w[0], array_slice(explode(' ', $top1['nombre']), 0, 2)))) }}
-            </div>
-            @if($top1['es_yo'])
-                <div class="eo-podio-me-badge">TÚ</div>
-            @endif
-        </div>
-        <div class="eo-podio-name {{ $top1['es_yo'] ? 'eo-rank-name-me' : '' }}" title="{{ $top1['nombre'] }}">
-            {{ $top1['nombre'] }}
-        </div>
-        <div class="eo-podio-pts">{{ number_format($top1['puntaje']) }}</div>
-        <div class="eo-podio-base eo-podio-base-1">#1</div>
-    </div>
-    @endif
+                    {{-- Oro (#1) --}}
+                    @if($top1)
+                    <div class="eo-podio-slot eo-podio-slot-1">
+                        <div class="eo-podio-avatar">
+                            <div class="eo-podio-crown">👑</div>
+                            <div class="eo-podio-circle eo-podio-circle-1 {{ $top1['es_yo'] ? 'eo-avatar-me-podio' : '' }}">
+                                {{ strtoupper(implode('', array_map(fn($w) => $w[0], array_slice(explode(' ', $top1['nombre']), 0, 2)))) }}
+                            </div>
+                            @if($top1['es_yo'])
+                            <div class="eo-podio-me-badge">TÚ</div>
+                            @endif
+                        </div>
+                        <div class="eo-podio-name {{ $top1['es_yo'] ? 'eo-rank-name-me' : '' }}" title="{{ $top1['nombre'] }}">
+                            {{ $top1['nombre'] }}
+                        </div>
+                        <div class="eo-podio-pts">{{ number_format($top1['puntaje']) }}</div>
+                        <div class="eo-podio-base eo-podio-base-1">#1</div>
+                    </div>
+                    @endif
 
-    {{-- Bronce (#3) --}}
-    @if($top3)
-    <div class="eo-podio-slot eo-podio-slot-3">
-        <div class="eo-podio-avatar">
-            <div class="eo-podio-circle eo-podio-circle-3 {{ $top3['es_yo'] ? 'eo-avatar-me-podio' : '' }}">
-                {{ strtoupper(implode('', array_map(fn($w) => $w[0], array_slice(explode(' ', $top3['nombre']), 0, 2)))) }}
-            </div>
-            @if($top3['es_yo'])
-                <div class="eo-podio-me-badge">TÚ</div>
-            @endif
-        </div>
-        <div class="eo-podio-name {{ $top3['es_yo'] ? 'eo-rank-name-me' : '' }}" title="{{ $top3['nombre'] }}">
-            {{ $top3['nombre'] }}
-        </div>
-        <div class="eo-podio-pts">{{ number_format($top3['puntaje']) }}</div>
-        <div class="eo-podio-base eo-podio-base-3">#3</div>
-    </div>
-    @endif
+                    {{-- Bronce (#3) --}}
+                    @if($top3)
+                    <div class="eo-podio-slot eo-podio-slot-3">
+                        <div class="eo-podio-avatar">
+                            <div class="eo-podio-circle eo-podio-circle-3 {{ $top3['es_yo'] ? 'eo-avatar-me-podio' : '' }}">
+                                {{ strtoupper(implode('', array_map(fn($w) => $w[0], array_slice(explode(' ', $top3['nombre']), 0, 2)))) }}
+                            </div>
+                            @if($top3['es_yo'])
+                            <div class="eo-podio-me-badge">TÚ</div>
+                            @endif
+                        </div>
+                        <div class="eo-podio-name {{ $top3['es_yo'] ? 'eo-rank-name-me' : '' }}" title="{{ $top3['nombre'] }}">
+                            {{ $top3['nombre'] }}
+                        </div>
+                        <div class="eo-podio-pts">{{ number_format($top3['puntaje']) }}</div>
+                        <div class="eo-podio-base eo-podio-base-3">#3</div>
+                    </div>
+                    @endif
 
-</div>
+                </div>
 
                 {{-- Mi posición si NO estoy en top 3 --}}
                 @php $myItem = collect($ranking)->firstWhere('es_yo', true); @endphp
