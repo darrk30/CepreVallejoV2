@@ -1,0 +1,690 @@
+@import url("https://fonts.googleapis.com/css2?family=Handlee&family=Nunito:wght@300;400;600;700;800;900&display=swap");
+/* ============================================================
+   Exámenes Ordinarios — Gaming UI (White Mode)
+   ============================================================ */
+:root {
+    --eo-bg: #f0f2fa;
+    --eo-card: #ffffff;
+    --eo-surface: #f5f6fd;
+    --eo-border: rgba(99, 102, 241, 0.12);
+    --eo-border-soft: rgba(0, 0, 0, 0.06);
+
+    --eo-text-main: #1a1e35;
+    --eo-text-muted: #4a5068;
+    --eo-text-dim: #8890aa;
+
+    --eo-violet: #534AB7;
+    --eo-violet-light: rgba(99, 102, 241, 0.10);
+    --eo-gold: #b45309;
+    --eo-silver: #6b7280;
+    --eo-bronze: #92400e;
+    --eo-radius: 16px;
+}
+
+/* ── Base ─────────────────────────────────────────────────── */
+.eo-page {
+    /* background-color: var(--eo-bg); */
+    color: var(--eo-text-main); 
+    min-height: 70vh;
+}
+
+/* ── Layout ───────────────────────────────────────────────── */
+.eo-layout {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 1.5rem;
+    max-width: 1300px;
+    margin: 0 auto;
+}
+@media (max-width: 900px) {
+    .eo-layout { grid-template-columns: 1fr; }
+}
+
+/* ── Card base ────────────────────────────────────────────── */
+.eo-card {
+    background-color: var(--eo-card);
+    border: 1px solid var(--eo-border);
+    border-radius: var(--eo-radius);
+    padding: 1.5rem;
+    box-shadow: 0 1px 4px rgba(99, 102, 241, 0.06);
+}
+
+/* ── Card header ──────────────────────────────────────────── */
+.eo-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.25rem;
+}
+.eo-card-header-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--eo-violet-light);
+    color: var(--eo-violet);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+.eo-card-header-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--eo-text-main);
+    line-height: 1.2;
+}
+.eo-card-header-sub {
+    font-size: 12px;
+    color: var(--eo-text-dim);
+    margin-top: 2px;
+}
+
+/* ── Search ───────────────────────────────────────────────── */
+.eo-search-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--eo-surface);
+    border: 1px solid var(--eo-border);
+    border-radius: 10px;
+    padding: 0 12px;
+    margin-bottom: 1rem;
+    color: var(--eo-text-dim);
+}
+.eo-input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    padding: 10px 0;
+    font-size: 14px;
+    color: var(--eo-text-main);
+}
+.eo-input::placeholder { color: var(--eo-text-dim); }
+
+/* ── Exam list ────────────────────────────────────────────── */
+.eo-exam-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+.eo-exam-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 12px;
+    background: var(--eo-surface);
+    padding: 1rem 1.1rem;
+    border-radius: 12px;
+    border: 1px solid var(--eo-border);
+    transition: border-color 0.2s, background 0.2s;
+}
+.eo-exam-row:hover {
+    border-color: var(--eo-violet);
+    background: #efeffb;
+}
+.eo-exam-row-active {
+    border-color: var(--eo-violet);
+    background: #eeeefb;
+}
+.eo-exam-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: var(--eo-violet-light);
+    color: var(--eo-violet);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+.eo-exam-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--eo-text-main);
+}
+.eo-exam-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--eo-text-muted);
+    margin-top: 3px;
+}
+
+/* Items estándar (sin el pill) */
+.eo-meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.eo-dot { color: var(--eo-text-dim); }
+
+/* Iconos de Heroicons integrados */
+.eo-icon-meta {
+    width: 14px;
+    height: 14px;
+    margin-right: 2px;
+    vertical-align: middle;
+}
+
+/* ── Pills ────────────────────────────────────────────────── */
+.eo-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+}
+.eo-pill-violet {
+    background: var(--eo-violet-light);
+    color: var(--eo-violet);
+}
+
+/* ── Exam actions ─────────────────────────────────────────── */
+.eo-exam-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    width: 100%;
+}
+.eo-btn-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: transform 0.2s, background 0.2s;
+}
+svg {
+    width: 24px;
+    height: 24px;
+}
+.eo-btn-icon:hover { transform: scale(1.1); }
+.eo-btn-icon-primary {
+    background: var(--eo-violet);
+    color: #fff;
+}
+.eo-btn-icon-primary:hover { background: #4f46e5; }
+.eo-btn-icon-secondary {
+    background: var(--eo-violet-light);
+    color: var(--eo-violet);
+}
+.eo-btn-icon-secondary:hover { background: #ddddf5; }
+
+/* ── Empty state ──────────────────────────────────────────── */
+.eo-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 2rem;
+    color: var(--eo-text-dim);
+    font-size: 14px;
+}
+.eo-empty i { font-size: 32px; }
+
+/* ── Rank filter (select) ─────────────────────────────────── */
+.eo-rank-filter { margin-bottom: 1rem; }
+.eo-select {
+    width: 100%;
+    background: var(--eo-surface);
+    border: 1px solid var(--eo-border);
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-size: 13px;
+    color: var(--eo-text-main);
+    outline: none;
+    cursor: pointer;
+}
+.eo-select:focus { border-color: var(--eo-violet); }
+
+/* ── Rank empty ───────────────────────────────────────────── */
+.eo-rank-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 3rem 1rem;
+    color: var(--eo-text-dim);
+    text-align: center;
+    font-size: 14px;
+    line-height: 1.6;
+}
+.eo-rank-empty i { font-size: 36px; opacity: 0.5; }
+
+/* ── Podio ────────────────────────────────────────────────── */
+.eo-podio {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 8px;
+    padding: 1rem 0 0.5rem;
+    margin-bottom: 1rem;
+}
+.eo-podio-slot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    flex: 1;
+    max-width: 110px;
+}
+.eo-podio-avatar { position: relative; }
+.eo-podio-crown {
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 16px;
+}
+.eo-podio-circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+}
+.eo-podio-slot-1 .eo-podio-circle { width: 56px; height: 56px; font-size: 16px; }
+
+.eo-podio-circle-1 { background: #fef3c7; color: #92400e; border: 2px solid #fbbf24; }
+.eo-podio-circle-2 { background: #f1f5f9; color: #475569; border: 2px solid #94a3b8; }
+.eo-podio-circle-3 { background: #fdf2e9; color: #92400e; border: 2px solid #d97706; }
+
+.eo-podio-name {
+    font-size: 13px; /* Te sugiero 13px o 14px para que entre mejor en el podio */
+    font-weight: 600;
+    color: var(--eo-text-main);
+    text-align: center;
+    margin-top: 4px;
+
+    /* ── MAGIA PARA CORTAR EL TEXTO ── */
+    width: 100%;
+    max-width: 90px; /* Ajusta este valor al ancho de tus avatares del podio */
+    white-space: nowrap; /* Evita que el texto salte a la segunda línea */
+    overflow: hidden; /* Oculta lo que se desborde */
+    text-overflow: ellipsis; /* Agrega los "..." al final */
+    cursor: default; /* Opcional: puedes poner 'help' o 'pointer' para indicar que hay más info */
+}
+
+/* ── Distintivo "TÚ" en el podio ──────────────────────────── */
+.eo-podio-me-badge {
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--eo-violet);
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    padding: 2px 8px;
+    border-radius: 12px;
+    border: 2px solid #ffffff;
+    z-index: 10;
+    box-shadow: 0 2px 6px rgba(83, 74, 183, 0.4);
+}
+
+/* Borde intenso para el avatar si soy yo */
+.eo-avatar-me-podio {
+    border-color: var(--eo-violet) !important;
+    background: var(--eo-violet-light) !important;
+    color: var(--eo-violet) !important;
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--eo-violet) 15%, transparent);
+}
+
+.eo-podio-pts {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--eo-text-muted);
+}
+.eo-podio-base {
+    width: 100%;
+    text-align: center;
+    border-radius: 8px 8px 0 0;
+    padding: 6px 0 4px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-top: 4px;
+}
+.eo-podio-base-1 { background: #fef3c7; color: #92400e; height: 56px; display: flex; align-items: flex-start; justify-content: center; padding-top: 8px; }
+.eo-podio-base-2 { background: #f1f5f9; color: #475569; height: 40px; display: flex; align-items: flex-start; justify-content: center; padding-top: 6px; }
+.eo-podio-base-3 { background: #fdf2e9; color: #92400e; height: 28px; display: flex; align-items: flex-start; justify-content: center; padding-top: 4px; }
+
+/* ── My rank banner ───────────────────────────────────────── */
+.eo-my-rank-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--eo-violet-light);
+    border: 1px solid rgba(99, 102, 241, 0.25);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--eo-violet);
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+/* ── Rank list ────────────────────────────────────────────── */
+.eo-rank-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.eo-rank-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 8px;
+    border-radius: 10px;
+    transition: background 0.15s;
+}
+.eo-rank-item:hover { background: var(--eo-surface); }
+.eo-rank-me {
+    background: var(--eo-violet-light);
+    border-radius: 10px;
+}
+.eo-rank-pos {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--eo-text-dim);
+    width: 28px;
+    text-align: center;
+    flex-shrink: 0;
+}
+.eo-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--eo-surface);
+    border: 1px solid var(--eo-border);
+    color: var(--eo-text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+.eo-avatar-me {
+    background: var(--eo-violet-light);
+    border-color: rgba(99, 102, 241, 0.3);
+    color: var(--eo-violet);
+}
+.eo-rank-info { flex: 1; min-width: 0; }
+.eo-rank-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--eo-text-main);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.eo-rank-name-me { color: var(--eo-violet); font-weight: 600; }
+.eo-rank-carrera {
+    font-size: 11px;
+    color: var(--eo-text-dim);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.eo-rank-carrera-me { color: var(--eo-violet); opacity: 0.75; }
+.eo-rank-pts {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--eo-text-muted);
+    flex-shrink: 0;
+}
+.eo-rank-pts-me { color: var(--eo-violet); }
+.eo-you-badge {
+    font-size: 11px;
+    font-weight: 500;
+    background: var(--eo-violet-light);
+    color: var(--eo-violet);
+    padding: 1px 6px;
+    border-radius: 4px;
+    margin-left: 4px;
+}
+
+/* ── Rank list scrollable (modal) ─────────────────────────── */
+.eo-rank-list-scroll {
+    max-height: 420px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--eo-border) transparent;
+}
+
+/* ── Rank footer ──────────────────────────────────────────── */
+.eo-rank-footer { margin-top: 0.75rem; }
+/* Contenedor Flex para alinear los botones lado a lado */
+.eo-exam-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    width: 100%;
+    margin-top: 16px; /* Ajusta según tu diseño */
+}
+
+/* Base compartida para ambos botones */
+.eo-btn-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 5px 8px;
+    border-radius: 10px;
+    /* font-size: 0.9rem; */
+    /* font-weight: 600; */
+    font-family: "Handlee", sans-serif;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-sizing: border-box;
+    height: 40px;
+}
+
+/* Evita que los íconos se deformen */
+.eo-btn-action svg {
+    flex-shrink: 0;
+}
+
+/* Evita que el texto salte de línea */
+.eo-btn-text {
+    white-space: nowrap;
+}
+
+/* =========================================
+   DISEÑO SECUNDARIO (Botón de Intentos)
+   ========================================= */
+.eo-btn-secondary {
+    background: transparent;
+    color: var(--eo-text-muted, #64748b);
+    border: 2px solid var(--eo-border, #e2e8f0);
+    flex: 1; /* Ocupa el espacio necesario */
+}
+
+.eo-btn-secondary:hover {
+    background: var(--eo-surface-hover, #f8fafc);
+    color: var(--eo-violet); /* Cambia al color principal en el hover */
+    border-color: var(--eo-violet);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* =========================================
+   DISEÑO PRIMARIO (Botón de Iniciar)
+   ========================================= */
+.eo-btn-primary {
+    background: var(--eo-violet);
+    color: #ffffff;
+    border: 2px solid var(--eo-violet);
+    flex: 2; /* Le damos mayor anchura visual (proporción 2:1) para destacarlo */
+    box-shadow: 0 4px 10px rgba(99, 102, 241, 0.25); /* Sombra difuminada */
+}
+
+.eo-btn-primary:hover {
+    background: #4f46e5; /* Un tono ligerísimamente más oscuro de violeta */
+    border-color: #4f46e5;
+    transform: translateY(-2px); /* Se levanta al pasar el mouse */
+    box-shadow: 0 6px 14px rgba(99, 102, 241, 0.35); /* La sombra crece */
+}
+
+/* ── Modal ────────────────────────────────────────────────── */
+.eo-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(20, 22, 40, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    padding: 1rem;
+}
+.eo-modal {
+    background: var(--eo-card);
+    border: 1px solid var(--eo-border);
+    border-radius: var(--eo-radius);
+    width: 100%;
+    max-width: 520px;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(99, 102, 241, 0.12);
+}
+.eo-modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--eo-border-soft);
+    flex-shrink: 0;
+}
+.eo-modal-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--eo-text-main);
+}
+.eo-modal-subtitle {
+    font-size: 13px;
+    color: var(--eo-text-muted);
+    font-weight: 400;
+}
+.eo-modal-exam-name {
+    font-size: 12px;
+    color: var(--eo-text-dim);
+    margin-top: 2px;
+}
+.eo-modal-close {
+    background: var(--eo-surface);
+    border: 1px solid var(--eo-border);
+    border-radius: 8px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--eo-text-muted);
+    font-size: 15px;
+    transition: background 0.2s;
+    flex-shrink: 0;
+}
+.eo-modal-close:hover {
+    background: #eeeefb;
+    color: var(--eo-violet);
+}
+.eo-modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--eo-border-soft);
+    flex-shrink: 0;
+}
+
+.re-btn-flotante-movil {
+    display: none;
+}
+
+/* 2. Reglas de responsividad para pantallas móviles (Teléfonos) */
+@media (max-width: 640px) {
+    .eo-exam-row {
+        /* Pasamos de 3 columnas a solo 2 (Ícono + Texto) */
+        grid-template-columns: auto 1fr;
+        align-items: flex-start;
+    }
+
+    .eo-exam-actions {
+        /* Forzamos a que los botones ocupen una nueva fila completa debajo del texto */
+        grid-column: 1 / -1; 
+        margin-top: 12px;
+    }
+
+    /* Opcional: Si los botones quedan muy apretados, forzamos a que se apilen uno sobre otro */
+    /* 
+    .eo-exam-actions {
+        flex-direction: column;
+    } 
+    */
+}
+
+/* 3. Pequeño ajuste para el Podio en móviles */
+@media (max-width: 480px) {
+    .eo-podio {
+        gap: 4px; /* Reduce el espacio entre medallas para que no choquen */
+    }
+    .eo-podio-name {
+        font-size: 11px; /* Reduce ligeramente el texto para nombres largos */
+    }
+}
+
+@media (max-width: 900px) {
+    .re-btn-flotante-movil {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        
+        /* Lo fijamos en la parte inferior derecha de la pantalla */
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        z-index: 50; /* Nos aseguramos de que esté por encima del PDF */
+        
+        background-color: var(--eo-violet);
+        color: #ffffff;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 50px;
+        font-family: "Handlee", sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .re-btn-flotante-movil:active {
+        transform: scale(0.95); /* Efecto de toque */
+    }
+
+    /* Le damos un poco de espacio extra al final de la pantalla 
+       para que el botón flotante no tape el botón de "Enviar Respuestas" */
+    .re-progreso-wrap {
+        padding-bottom: 80px;
+    }
+}

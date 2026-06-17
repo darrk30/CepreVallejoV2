@@ -14,7 +14,7 @@ class CicloCourseTeacher extends Model
 
     public function teacher(): BelongsTo
     {
-        return $this->belongsTo(Teacher::class, 'teacher_id');
+        return $this->belongsTo(User::class, 'teacher_id');
     }
 
     public function cicloCourse(): BelongsTo

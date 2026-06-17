@@ -52,7 +52,13 @@ class LibroForm
                                 ->relationship('area', 'nombre')
                                 ->searchable()
                                 ->preload()
-                                ->required(),
+                                ->required()
+                                ->createOptionForm([
+                                    TextInput::make('nombre')
+                                        ->label('Nombre del Área')
+                                        ->required()
+                                        ->maxLength(255),
+                                ]),
                         ]),
 
                         Textarea::make('descripcion')

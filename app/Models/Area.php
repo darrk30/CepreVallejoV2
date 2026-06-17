@@ -40,4 +40,16 @@ class Area extends Model
     {
         return $this->hasMany(Video::class);
     }
+
+    public function carreras()
+    {
+        return $this->hasMany(Carrera::class);
+    }
+
+    public function examenes()
+    {
+        return $this->belongsToMany(ExamenOrdinario::class, 'area_examen_ordinario')
+                    ->withPivot('puntaje_minimo')
+                    ->withTimestamps();
+    }
 }

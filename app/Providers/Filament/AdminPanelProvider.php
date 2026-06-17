@@ -102,7 +102,7 @@ class AdminPanelProvider extends PanelProvider
     {
         FilamentAsset::register([
             Css::make('virtual-classroom-styles', asset('css/virtual-classroom.css')),
-            Css::make('virtual-classroom-styles', asset('css/create-exam.css')),
+            // Css::make('virtual-classroom-styles', asset('css/create-exam.css')),
             Css::make('virtual-classroom-styles', asset('css/take-exam.css')),
             Css::make('virtual-classroom-styles', asset('css/exam-results.css')),
             Css::make('virtual-classroom-styles', asset('css/managerCourseContent.css')),

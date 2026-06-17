@@ -47,8 +47,9 @@ class BannerForm
                         Select::make('tipo')
                             ->label('Visibilidad (Tipo)')
                             ->options([
-                                'publico' => 'Público (Landing Page)',
+                                'publico' => 'Banner principal',
                                 'interno' => 'Interno (Campus / Alumnos)',
+                                'informacion_publica' => 'Información Pública',
                             ])
                             ->default('publico')
                             ->required()

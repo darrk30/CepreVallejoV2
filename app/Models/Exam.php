@@ -29,7 +29,7 @@ class Exam extends Model
             }
         });
     }
-    
+
 
     public function participants()
     {
@@ -51,10 +51,10 @@ class Exam extends Model
         return $this->belongsTo(User::class, 'user_create_id');
     }
 
-public function detail(): BelongsTo
-{
-    return $this->belongsTo(TeacherCourseContentDetail::class, 'teacher_course_content_detail_id');
-}
+    public function detail(): BelongsTo
+    {
+        return $this->belongsTo(TeacherCourseContentDetail::class, 'teacher_course_content_detail_id');
+    }
 
     /**
      * Relación con las preguntas (lo crearemos en el siguiente paso).

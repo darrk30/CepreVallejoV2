@@ -102,6 +102,9 @@ class AlumnoPanelProvider extends PanelProvider
             Css::make('virtual-classroom-styles', asset('css/announcements-widget.css')),
             Css::make('virtual-classroom-styles', asset('css/reproductor-video.css')),
             Css::make('virtual-classroom-styles', asset('css/take-exam.css')),
+            Css::make('virtual-classroom-styles', asset('css/examen-ordinario.css')),
+            Css::make('virtual-classroom-styles', asset('css/mis-intentos.css')),
+            Css::make('virtual-classroom-styles', asset('css/rendir-examen.css')),
         ], 'alumno'); // 'alumno' debe ser el mismo ID que definiste en ->id('alumno')
     }
 }

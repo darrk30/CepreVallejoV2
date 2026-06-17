@@ -1,0 +1,255 @@
+/* ============================================================
+   RENDIR EXAMEN — Estilos
+   Incluir en el blade: <link rel="stylesheet" href="{{ asset('css/rendir-examen.css') }}">
+   ============================================================ */
+
+/* ── Layout general ─────────────────────────────────────────── */
+.re-layout-single {
+    grid-template-columns: 1fr;
+}
+
+/* ── Pantalla configuración ─────────────────────────────────── */
+.re-config-card {
+    max-width: 600px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.re-config-body {
+    padding: 20px;
+}
+
+.re-config-field {
+    margin-bottom: 20px;
+}
+
+.re-config-label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--eo-text-muted);
+    font-size: 0.9rem;
+}
+
+.re-config-select {
+    width: 100%;
+}
+
+.re-config-error {
+    color: #ff5555;
+    font-size: 0.8rem;
+    margin-top: 5px;
+    display: block;
+}
+
+.re-config-info {
+    background: var(--eo-surface);
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid var(--eo-border-soft);
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    color: var(--eo-text-muted);
+}
+
+.re-config-info ul {
+    list-style-type: disc;
+    padding-left: 20px;
+    margin: 0;
+}
+
+.re-btn-iniciar {
+    background: var(--eo-violet);
+    color: white;
+    border: none;
+}
+
+/* ── Pantalla en progreso ───────────────────────────────────── */
+.re-progreso-wrap {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+}
+
+/* PDF */
+.re-pdf-card {
+    flex: 1;
+    min-width: 300px;
+    height: 80vh;
+    padding: 0;
+}
+
+.re-pdf-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: var(--eo-radius);
+}
+
+.re-pdf-empty {
+    height: 100%;
+    justify-content: center;
+}
+
+/* Cartilla de respuestas */
+.re-cartilla-card {
+    width: 350px;
+    flex-shrink: 0;
+}
+
+.re-cartilla-header {
+    justify-content: space-between;
+}
+
+.re-timer {
+    color: var(--eo-violet);
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.re-cartilla-scroll {
+    padding: 15px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.re-cartilla-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+.re-cartilla-table thead th {
+    padding-bottom: 10px;
+    color: var(--eo-text-muted);
+}
+
+.re-cartilla-table tbody tr {
+    border-bottom: 1px solid var(--eo-border-soft);
+}
+
+.re-num-pregunta {
+    padding: 8px 0;
+    font-weight: bold;
+    color: var(--eo-text-dim);
+}
+
+.re-opcion-td {
+    padding: 8px 0;
+}
+
+.re-opcion-circle {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 11px;
+    font-weight: bold;
+    user-select: none;
+    border: 2px solid var(--eo-text-muted);
+    background: transparent;
+    color: var(--eo-text-muted);
+}
+
+.re-opcion-circle.marcada {
+    border-color: var(--eo-violet);
+    background: var(--eo-violet);
+    color: white;
+}
+
+.re-opcion-circle:hover:not(.marcada) {
+    border-color: var(--eo-violet);
+    color: var(--eo-violet);
+}
+
+.re-cartilla-footer {
+    padding-top: 15px;
+    border-top: 1px solid var(--eo-border-soft);
+    margin-top: 10px;
+}
+
+.re-btn-enviar {
+    background: #10b981;
+    color: white;
+    border: none;
+}
+
+/* ── Pantalla finalizado ────────────────────────────────────── */
+.re-resultado-card {
+    max-width: 600px;
+    margin: 0 auto;
+    width: 100%;
+    text-align: center;
+}
+
+.re-resultado-body {
+    padding: 40px 20px;
+}
+
+.re-resultado-icon-success {
+    color: #10b981;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.re-resultado-icon-fail {
+    color: #ef4444;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.re-resultado-titulo {
+    font-size: 2rem;
+    color: var(--eo-text-muted);
+    margin-bottom: 5px;
+}
+
+.re-resultado-sub {
+    color: var(--eo-text-muted);
+}
+
+.re-resultado-stats {
+    background: var(--eo-surface);
+    border: 1px solid var(--eo-border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 30px;
+    display: flex;
+    justify-content: space-around;
+}
+
+.re-stat-label {
+    font-size: 0.8rem;
+    color: var(--eo-text-muted);
+    text-transform: uppercase;
+}
+
+.re-stat-puntaje {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--eo-violet);
+}
+
+.re-stat-tiempo {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--eo-text-muted);
+}
+
+.re-stat-tiempo span {
+    font-size: 1rem;
+}
+
+.re-btn-volver {
+    margin-top: 30px;
+    display: inline-flex;
+}
