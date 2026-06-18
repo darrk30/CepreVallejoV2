@@ -244,7 +244,7 @@ document.querySelectorAll('section[id]').forEach((section) => {
 
             <!-- Sección Intranet Móvil -->
             <div class="grid grid-cols-2 gap-4 py-4">
-                <a href="{{ config('app.url') }}/admin"
+                <a href="{{ config('app.url') }}/alumno"
                     class="flex flex-col items-center justify-center p-4 rounded-[2rem] bg-blue-50 border border-blue-100 active:scale-95 transition-all">
                     <div
                         class="w-10 h-10 mb-3 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-200">
