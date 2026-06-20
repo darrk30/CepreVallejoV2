@@ -13,8 +13,10 @@ use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Assets\Css;
+use Filament\Support\Assets\Js;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentAsset;
+use Filament\View\PanelsRenderHook;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -42,6 +44,10 @@ class AlumnoPanelProvider extends PanelProvider
             ->colors([
                 'primary' => '#46449e',
             ])
+            ->renderHook(
+                PanelsRenderHook::BODY_END,
+                fn(): string => view('components.global-audio-player')->render(),
+            )
             ->renderHook('panels::body.start', fn() => '
                 <style>
                     /* Aplicamos la sombra al contenedor principal de la barra lateral */
@@ -105,6 +111,9 @@ class AlumnoPanelProvider extends PanelProvider
             Css::make('virtual-classroom-styles', asset('css/examen-ordinario.css')),
             Css::make('virtual-classroom-styles', asset('css/mis-intentos.css')),
             Css::make('virtual-classroom-styles', asset('css/rendir-examen.css')),
+            Css::make('virtual-classroom-styles', asset('css/play-podcast.css')),
+            Css::make('virtual-classroom-styles', asset('css/podcatsautor.css')),
+            Js::make('virtual-classroom-styles', asset('js/podcast-player.js')),
         ], 'alumno'); // 'alumno' debe ser el mismo ID que definiste en ->id('alumno')
     }
 }

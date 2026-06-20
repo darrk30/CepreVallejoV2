@@ -1,0 +1,363 @@
+/* ==========================================================================
+   CV GLOBAL PLAYER (barra fija inferior, estilo Spotify)
+   Prefijo exclusivo: cvplayer- (evita choques con otras clases del proyecto)
+   ========================================================================== */
+
+.cvplayer-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    background: #181818;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.4);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s ease;
+}
+
+.cvplayer-bar--minimized {
+    transform: translateY(100%);
+    box-shadow: none; 
+}
+
+.cvplayer-toggle-btn {
+    position: absolute;
+    top: -28px; /* Lo sube por encima de la barra */
+    left: 50%; /* Lo centra */
+    transform: translateX(-50%);
+    width: 60px;
+    height: 28px;
+    background: #181818;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #a3a3a3;
+    transition: color 0.2s ease, background 0.2s ease;
+}
+
+.cvplayer-toggle-btn:hover {
+    color: #fff;
+    background: #282828;
+}
+
+.cvplayer-toggle-btn svg {
+    width: 18px;
+    height: 18px;
+}
+
+.cvplayer-enter {
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+.cvplayer-enter-start {
+    transform: translateY(100%);
+    opacity: 0;
+}
+.cvplayer-enter-end {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.cvplayer-inner {
+    display: grid;
+    /* Antes: minmax(180px, 280px) 1fr minmax(160px, 220px) */
+    /* NUEVO: Al darle el mismo ancho (260px) a ambos lados, el 1fr central queda en el medio exacto */
+    grid-template-columns: 260px 1fr 260px; 
+    align-items: center;
+    gap: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 12px 20px;
+}
+
+/* ---------- Meta (portada + título) ---------- */
+.cvplayer-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.cvplayer-cover {
+    width: 48px;
+    height: 48px;
+    border-radius: 6px;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: #2d3748;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cvplayer-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.cvplayer-cover svg {
+    width: 20px;
+    height: 20px;
+    color: #718096;
+}
+
+.cvplayer-text {
+    min-width: 0;
+}
+
+.cvplayer-title {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #fff;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cvplayer-subtitle {
+    font-size: 11.5px;
+    color: #a3a3a3;
+    margin: 2px 0 0 0;
+}
+
+/* ---------- Controles centrales ---------- */
+.cvplayer-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+}
+
+.cvplayer-play-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #fff;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+}
+
+.cvplayer-play-btn:hover {
+    transform: scale(1.06);
+}
+
+.cvplayer-play-btn svg {
+    width: 16px;
+    height: 16px;
+    color: #181818;
+    margin-left: 1px;
+}
+
+.cvplayer-progress-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    max-width: 480px;
+}
+
+.cvplayer-time {
+    font-size: 11px;
+    color: #a3a3a3;
+    min-width: 32px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.cvplayer-seek {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    border-radius: 2px;
+    background: #4d4d4d;
+    outline: none;
+    cursor: pointer;
+}
+
+.cvplayer-seek::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #fff;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+
+.cvplayer-seek:hover::-webkit-slider-thumb {
+    opacity: 1;
+}
+
+.cvplayer-seek::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+/* ---------- Extra: volumen + cerrar ---------- */
+.cvplayer-extra {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 14px;
+}
+
+.cvplayer-volume {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cvplayer-volume svg {
+    width: 18px;
+    height: 18px;
+    color: #a3a3a3;
+    flex-shrink: 0;
+}
+
+.cvplayer-volume-slider {
+    width: 90px;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    border-radius: 2px;
+    background: #4d4d4d;
+    outline: none;
+    cursor: pointer;
+}
+
+.cvplayer-volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: #fff;
+    cursor: pointer;
+}
+
+.cvplayer-volume-slider::-moz-range-thumb {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.cvplayer-close-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: transparent;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+    flex-shrink: 0;
+}
+
+.cvplayer-close-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.cvplayer-close-btn svg {
+    width: 14px;
+    height: 14px;
+    color: #a3a3a3;
+}
+
+/* Contenedor central de los botones de reproducción */
+.cvplayer-play-group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 2px;
+}
+
+/* Botones de Anterior y Siguiente */
+.cvplayer-skip-btn {
+    background: transparent;
+    border: none;
+    color: #a3a3a3;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: color 0.2s ease, transform 0.1s ease;
+}
+
+.cvplayer-skip-btn:not(:disabled):hover {
+    color: #fff;
+    transform: scale(1.1);
+}
+
+.cvplayer-skip-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+
+/* ==========================================================================
+   RESPONSIVE - Móvil
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    .cvplayer-inner {
+        grid-template-columns: 1fr auto;
+        grid-template-areas:
+            "meta extra"
+            "controls controls";
+        padding: 10px 14px 14px 14px;
+        gap: 8px;
+    }
+
+    .cvplayer-meta {
+        grid-area: meta;
+    }
+
+    .cvplayer-extra {
+        grid-area: extra;
+        justify-content: flex-end;
+    }
+
+    .cvplayer-controls {
+        grid-area: controls;
+    }
+
+    /* En móvil ocultamos volumen, dejamos solo play y cerrar */
+    .cvplayer-volume {
+        display: none;
+    }
+
+    .cvplayer-progress-row {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 420px) {
+    .cvplayer-title {
+        font-size: 12.5px;
+    }
+}

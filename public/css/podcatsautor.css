@@ -1,0 +1,307 @@
+@import url("https://fonts.googleapis.com/css2?family=Handlee&family=Nunito:wght@300;400;600;700;800;900&display=swap");
+
+/* Contenedor principal con fuente base */
+.podcasts-wrapper {
+    font-family: "Nunito", sans-serif;
+    color: #374151;
+}
+
+/* ==========================================================================
+   Banner de Autor - Estilo Refinado
+   ========================================================================== */
+.pd-autor-banner {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 4px;
+    padding: 30px 40px; /* Ajuste de padding para un look más estilizado */
+    background: linear-gradient(90deg, #ede9fe 0%, #ffffff 100%); /* Degradado suave horizontal (lila pálido a blanco) */
+    border-radius: 24px; /* Bordes notablemente redondeados */
+    border: 1px solid rgba(124, 58, 237, 0.1); /* Borde muy sutil para definir la forma */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); /* Sombra elegante */
+}
+
+.pd-autor-banner-img {
+    width: 130px; /* Tamaño adecuado para no abrumar el texto */
+    height: 130px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    border: 4px solid #ffffff; /* Borde blanco para destacar sobre el degradado */
+    box-shadow: 0 6px 16px rgba(124, 58, 237, 0.15); /* Sombra sutil para la imagen */
+}
+
+.pd-autor-banner-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.pd-autor-banner-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.pd-autor-banner-eyebrow {
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6b7280; /* Gris medio, menos llamativo que el título */
+    margin: 0 0 4px 0;
+}
+
+.pd-autor-banner-name {
+    font-family: "Handlee", cursive;
+    font-size: 48px; /* Nombre muy destacado */
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0;
+    line-height: 1.1;
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8); /* Brillo sutil en el texto */
+}
+
+.pd-autor-banner-count {
+    font-size: 14px;
+    font-weight: 600;
+    color: #7c3aed; /* Usando el morado para el contador, resaltándolo sutilmente */
+    margin-top: 8px;
+}
+
+/* Ajustes Responsive para el Banner en Móvil */
+@media (max-width: 640px) {
+    .pd-autor-banner {
+        gap: 16px; /* Espacio reducido entre imagen y texto */
+        padding: 16px 20px;
+        flex-direction: row; /* Mantener en horizontal */
+        text-align: left; /* Mantener texto alineado a la izquierda */
+        border-radius: 16px;
+    }
+
+    .pd-autor-banner-img {
+        width: 80px; /* Imagen más pequeña para encajar en horizontal */
+        height: 80px;
+        border-radius: 12px; /* Cambiar a formato cuadrado con bordes redondeados */
+        border-width: 3px;
+    }
+
+    .pd-autor-banner-info {
+        align-items: flex-start; /* Asegurar alineación a la izquierda */
+    }
+
+    .pd-autor-banner-name {
+        font-size: 26px; /* Reducir tamaño de letra para que no se desborde */
+    }
+
+    .pd-autor-banner-eyebrow {
+        font-size: 11px;
+    }
+
+    .pd-autor-banner-count {
+        font-size: 13px;
+        margin-top: 4px;
+    }
+}
+
+/* ==========================================================================
+   Elementos Globales de la Sección (Subtítulos, Divisores)
+   ========================================================================== */
+.pd-section-subtitle {
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #7c3aed;
+    margin: 0 0 16px 0;
+}
+
+/* ===================== */
+/* Separadores            */
+/* ===================== */
+.pd-divider {
+    height: 1px;
+    width: 100%;
+    background: linear-gradient(to right, #e5e7eb, #d1d5db, #e5e7eb);
+    margin: 32px 0;
+}
+
+/* Tabla y Estructura */
+.pd-table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    margin-top: 1rem;
+}
+
+.pd-table th { 
+    text-align: left; 
+    color: #9ca3af; 
+    font-size: 12px; 
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 12px 16px; 
+    border-bottom: 1px solid #e5e7eb; 
+}
+
+.pd-row { 
+    cursor: pointer; 
+    transition: background 0.2s; 
+}
+
+.pd-row:hover { 
+    background: #f9fafb; 
+}
+
+.pd-row td { 
+    padding: 12px 16px; 
+    border-bottom: 1px solid #f3f4f6;
+}
+
+/* Contenedor de la celda de título con imagen a la izquierda */
+.pd-cell-title { 
+    display: flex; 
+    align-items: center; 
+    gap: 16px; /* Espacio entre imagen y texto */
+}
+
+/* Índice y Efecto Play (evita saltos) */
+.pd-index-col {
+    width: 50px;
+    text-align: center;
+    position: relative;
+    height: 60px;
+}
+
+.pd-index-text, .pd-play-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: opacity 0.2s;
+}
+
+.pd-play-icon { 
+    opacity: 0; 
+    color: #7c3aed; 
+}
+
+.pd-row:hover .pd-index-text { opacity: 0; }
+.pd-row:hover .pd-play-icon { opacity: 1; }
+
+/* Fila/ícono activo cuando se está reproduciendo */
+.pd-play-icon--active {
+    opacity: 1;
+}
+
+.pd-row--active {
+    background: #f5f3ff;
+}
+
+.pd-row--active .pd-index-text {
+    opacity: 0;
+}
+
+/* Título y Autor */
+.pd-mini-cover { 
+    width: 48px; 
+    height: 48px; 
+    border-radius: 6px; 
+    object-fit: cover; 
+    flex-shrink: 0; /* Asegura que la imagen no se deforme */
+}
+
+.pd-song-name {
+    display: block;
+    font-family: "Handlee", cursive;
+    font-size: 17px;
+    font-weight: 700;
+    color: #1f2937;
+    transition: color 0.2s;
+}
+
+.pd-row:hover .pd-song-name { color: #7c3aed; }
+
+.pd-song-name--active {
+    color: #7c3aed;
+}
+
+.pd-author-name {
+    display: block;
+    font-size: 13px;
+    color: #9ca3af;
+    margin-top: -2px;
+}
+
+/* ===================== */
+/* Responsive (Móvil)     */
+/* ===================== */
+@media (max-width: 640px) {
+    /* Ocultamos todas las columnas excepto el índice/play y el título */
+    .pd-table th:nth-child(3),
+    .pd-table th:nth-child(4),
+    .pd-table th:nth-child(5),
+    .pd-table td:nth-child(3),
+    .pd-table td:nth-child(4),
+    .pd-table td:nth-child(5) {
+        display: none;
+    }
+
+    .pd-table th,
+    .pd-table td {
+        padding: 10px 8px;
+    }
+
+    .pd-index-col {
+        width: 36px;
+    }
+
+    /* Evita que la fila se desborde y permite truncar el texto */
+    .pd-cell-title {
+        gap: 10px;
+        min-width: 0;
+    }
+
+    .pd-cell-title .flex.flex-col {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .pd-mini-cover {
+        width: 40px;
+        height: 40px;
+    }
+
+    /* Título largo: corta con puntos suspensivos en vez de saltar de línea */
+    .pd-song-name,
+    .pd-author-name {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+/* Estilos para el carrusel de artistas */
+.autor-slide { width: auto; min-width: 120px; }
+.autor-card { 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    text-decoration: none; 
+}
+
+.autor-img { 
+    width: 100px; 
+    height: 100px; 
+    border-radius: 50%; 
+    overflow: hidden; 
+    border: 3px solid #e5e7eb; 
+    transition: border-color 0.2s;
+}
+
+.autor-card:hover .autor-img { border-color: #7c3aed; }
+.autor-name { 
+    margin-top: 8px; 
+    font-weight: 600; 
+    color: #374151; 
+}

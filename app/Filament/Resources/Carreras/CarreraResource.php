@@ -13,14 +13,19 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class CarreraResource extends Resource
 {
     protected static ?string $model = Carrera::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedAcademicCap;
 
     protected static ?string $recordTitleAttribute = 'Carrera';
+
+    protected static string | UnitEnum | null $navigationGroup = 'Exámenes';
+
+    protected static ?int $navigationSort = 17;
 
     public static function form(Schema $schema): Schema
     {

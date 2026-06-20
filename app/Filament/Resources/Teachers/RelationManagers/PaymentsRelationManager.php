@@ -55,6 +55,7 @@ class PaymentsRelationManager extends RelationManager
                     ->label('Método de Pago')
                     ->options([
                         'Transferencia BCP' => 'Transferencia BCP',
+                        'Transferencia BN' => 'Transf. Banco de la Nación',
                         'Transferencia BBVA' => 'Transferencia BBVA',
                         'Transferencia Interbank' => 'Transferencia Interbank',
                         'Yape' => 'Yape',

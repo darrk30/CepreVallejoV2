@@ -20,7 +20,7 @@ class StudentResource extends Resource
     protected static ?string $model = Student::class;
 
     // 1. Agrupamos en "Usuarios"
-    protected static string | UnitEnum | null $navigationGroup = 'Matriculas';
+    protected static string | UnitEnum | null $navigationGroup = 'Matrícula';
 
     // 2. Cambiamos el icono a uno de maestros/academia (AcademicCap)
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedIdentification;
