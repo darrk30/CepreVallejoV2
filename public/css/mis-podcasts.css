@@ -54,6 +54,7 @@
     width: 100%; 
     border-collapse: collapse; 
     margin-top: 1rem;
+    table-layout: fixed; /* Ayuda a controlar el desborde del texto */
 }
 
 .pd-table th { 
@@ -85,6 +86,12 @@
     display: flex; 
     align-items: center; 
     gap: 16px; /* Espacio entre imagen y texto */
+}
+
+/* El div que envuelve el texto necesita min-width:0 para que funcione el text-overflow */
+.pd-cell-title > div {
+    min-width: 0;
+    flex: 1;
 }
 
 /* Índice y Efecto Play (evita saltos) */
@@ -140,6 +147,12 @@
     font-weight: 700;
     color: #1f2937;
     transition: color 0.2s;
+    
+    /* EN PC: Puntos suspensivos si es muy largo */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
 }
 
 .pd-row:hover .pd-song-name { color: #7c3aed; }
@@ -153,57 +166,15 @@
     font-size: 13px;
     color: #9ca3af;
     margin-top: -2px;
+    
+    /* EN PC: Puntos suspensivos para el autor también */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
 }
 
-/* ===================== */
-/* Responsive (Móvil)     */
-/* ===================== */
-@media (max-width: 640px) {
-    /* Ocultamos todas las columnas excepto el índice/play y el título */
-    .pd-table th:nth-child(3),
-    .pd-table th:nth-child(4),
-    .pd-table th:nth-child(5),
-    .pd-table td:nth-child(3),
-    .pd-table td:nth-child(4),
-    .pd-table td:nth-child(5) {
-        display: none;
-    }
-
-    .pd-table th,
-    .pd-table td {
-        padding: 10px 8px;
-    }
-
-    .pd-index-col {
-        width: 36px;
-    }
-
-    /* Evita que la fila se desborde y permite truncar el texto */
-    .pd-cell-title {
-        gap: 10px;
-        min-width: 0;
-    }
-
-    .pd-cell-title .flex.flex-col {
-        min-width: 0;
-        flex: 1;
-    }
-
-    .pd-mini-cover {
-        width: 40px;
-        height: 40px;
-    }
-
-    /* Título largo: corta con puntos suspensivos en vez de saltar de línea */
-    .pd-song-name,
-    .pd-author-name {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-}
-
-/* Estilos para el carrusel de artistas */
+/* Estilos para el carrusel de artistas (Escritorio) */
 .autor-slide { 
     width: auto; 
     min-width: 140px;
@@ -235,8 +206,74 @@
     margin-top: 12px; /* Más espacio entre la foto y el nombre */
     font-weight: 600; 
     color: #374151;
-    text-align: center; /* Asegura que si el nombre es largo, se centre bien */
+    text-align: center; 
     display: block;
     line-height: 1.2;
     padding: 0 5px; 
+}
+
+/* ===================== */
+/* Responsive (Móvil)     */
+/* ===================== */
+@media (max-width: 640px) {
+    /* Ocultamos todas las columnas excepto el índice/play y el título */
+    .pd-table th:nth-child(3),
+    .pd-table th:nth-child(4),
+    .pd-table th:nth-child(5),
+    .pd-table td:nth-child(3),
+    .pd-table td:nth-child(4),
+    .pd-table td:nth-child(5) {
+        display: none;
+    }
+
+    .pd-table th,
+    .pd-table td {
+        padding: 10px 8px;
+    }
+
+    .pd-index-col {
+        width: 36px;
+    }
+
+    .pd-cell-title {
+        gap: 10px;
+    }
+
+    .pd-mini-cover {
+        width: 40px;
+        height: 40px;
+    }
+
+    /* EN MÓVIL: Título largo baja a la siguiente línea en lugar de cortarse */
+    .pd-song-name,
+    .pd-author-name {
+        white-space: normal; /* Permite salto de línea */
+        overflow: visible;
+        word-wrap: break-word; /* Rompe palabras largas si es necesario */
+        overflow-wrap: break-word;
+    }
+
+    .pd-song-name {
+        font-size: 15px; /* Un poco más pequeño para encajar mejor */
+        line-height: 1.2;
+        margin-bottom: 2px;
+    }
+
+    /* EN MÓVIL: Reducimos el tamaño de los autores en el carrusel */
+    .autor-slide {
+        min-width: 90px; /* Tarjeta más angosta */
+        padding: 0 5px;
+    }
+
+    .autor-img {
+        width: 70px; /* Imagen más pequeña */
+        height: 70px;
+        border-width: 2px;
+    }
+
+    .autor-name {
+        font-size: 12px; /* Letra más pequeña */
+        margin-top: 8px;
+        padding: 0;
+    }
 }
