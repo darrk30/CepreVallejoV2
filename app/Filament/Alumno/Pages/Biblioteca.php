@@ -16,6 +16,7 @@ class Biblioteca extends Page
     protected string $view = 'filament.alumno.pages.biblioteca';
     protected static ?string $title = 'Mi Biblioteca Digital';
     protected static ?string $navigationLabel = 'Biblioteca';
+    protected static ?int $navigationSort = 9;
 
     #[Url(history: true)]
     public $search = '';

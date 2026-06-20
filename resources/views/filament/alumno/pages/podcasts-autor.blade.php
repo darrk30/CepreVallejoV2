@@ -1,4 +1,3 @@
-<!-- <link rel="stylesheet" href="{{ asset('css/podcatsautor.css') }}"> -->
 <script src="{{ asset('js/podcast-player.js') }}" defer></script>
 <x-filament-panels::page>
     @php
@@ -22,8 +21,7 @@
         <!-- Banner del Autor -->
         <div class="pd-autor-banner">
             <div class="pd-autor-banner-img">
-                {{-- Ahora $autor ya existe y esto funcionará perfecto --}}
-                <img src="{{ $autor->imagen ? asset('storage/' . $autor->imagen) : asset('img/default-user.png') }}" alt="{{ $autor->nombre }}">
+                <img src="{{ $autor->imagen ? asset('storage/' . $autor->imagen) : 'https://thumbs.dreamstime.com/b/ilustraci%C3%B3n-de-avatar-empresario-retrato-usuario-dibujos-animados-icono-perfil-simple-un-l%C3%ADder-empresarial-vectorial-276189185.jpg' }}" alt="{{ $autor->nombre }}">
             </div>
             <div class="pd-autor-banner-info">
                 <p class="pd-autor-banner-eyebrow">Autor</p>
@@ -92,7 +90,7 @@
                         <!-- Título y Autor -->
                         <td class="py-3">
                             <div class="pd-cell-title flex items-center gap-4">
-                                <img src="{{ $podcast->imagen_portada ? asset('storage/' . $podcast->imagen_portada) : asset('img/default-cover.png') }}" class="pd-mini-cover">
+                                <img src="{{ $podcast->imagen_portada ? asset('storage/' . $podcast->imagen_portada) : 'https://thumbs.dreamstime.com/b/ilustraci%C3%B3n-de-avatar-empresario-retrato-usuario-dibujos-animados-icono-perfil-simple-un-l%C3%ADder-empresarial-vectorial-276189185.jpg' }}" alt="{{ $autor->nombre }}" class="pd-mini-cover">
                                 <div class="flex flex-col">
                                     <span class="pd-song-name" :class="{ 'pd-song-name--active': isThisActive }">{{ $podcast->titulo }}</span>
                                     <span class="pd-author-name">{{ $autor->nombre }}</span>

@@ -15,6 +15,7 @@ class Videos extends Page
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedVideoCamera;
     protected string $view = 'filament.alumno.pages.videos';
     protected static ?string $title = 'Videoteca';
+    protected static ?int $navigationSort = 11;
 
     #[Url(history: true)]
     public $search = '';

@@ -25,6 +25,8 @@ class ExamenOrdinarioResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'ExamenOrdinario';
 
+    protected static ?int $navigationSort = 8;
+
     public static function form(Schema $schema): Schema
     {
         return ExamenOrdinarioForm::configure($schema);

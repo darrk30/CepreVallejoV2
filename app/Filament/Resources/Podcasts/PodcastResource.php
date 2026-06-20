@@ -25,6 +25,8 @@ class PodcastResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'Podcast';
 
+    protected static ?int $navigationSort = 22;
+
     public static function form(Schema $schema): Schema
     {
         return PodcastForm::configure($schema);

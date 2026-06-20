@@ -14,6 +14,7 @@ class ExamenesOrdinarios extends Page
     protected static ?string $navigationLabel = 'Exámenes';
     protected static ?string $title = 'Exámenes Ordinarios';
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentChartBar;
+    protected static ?int $navigationSort = 7;
 
     // ── Estado público (Livewire reactivo) ───────────────────────
     public array   $examenes      = [];

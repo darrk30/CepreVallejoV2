@@ -18,6 +18,7 @@ class Podcasts extends Page
     protected static ?string $navigationLabel = 'Podcasts';
     protected static ?string $title = 'Podcasts Académicos';
     protected string $view = 'filament.alumno.pages.podcasts';
+    protected static ?int $navigationSort = 13;
 
    public function getHeading(): string
     {
