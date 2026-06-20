@@ -204,12 +204,17 @@
 }
 
 /* Estilos para el carrusel de artistas */
-.autor-slide { width: auto; min-width: 120px; }
+.autor-slide { 
+    width: auto; 
+    min-width: 140px;
+    padding: 0 10px; 
+}
 .autor-card { 
     display: flex; 
     flex-direction: column; 
     align-items: center; 
-    text-decoration: none; 
+    text-decoration: none;
+    transition: transform 0.2s; 
 }
 
 .autor-img { 
@@ -221,10 +226,17 @@
     transition: border-color 0.2s;
 }
 
+.autor-card:hover {
+    transform: scale(1.05); /* Pequeño efecto al pasar el mouse */
+}
+
 .autor-card:hover .autor-img { border-color: #7c3aed; }
 .autor-name { 
-    
-    margin-top: 8px; 
+    margin-top: 12px; /* Más espacio entre la foto y el nombre */
     font-weight: 600; 
-    color: #374151; 
+    color: #374151;
+    text-align: center; /* Asegura que si el nombre es largo, se centre bien */
+    display: block;
+    line-height: 1.2;
+    padding: 0 5px; 
 }
