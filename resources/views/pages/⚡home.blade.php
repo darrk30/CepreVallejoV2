@@ -2,6 +2,7 @@
 
 use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Illuminate\Support\Facades\Cache;
 use App\Models\Institution;
 use App\Models\AcademicCycle;
 use App\Models\Convention;
@@ -12,25 +13,39 @@ use App\Models\Teacher; // Asumiendo que existe el modelo basado en CicloCourseT
 new class extends Component {
     public function with(): array
     {
-        return [
-            // Obtenemos la primera institución registrada
-            'institucion' => Institution::first() ?? new Institution(),
+        // Cacheamos solo arrays planos (toArray()): Laravel 13 fuerza
+        // 'serializable_classes' => false en el cache (config/cache.php) por
+        // seguridad, así que unserialize() nunca reconstruye objetos/Modelos
+        // Eloquent desde caché — solo arrays y escalares sobreviven intactos.
+        $raw = Cache::remember('home.page.data', now()->addMinutes(15), fn () => $this->fetchHomeData());
 
+        // La institución se consulta siempre en vivo (fuera de la caché): es
+        // una sola fila liviana y necesitamos el acceso "null-safe" propio de
+        // Eloquent cuando no existe ningún registro (toArray()/json_decode de
+        // un modelo vacío pierde esa propiedad y rompe {!! $institucion->x !!}).
+        return array_merge(
+            ['institucion' => Institution::first() ?? new Institution()],
+            $this->hydrate($raw)
+        );
+    }
+
+    private function fetchHomeData(): array
+    {
+        return [
             // Banners ordenados por su columna 'orden'
             'banners' => Banner::where('estado', 'Activo')
                 ->where('tipo', 'publico')
-                ->orderBy('orden')->get(),
+                ->orderBy('orden')->get()->toArray(),
 
             'banners_informativos' => Banner::where('estado', 'Activo')
                 ->where('tipo', 'informacion_publica')
                 ->orderBy('orden')
-                ->get(),
+                ->get()->toArray(),
 
             // Servicios Académicos
-            'servicios' => AcademicService::where('estado', 'Activo')->get(),
+            'servicios' => AcademicService::where('estado', 'Activo')->get()->toArray(),
 
             // Ciclos con sus detalles cargados (Eager Loading para optimizar)
-            // 'ciclos' => AcademicCycle::with('details')->where('estado', true)->orderBy('fecha_inicio', 'asc')->get(),
             'ciclos' => AcademicCycle::with([
                 'details',
                 'courses' => function ($query) {
@@ -40,14 +55,44 @@ new class extends Component {
             ])
                 ->where('estado', true)
                 ->orderBy('fecha_inicio', 'asc')
-                ->get(),
+                ->get()->toArray(),
             // Convenios Activos
-            'convenios' => Convention::where('estado', 'Activo')->get(),
+            'convenios' => Convention::where('estado', 'Activo')->get()->toArray(),
 
             // Plana docente (Si el modelo Teacher ya existe)
             'docentes' => Teacher::with(['user', 'specialties'])
                 ->where('estado', true)
-                ->get(),
+                ->get()->toArray(),
+        ];
+    }
+
+    /**
+     * Reconstruye objetos (stdClass) y Collections desde los arrays cacheados,
+     * para que la vista pueda seguir usando ->propiedad, ->count(), ->take(), etc.
+     * sin cambios, igual que con los modelos Eloquent originales.
+     */
+    private function hydrate(array $raw): array
+    {
+        $toObjects = fn (array $rows) => collect($rows)->map(fn ($row) => json_decode(json_encode($row)));
+
+        return [
+            'banners' => $toObjects($raw['banners']),
+            'banners_informativos' => $toObjects($raw['banners_informativos']),
+            'servicios' => $toObjects($raw['servicios']),
+            'convenios' => $toObjects($raw['convenios']),
+            'ciclos' => collect($raw['ciclos'])->map(function (array $ciclo) {
+                $ciclo = json_decode(json_encode($ciclo));
+                $ciclo->details = collect($ciclo->details ?? []);
+                $ciclo->courses = collect($ciclo->courses ?? []);
+
+                return $ciclo;
+            }),
+            'docentes' => collect($raw['docentes'])->map(function (array $docente) {
+                $docente = json_decode(json_encode($docente));
+                $docente->specialties = collect($docente->specialties ?? []);
+
+                return $docente;
+            }),
         ];
     }
 

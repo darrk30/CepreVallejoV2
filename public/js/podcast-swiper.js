@@ -13,6 +13,8 @@ document.addEventListener('DOMContentLoaded', function () {
             freeMode: true,
             loop: canLoop,
             grabCursor: true,
+            preventClicks: false,
+            preventClicksPropagation: false,
         });
     };
 

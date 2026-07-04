@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class Banner extends Model
 {
@@ -24,11 +25,14 @@ class Banner extends Model
             if (Auth::check()) {
                 $banner->user_create_id = Auth::id();
             }
-            
+
             if (is_null($banner->orden)) {
                 $banner->orden = static::max('orden') + 1;
             }
         });
+
+        static::saved(fn () => Cache::forget('home.page.data'));
+        static::deleted(fn () => Cache::forget('home.page.data'));
     }
 
     public function creator(): BelongsTo

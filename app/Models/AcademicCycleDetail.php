@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class AcademicCycleDetail extends Model
 {
@@ -27,6 +28,9 @@ class AcademicCycleDetail extends Model
                 $detail->orden = static::where('academic_cycle_id', $detail->academic_cycle_id)->max('orden') + 1;
             }
         });
+
+        static::saved(fn () => Cache::forget('home.page.data'));
+        static::deleted(fn () => Cache::forget('home.page.data'));
     }
 
     // Relación con el Ciclo Académico (Debes asegurarte de tener la relación inversa en el modelo AcademicCycle)

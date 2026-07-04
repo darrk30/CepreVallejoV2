@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class CicloCourse extends Pivot
 {
@@ -31,6 +32,9 @@ class CicloCourse extends Pivot
                 $pivot->user_create_id = Auth::id();
             }
         });
+
+        static::saved(fn () => Cache::forget('home.page.data'));
+        static::deleted(fn () => Cache::forget('home.page.data'));
     }
 
 

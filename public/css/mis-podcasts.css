@@ -1,9 +1,31 @@
 @import url("https://fonts.googleapis.com/css2?family=Handlee&family=Nunito:wght@300;400;600;700;800;900&display=swap");
 
+:root {
+    --pd-text-strong: #1f2937;
+    --pd-text-body: #374151;
+    --pd-text-muted: #9ca3af;
+    --pd-border: #e5e7eb;
+    --pd-border-mid: #d1d5db;
+    --pd-border-soft: #f3f4f6;
+    --pd-hover-bg: #f9fafb;
+    --pd-active-bg: #f5f3ff;
+}
+
+.dark {
+    --pd-text-strong: #f1f2fb;
+    --pd-text-body: #d7d9ea;
+    --pd-text-muted: #9599b8;
+    --pd-border: #33364f;
+    --pd-border-mid: #40435f;
+    --pd-border-soft: #262840;
+    --pd-hover-bg: #23253c;
+    --pd-active-bg: #2b2850;
+}
+
 /* Contenedor principal con fuente base */
 .podcasts-wrapper {
     font-family: "Handlee", sans-serif;
-    color: #374151;
+    color: var(--pd-text-body);
 }
 
 /* ===================== */
@@ -17,13 +39,13 @@
     font-family: "Handlee", cursive;
     font-size: 32px;
     font-weight: 700;
-    color: #1f2937;
+    color: var(--pd-text-strong);
     margin: 0;
 }
 
 .pd-main-subtitle {
     font-size: 14px;
-    color: #9ca3af;
+    color: var(--pd-text-muted);
     margin-top: 4px;
 }
 
@@ -45,7 +67,7 @@
 .pd-divider {
     height: 1px;
     width: 100%;
-    background: linear-gradient(to right, #e5e7eb, #d1d5db, #e5e7eb);
+    background: linear-gradient(to right, var(--pd-border), var(--pd-border-mid), var(--pd-border));
     margin: 10px 0;
 }
 
@@ -57,14 +79,40 @@
     table-layout: fixed; /* Ayuda a controlar el desborde del texto */
 }
 
-.pd-table th { 
-    text-align: left; 
-    color: #9ca3af; 
-    font-size: 12px; 
+.pd-table th {
+    text-align: left;
+    color: var(--pd-text-muted);
+    font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    padding: 12px 16px; 
-    border-bottom: 1px solid #e5e7eb; 
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--pd-border);
+}
+
+/* Reparto de columnas (solo escritorio): Título necesita la mayor parte
+   del ancho, Álbum/Fecha/Duración solo el mínimo indispensable.
+   En móvil esas columnas se ocultan (ver media query más abajo) y no deben
+   reservar espacio, por eso este reparto no aplica ahí. */
+@media (min-width: 641px) {
+    .pd-table th:nth-child(2),
+    .pd-table td:nth-child(2) {
+        width: 50%;
+    }
+
+    .pd-table th:nth-child(3),
+    .pd-table td:nth-child(3) {
+        width: 20%;
+    }
+
+    .pd-table th:nth-child(4),
+    .pd-table td:nth-child(4) {
+        width: 16%;
+    }
+
+    .pd-table th:nth-child(5),
+    .pd-table td:nth-child(5) {
+        width: 14%;
+    }
 }
 
 .pd-row { 
@@ -72,13 +120,13 @@
     transition: background 0.2s; 
 }
 
-.pd-row:hover { 
-    background: #f9fafb; 
+.pd-row:hover {
+    background: var(--pd-hover-bg);
 }
 
-.pd-row td { 
-    padding: 12px 16px; 
-    border-bottom: 1px solid #f3f4f6;
+.pd-row td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--pd-border-soft);
 }
 
 /* Contenedor de la celda de título con imagen a la izquierda */
@@ -124,7 +172,7 @@
 }
 
 .pd-row--active {
-    background: #f5f3ff;
+    background: var(--pd-active-bg);
 }
 
 .pd-row--active .pd-index-text {
@@ -145,7 +193,7 @@
     font-family: "Handlee", cursive;
     font-size: 17px;
     font-weight: 700;
-    color: #1f2937;
+    color: var(--pd-text-strong);
     transition: color 0.2s;
     
     /* EN PC: Puntos suspensivos si es muy largo */
@@ -164,7 +212,7 @@
 .pd-author-name {
     display: block;
     font-size: 13px;
-    color: #9ca3af;
+    color: var(--pd-text-muted);
     margin-top: -2px;
     
     /* EN PC: Puntos suspensivos para el autor también */
@@ -175,7 +223,13 @@
 }
 
 /* Estilos para el carrusel de artistas (Escritorio) */
-.autor-slide { 
+.authorsSwiper {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.autor-slide {
     width: auto; 
     min-width: 140px;
     padding: 0 10px; 
@@ -188,12 +242,12 @@
     transition: transform 0.2s; 
 }
 
-.autor-img { 
-    width: 100px; 
-    height: 100px; 
-    border-radius: 50%; 
-    overflow: hidden; 
-    border: 3px solid #e5e7eb; 
+.autor-img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid var(--pd-border);
     transition: border-color 0.2s;
 }
 
@@ -202,10 +256,10 @@
 }
 
 .autor-card:hover .autor-img { border-color: #7c3aed; }
-.autor-name { 
+.autor-name {
     margin-top: 12px; /* Más espacio entre la foto y el nombre */
-    font-weight: 600; 
-    color: #374151;
+    font-weight: 600;
+    color: var(--pd-text-body);
     text-align: center; 
     display: block;
     line-height: 1.2;

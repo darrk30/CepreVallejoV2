@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Cache;
 
 class AcademicCycle extends Model
 {
@@ -17,6 +18,12 @@ class AcademicCycle extends Model
         'estado',
         'user_create_id'
     ];
+
+    protected static function booted(): void
+    {
+        static::saved(fn () => Cache::forget('home.page.data'));
+        static::deleted(fn () => Cache::forget('home.page.data'));
+    }
 
     protected function casts(): array
     {

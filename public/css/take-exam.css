@@ -6,7 +6,7 @@
     box-sizing: border-box;
 }
 
-.exam-root {
+:root {
     --brand: #2563eb;
     --brand-dark: #1d4ed8;
     --brand-soft: rgba(37, 99, 235, 0.09);
@@ -33,7 +33,7 @@
     --radius-sm: 9px;
 }
 
-.dark .exam-root {
+.dark {
     --surface: #111827;
     --surface-2: #1f2937;
     --surface-3: #374151;

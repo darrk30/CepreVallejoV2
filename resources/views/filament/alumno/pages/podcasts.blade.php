@@ -1,7 +1,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-<script src="{{ asset('js/podcast-swiper.js') }}" defer></script>
-<link rel="stylesheet" href="{{ asset('css/mis-podcasts.css') }}">
+<script src="{{ asset('js/podcast-swiper.js') }}?v={{ filemtime(public_path('js/podcast-swiper.js')) }}" defer></script>
+<link rel="stylesheet" href="{{ asset('css/mis-podcasts.css') }}?v={{ filemtime(public_path('css/mis-podcasts.css')) }}">
 
 <x-filament-panels::page>
     @php
@@ -27,11 +27,11 @@
         <!-- Sección de Autores -->
         @if($this->autores->isNotEmpty())
             <h2 class="pd-section-subtitle">Autores</h2>
-            <div class="swiper-container authorsSwiper mb-12">
+            <div class="swiper authorsSwiper mb-12">
                 <div class="swiper-wrapper">
                     @foreach($this->autores as $autor)
                         <div class="swiper-slide autor-slide">
-                            <a href="{{ \App\Filament\Alumno\Pages\PodcastsAutor::getUrl(['autor_id' => $autor->id]) }}" class="autor-card">
+                            <a href="{{ \App\Filament\Alumno\Pages\PodcastsAutor::getUrl(['autor_id' => $autor->id]) }}" class="autor-card" onclick="window.Livewire.navigate(this.href); return false;">
                                 <div class="autor-img">
                                     <img src="{{ $autor->imagen ? asset('storage/'.$autor->imagen) : 'https://thumbs.dreamstime.com/b/ilustraci%C3%B3n-de-avatar-empresario-retrato-usuario-dibujos-animados-icono-perfil-simple-un-l%C3%ADder-empresarial-vectorial-276189185.jpg' }}" alt="{{ $autor->nombre }}">
                                 </div>
@@ -42,7 +42,7 @@
                 </div>
             </div>
         @else
-            <div style="text-align: center; padding: 40px; color: #9ca3af; border: 2px dashed #e5e7eb; border-radius: 16px; margin-bottom: 32px;">
+            <div style="text-align: center; padding: 40px; color: var(--pd-text-muted); border: 2px dashed var(--pd-border); border-radius: 16px; margin-bottom: 32px;">
                 <p>Aún no hay autores registrados.</p>
             </div>
         @endif
@@ -91,7 +91,7 @@
                 </table>
             </div>
         @else
-            <div style="text-align: center; padding: 60px; color: #9ca3af; background: #f9fafb; border-radius: 16px;">
+            <div style="text-align: center; padding: 60px; color: var(--pd-text-muted); background: var(--pd-hover-bg); border-radius: 16px;">
                 <p style="font-size: 18px; font-weight: 600;">No hay audios disponibles</p>
                 <p style="font-size: 14px;">Estamos trabajando para traerte contenido nuevo pronto.</p>
             </div>

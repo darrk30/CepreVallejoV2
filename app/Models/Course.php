@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class Course extends Model
 {
@@ -38,6 +39,9 @@ class Course extends Model
                 $course->slug = Str::slug($course->nombre . '-' . $course->codigo);
             }
         });
+
+        static::saved(fn () => Cache::forget('home.page.data'));
+        static::deleted(fn () => Cache::forget('home.page.data'));
     }
 
     public function getRouteKeyName(): string

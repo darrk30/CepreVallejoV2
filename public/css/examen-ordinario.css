@@ -27,6 +27,21 @@
     --eo-radius: 16px;
 }
 
+.dark {
+    --eo-bg: #12131f;
+    --eo-card: #1a1c2c;
+    --eo-surface: #21233a;
+    --eo-border: rgba(148, 130, 255, 0.18);
+    --eo-border-soft: rgba(255, 255, 255, 0.08);
+
+    --eo-text-main: #f1f2fb;
+    --eo-text-muted: #b6b9d6;
+    --eo-text-dim: #82859f;
+
+    --eo-violet: #8b83e8;
+    --eo-violet-light: rgba(139, 131, 232, 0.18);
+}
+
 
 /* ── Base ─────────────────────────────────────────────────── */
 .eo-page {
@@ -129,11 +144,11 @@
 }
 .eo-exam-row:hover {
     border-color: var(--eo-violet);
-    background: #efeffb;
+    background: var(--eo-violet-light);
 }
 .eo-exam-row-active {
     border-color: var(--eo-violet);
-    background: #eeeefb;
+    background: var(--eo-violet-light);
 }
 .eo-exam-icon {
     width: 34px;
@@ -227,7 +242,7 @@ svg {
     background: var(--eo-violet-light);
     color: var(--eo-violet);
 }
-.eo-btn-icon-secondary:hover { background: #ddddf5; }
+.eo-btn-icon-secondary:hover { background: var(--eo-violet-light); }
 
 /* ── Empty state ──────────────────────────────────────────── */
 .eo-empty {
@@ -615,7 +630,7 @@ svg {
     flex-shrink: 0;
 }
 .eo-modal-close:hover {
-    background: #eeeefb;
+    background: var(--eo-violet-light);
     color: var(--eo-violet);
 }
 .eo-modal-footer {

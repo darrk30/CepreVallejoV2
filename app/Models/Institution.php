@@ -30,11 +30,13 @@ class Institution extends Model
         // Se ejecuta después de crear o actualizar un registro
         static::saved(function ($institution) {
             Cache::forget('institution_whatsapp');
+            Cache::forget('home.page.data');
         });
 
         // Se ejecuta si eliminas el registro (por seguridad)
         static::deleted(function ($institution) {
             Cache::forget('institution_whatsapp');
+            Cache::forget('home.page.data');
         });
     }
 }

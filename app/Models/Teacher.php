@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class Teacher extends Model
 {
@@ -14,6 +15,12 @@ class Teacher extends Model
         'imagen_path',
         'user_id',
     ];
+
+    protected static function booted(): void
+    {
+        static::saved(fn () => Cache::forget('home.page.data'));
+        static::deleted(fn () => Cache::forget('home.page.data'));
+    }
 
     public function user()
     {
