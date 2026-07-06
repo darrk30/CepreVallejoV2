@@ -41,6 +41,7 @@ class AlumnoPanelProvider extends PanelProvider
             ->favicon('/img/cepreicono.ico')
             ->profile(isSimple: false)
             ->brandLogoHeight('3.5rem')
+            ->viteTheme('resources/css/filament/alumno/theme.css')
             ->colors([
                 'primary' => '#46449e',
             ])
@@ -101,19 +102,13 @@ class AlumnoPanelProvider extends PanelProvider
 
     public function boot(): void
     {
+        // Solo se registran aquí los assets realmente globales (usados en TODAS las
+        // páginas del panel, como el reproductor de audio persistente). El resto de
+        // CSS/JS específico de cada página se carga con @push('styles') en su propia
+        // vista para no descargar estilos que esa página no necesita.
         FilamentAsset::register([
-            Css::make('virtual-classroom-styles', asset('css/virtual-classroom.css')),
-            Css::make('virtual-classroom-styles', asset('css/biblioteca.css')),
-            Css::make('virtual-classroom-styles', asset('css/video.css')),
-            Css::make('virtual-classroom-styles', asset('css/announcements-widget.css')),
-            Css::make('virtual-classroom-styles', asset('css/reproductor-video.css')),
-            Css::make('virtual-classroom-styles', asset('css/take-exam.css')),
-            Css::make('virtual-classroom-styles', asset('css/examen-ordinario.css')),
-            Css::make('virtual-classroom-styles', asset('css/mis-intentos.css')),
-            Css::make('virtual-classroom-styles', asset('css/rendir-examen.css')),
-            Css::make('virtual-classroom-styles', asset('css/play-podcast.css')),
-            Css::make('virtual-classroom-styles', asset('css/podcatsautor.css')),
-            Js::make('virtual-classroom-styles', asset('js/podcast-player.js')),
+            Css::make('play-podcast-styles', asset('css/play-podcast.css')),
+            Js::make('podcast-player-script', asset('js/podcast-player.js')),
         ], 'alumno'); // 'alumno' debe ser el mismo ID que definiste en ->id('alumno')
     }
 }

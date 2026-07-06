@@ -36,13 +36,31 @@ class VirtualClassroom extends Page
             ->groupBy(fn($ins) => $ins->academicCycle->nombre);
     }
 
-    // Para cada ciclo necesitamos los cursos — lo exponemos como método helper
+    // Para cada ciclo necesitamos los cursos — lo exponemos como método helper.
+    // Los cursos de TODOS los ciclos se traen en una sola consulta (ver
+    // getCoursesByCycleProperty) y aquí solo hacemos una búsqueda en memoria,
+    // en vez de lanzar una query nueva por cada ciclo dentro del @foreach.
     public function getCoursesForCycle(int $cycleId): Collection
     {
+        return $this->coursesByCycle->get($cycleId) ?? collect();
+    }
+
+    public function getCoursesByCycleProperty(): Collection
+    {
+        $cycleIds = $this->cycles
+            ->map(fn($inscriptions) => $inscriptions->first()->academic_cycle_id)
+            ->unique()
+            ->values();
+
+        if ($cycleIds->isEmpty()) {
+            return collect();
+        }
+
         return CicloCourse::with(['course'])
-            ->where('ciclo_id', $cycleId)
+            ->whereIn('ciclo_id', $cycleIds)
             ->whereHas('course', fn($q) => $q->where('estado', 'activo'))
-            ->get();
+            ->get()
+            ->groupBy('ciclo_id');
     }
 
     public function getInscripcionProperty(): ?Inscription

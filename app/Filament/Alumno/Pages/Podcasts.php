@@ -20,7 +20,16 @@ class Podcasts extends Page
     protected string $view = 'filament.alumno.pages.podcasts';
     protected static ?int $navigationSort = 13;
 
-   public function getHeading(): string
+    protected int $perPageStep = 20;
+
+    public int $perPage = 20;
+
+    public function loadMorePodcasts()
+    {
+        $this->perPage += $this->perPageStep;
+    }
+
+    public function getHeading(): string
     {
         return '';
     }
@@ -32,13 +41,30 @@ class Podcasts extends Page
             ->get();
     }
 
-    public function getPodcastsProperty(): Collection
+    /**
+     * Query base de podcasts activos. Sin memoizar: se reconstruye cada vez
+     * para no arrastrar el ->take() del listado hacia el conteo total (o
+     * viceversa).
+     */
+    protected function podcastsBaseQuery()
     {
         // Usamos 'with('autor')' para traer la relación en la misma consulta
         return Podcast::query()
             ->where('estado', true)
-            ->with('autor') 
-            ->orderBy('orden', 'asc') // Opcional: si quieres respetar el orden que configuramos
-            ->get();
+            ->with('autor')
+            ->orderBy('orden', 'asc'); // Opcional: si quieres respetar el orden que configuramos
+    }
+
+    /**
+     * Total de podcasts activos (para saber si mostrar "Cargar más").
+     */
+    public function getPodcastsTotalProperty(): int
+    {
+        return $this->podcastsBaseQuery()->count();
+    }
+
+    public function getPodcastsProperty(): Collection
+    {
+        return $this->podcastsBaseQuery()->take($this->perPage)->get();
     }
 }

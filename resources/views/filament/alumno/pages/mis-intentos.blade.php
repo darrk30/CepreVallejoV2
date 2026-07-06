@@ -1,48 +1,55 @@
+{{-- Migrado a Tailwind. Si algo falla, descomenta este bloque (y quita las
+     clases Tailwind del <div class="eo-page">) para volver al CSS clásico. --}}
+{{--
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/examen-ordinario.css') }}">
 <link rel="stylesheet" href="{{ asset('css/mis-intentos.css') }}">
 @endpush
+--}}
 <x-filament-panels::page>
-    <div class="eo-page">
-        <div class="mi-layout">
+    <div class="eo-page font-handlee text-[#1a1e35] dark:text-[#f1f2fb]">
+        <div class="grid grid-cols-[320px_1fr] items-start gap-5 max-[768px]:grid-cols-1">
 
             {{-- ══════════════════════════════════════════════════
                  PANEL IZQUIERDO — lista de exámenes
             ══════════════════════════════════════════════════ --}}
-            <div class="eo-card mi-panel-examenes">
+            <div class="sticky top-5 rounded-2xl border border-[#6366f1]/12 bg-white p-6 shadow-[0_1px_4px_rgba(99,102,241,0.06)] dark:border-[#9482ff]/18 dark:bg-[#1a1c2c]">
 
-                <div class="eo-card-header">
-                    <div class="eo-card-header-icon">
+                <div class="mb-5 flex items-center gap-3">
+                    <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-[#6366f1]/10 text-[#534ab7] dark:bg-[#8b83e8]/18 dark:text-[#8b83e8]">
                         @svg('heroicon-o-academic-cap', 'w-5 h-5')
                     </div>
-                    <div class="eo-card-header-text">
-                        <div class="eo-card-header-title">Mis Exámenes</div>
-                        <div class="eo-card-header-sub">{{ count($examenes) }} con intentos</div>
+                    <div>
+                        <div class="text-[15px] leading-[1.2] font-semibold text-[#1a1e35] dark:text-[#f1f2fb]">Mis Exámenes</div>
+                        <div class="mt-0.5 text-xs text-[#8890aa] dark:text-[#82859f]">{{ count($examenes) }} con intentos</div>
                     </div>
                 </div>
 
                 @if(empty($examenes))
-                <div class="eo-empty">
+                <div class="flex flex-col items-center gap-2 p-8 text-sm text-[#8890aa] dark:text-[#82859f]">
                     @svg('heroicon-o-inbox', 'w-10 h-10')
                     <span>Aún no has rendido ningún examen.</span>
                 </div>
                 @else
-                <ul class="mi-exam-list">
+                <ul class="m-0 flex list-none flex-col gap-1.5 p-0">
                     @foreach($examenes as $examen)
                     <li
                         wire:click="seleccionarExamen({{ $examen['id'] }})"
-                        class="mi-exam-item {{ $examenId === $examen['id'] ? 'mi-exam-item-active' : '' }}">
-                        <div class="mi-exam-icon">
+                        class="flex cursor-pointer items-center gap-3 rounded-[10px] border px-3.5 py-3 transition-all duration-200
+                            {{ $examenId === $examen['id']
+                                ? 'border-[#534ab7] bg-[#6366f1]/12 dark:border-[#8b83e8] dark:bg-[#8b83e8]/12'
+                                : 'border-transparent hover:border-black/6 hover:bg-[#f5f6fd] dark:hover:border-white/8 dark:hover:bg-[#21233a]' }}">
+                        <div class="shrink-0 text-[#534ab7] dark:text-[#8b83e8]">
                             @svg('heroicon-o-document-text', 'w-5 h-5')
                         </div>
-                        <div class="mi-exam-info">
-                            <div class="mi-exam-titulo">{{ $examen['titulo'] }}</div>
-                            <div class="mi-exam-meta">
+                        <div class="min-w-0 flex-1">
+                            <div class="truncate text-sm font-semibold text-[#1a1e35] dark:text-[#f1f2fb]">{{ $examen['titulo'] }}</div>
+                            <div class="mt-0.5 flex items-center gap-1 text-xs text-[#4a5068] dark:text-[#b6b9d6]">
                                 @svg('heroicon-o-arrow-path', 'w-3 h-3')
                                 {{ $examen['intentos'] }} {{ $examen['intentos'] === 1 ? 'intento' : 'intentos' }}
                             </div>
                         </div>
-                        @svg('heroicon-o-chevron-right', 'w-4 h-4 mi-exam-arrow')
+                        @svg('heroicon-o-chevron-right', 'w-4 h-4 shrink-0 text-[#8890aa] dark:text-[#82859f]')
                     </li>
                     @endforeach
                 </ul>
@@ -52,102 +59,104 @@
             {{-- ══════════════════════════════════════════════════
                  PANEL DERECHO — intentos del examen seleccionado
             ══════════════════════════════════════════════════ --}}
-            <div class="eo-card mi-panel-intentos">
+            <div class="min-h-[300px] rounded-2xl border border-[#6366f1]/12 bg-white p-6 shadow-[0_1px_4px_rgba(99,102,241,0.06)] dark:border-[#9482ff]/18 dark:bg-[#1a1c2c]">
 
                 @if(!$examenId)
                 {{-- Sin selección --}}
-                <div class="mi-empty-state">
+                <div class="flex flex-col items-center justify-center gap-3 px-5 py-[60px] text-center text-[#8890aa] dark:text-[#82859f]">
                     @svg('heroicon-o-cursor-arrow-rays', 'w-16 h-16')
-                    <p>Selecciona un examen para<br>ver tu historial de intentos</p>
+                    <p class="text-[0.9rem] leading-normal text-[#4a5068] dark:text-[#b6b9d6]">Selecciona un examen para<br>ver tu historial de intentos</p>
                 </div>
 
                 @else
-                <div class="eo-card-header">
-                    <div class="eo-card-header-icon">
+                <div class="mb-5 flex items-center gap-3">
+                    <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-[#6366f1]/10 text-[#534ab7] dark:bg-[#8b83e8]/18 dark:text-[#8b83e8]">
                         @svg('heroicon-o-clock', 'w-5 h-5')
                     </div>
-                    <div class="eo-card-header-text">
-                        <div class="eo-card-header-title">Historial de Intentos</div>
-                        <div class="eo-card-header-sub">{{ Str::limit($examenTitulo, 40) }}</div>
+                    <div>
+                        <div class="text-[15px] leading-[1.2] font-semibold text-[#1a1e35] dark:text-[#f1f2fb]">Historial de Intentos</div>
+                        <div class="mt-0.5 text-xs text-[#8890aa] dark:text-[#82859f]">{{ Str::limit($examenTitulo, 40) }}</div>
                     </div>
                 </div>
 
                 @if(empty($intentos))
-                <div class="mi-empty-state">
+                <div class="flex flex-col items-center justify-center gap-3 px-5 py-[60px] text-center text-[#8890aa] dark:text-[#82859f]">
                     @svg('heroicon-o-inbox', 'w-12 h-12')
-                    <p>No hay intentos para este examen.</p>
+                    <p class="text-[0.9rem] leading-normal text-[#4a5068] dark:text-[#b6b9d6]">No hay intentos para este examen.</p>
                 </div>
                 @else
-                <div class="mi-intentos-wrap">
+                <div class="flex flex-col gap-3.5 py-1">
                     @foreach($intentos as $idx => $intento)
-                    <div class="mi-intento-card {{ $intento['aprobado'] ? 'mi-intento-aprobado' : 'mi-intento-fallido' }}">
+                    <div class="rounded-xl border border-black/6 bg-[#f5f6fd] px-5 py-4 transition-colors dark:border-white/8 dark:bg-[#21233a]
+                        {{ $intento['aprobado'] ? 'border-l-4 border-l-emerald-500' : 'border-l-4 border-l-red-500' }}">
 
                         {{-- Número de intento + badge --}}
-                        <div class="mi-intento-header">
-                            <span class="mi-intento-num">Intento #{{ count($intentos) - $idx }}</span>
+                        <div class="mb-3.5 flex items-center justify-between">
+                            <span class="text-[0.95rem] font-bold text-[#1a1e35] dark:text-[#f1f2fb]">Intento #{{ count($intentos) - $idx }}</span>
                             @if($intento['aprobado'])
-                            <span class="mi-badge mi-badge-aprobado">
+                            <span class="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/15 px-2.5 py-[3px] text-xs font-semibold text-emerald-500">
                                 @svg('heroicon-o-check-circle', 'w-3 h-3') Aprobado
                             </span>
                             @else
-                            <span class="mi-badge mi-badge-fallido">
+                            <span class="inline-flex items-center gap-1 rounded-full border border-red-500/30 bg-red-500/15 px-2.5 py-[3px] text-xs font-semibold text-red-500">
                                 @svg('heroicon-o-x-circle', 'w-3 h-3') No aprobado
                             </span>
                             @endif
                         </div>
 
                         {{-- Stats --}}
-                        <div class="mi-intento-stats">
-                            <div class="mi-stat">
-                                <div class="mi-stat-label">Puntaje</div>
-                                <div class="mi-stat-value {{ $intento['aprobado'] ? 'mi-stat-green' : 'mi-stat-red' }}">
+                        <div class="mb-4 grid grid-cols-4 gap-3 max-[600px]:grid-cols-2">
+                            <div class="flex flex-col gap-1">
+                                <div class="text-[0.7rem] tracking-wider text-[#8890aa] uppercase dark:text-[#82859f]">Puntaje</div>
+                                <div class="text-[1.2rem] font-bold {{ $intento['aprobado'] ? 'text-emerald-500' : 'text-red-500' }}">
                                     {{ number_format($intento['puntaje'], 2) }}
                                 </div>
                             </div>
-                            <div class="mi-stat">
-                                <div class="mi-stat-label">Carrera</div>
-                                <div class="mi-stat-value mi-stat-small">{{ $intento['carrera'] }}</div>
+                            <div class="flex flex-col gap-1">
+                                <div class="text-[0.7rem] tracking-wider text-[#8890aa] uppercase dark:text-[#82859f]">Carrera</div>
+                                <div class="text-[0.85rem] font-bold text-[#1a1e35] dark:text-[#f1f2fb]">{{ $intento['carrera'] }}</div>
                             </div>
-                            <div class="mi-stat">
-                                <div class="mi-stat-label">Tiempo</div>
-                                <div class="mi-stat-value">
-                                    {{ $intento['tiempo_min'] }}<span class="mi-stat-unit">m</span>
-                                    {{ $intento['tiempo_seg'] }}<span class="mi-stat-unit">s</span>
+                            <div class="flex flex-col gap-1">
+                                <div class="text-[0.7rem] tracking-wider text-[#8890aa] uppercase dark:text-[#82859f]">Tiempo</div>
+                                <div class="text-[1.2rem] font-bold text-[#1a1e35] dark:text-[#f1f2fb]">
+                                    {{ $intento['tiempo_min'] }}<span class="text-xs font-normal text-[#4a5068] dark:text-[#b6b9d6]">m</span>
+                                    {{ $intento['tiempo_seg'] }}<span class="text-xs font-normal text-[#4a5068] dark:text-[#b6b9d6]">s</span>
                                 </div>
                             </div>
-                            <div class="mi-stat">
-                                <div class="mi-stat-label">Fecha</div>
-                                <div class="mi-stat-value mi-stat-small">{{ $intento['fecha'] }}</div>
+                            <div class="flex flex-col gap-1">
+                                <div class="text-[0.7rem] tracking-wider text-[#8890aa] uppercase dark:text-[#82859f]">Fecha</div>
+                                <div class="text-[0.85rem] font-bold text-[#1a1e35] dark:text-[#f1f2fb]">{{ $intento['fecha'] }}</div>
                             </div>
                         </div>
 
                         {{-- Acción --}}
-                        <div class="mi-acciones">
+                        <div class="flex flex-wrap items-center gap-3">
+                            @php
+                                $btnDetalle = 'box-border inline-flex h-9 max-w-[300px] items-center gap-1.5 rounded-lg border border-[#6366f1]/12 bg-transparent px-4 text-[0.8rem] text-[#4a5068] no-underline transition-all duration-200 hover:border-[#534ab7] hover:bg-[#6366f1]/8 hover:text-[#534ab7] dark:border-[#9482ff]/18 dark:text-[#b6b9d6] dark:hover:border-[#8b83e8] dark:hover:bg-[#8b83e8]/8 dark:hover:text-[#8b83e8]';
+                            @endphp
                             <button
                                 wire:click="verDetalle({{ $intento['id'] }})"
-                                class="mi-btn-detalle">
-                                @svg('heroicon-o-magnifying-glass', 'w-4 h-4')
-                                <span class="mi-btn-text">Ver detalle</span>
+                                class="{{ $btnDetalle }}">
+                                @svg('heroicon-o-magnifying-glass', 'w-4 h-4 shrink-0')
+                                <span class="truncate whitespace-nowrap">Ver detalle</span>
                             </button>
 
                             @if($intento['pdf_path'])
                             <a href="{{ asset('storage/' . $intento['pdf_path']) }}"
                                 target="_blank"
                                 download
-                                class="mi-btn-detalle mi-btn-download"
+                                class="{{ $btnDetalle }}"
                                 x-data="{ descargando: false }"
                                 @click="descargando = true; setTimeout(() => descargando = false, 1000)">
 
                                 {{-- Estado Normal --}}
-                                <span class="mi-btn-estado" x-show="!descargando">
-                                    <!-- @svg('heroicon-o-arrow-down-tray', 'w-4 h-4') -->
-                                    <span class="mi-btn-text">{{ basename($intento['pdf_path']) }}</span>
+                                <span class="inline-flex max-w-full items-center gap-1.5" x-show="!descargando">
+                                    <span class="truncate whitespace-nowrap">{{ basename($intento['pdf_path']) }}</span>
                                 </span>
 
                                 {{-- Estado Descargando --}}
-                                <span class="mi-btn-estado" x-show="descargando" x-cloak>
-                                    <!-- @svg('heroicon-o-arrow-path', 'w-4 h-4 animate-spin') -->
-                                    <span class="mi-btn-text">Descargando...</span>
+                                <span class="inline-flex max-w-full items-center gap-1.5" x-show="descargando" x-cloak>
+                                    <span class="truncate whitespace-nowrap">Descargando...</span>
                                 </span>
                             </a>
                             @endif
@@ -164,24 +173,24 @@
              MODAL — detalle pregunta por pregunta
         ══════════════════════════════════════════════════════ --}}
         @if($modalOpen)
-        <div class="eo-modal-backdrop" wire:click.self="cerrarModal">
-            <div class="eo-modal mi-modal">
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-[#141628]/35 p-4" wire:click.self="cerrarModal">
+            <div class="flex max-h-[85vh] w-[95vw] max-w-[700px] flex-col overflow-hidden rounded-2xl border border-[#6366f1]/12 bg-white shadow-[0_8px_32px_rgba(99,102,241,0.12)] dark:border-[#9482ff]/18 dark:bg-[#1a1c2c]">
 
-                <div class="eo-modal-header mi-modal-header-custom">
-                    <div class="mi-modal-header-content">
+                <div class="relative flex w-full items-start pt-2 pr-12">
+                    <div class="mt-2.5 flex w-full items-center justify-between gap-[30px] max-[640px]:flex-col max-[640px]:items-start max-[640px]:gap-4">
 
                         {{-- COLUMNA IZQUIERDA: Textos y Puntos --}}
-                        <div class="mi-modal-info-left">
-                            <span class="eo-modal-title">Detalle del Intento</span>
-                            <div class="eo-modal-exam-name">{{ $modalExamenTitulo }}</div>
-                            <div class="mi-modal-resumen">
-                                <span class="mi-modal-puntaje">{{ number_format($modalPuntaje, 2) }} pts</span>
+                        <div class="flex-1">
+                            <span class="text-[15px] font-bold text-[#1a1e35] dark:text-[#f1f2fb]">Detalle del Intento</span>
+                            <div class="mt-0.5 text-xs text-[#8890aa] dark:text-[#82859f]">{{ $modalExamenTitulo }}</div>
+                            <div class="mt-1.5 flex items-center gap-2.5">
+                                <span class="text-[1.4rem] font-bold text-[#534ab7] dark:text-[#8b83e8]">{{ number_format($modalPuntaje, 2) }} pts</span>
                                 @if($modalAprobado)
-                                <span class="mi-badge mi-badge-aprobado">
+                                <span class="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/15 px-2.5 py-[3px] text-xs font-semibold text-emerald-500">
                                     @svg('heroicon-o-check-circle', 'w-3 h-3') Aprobado
                                 </span>
                                 @else
-                                <span class="mi-badge mi-badge-fallido">
+                                <span class="inline-flex items-center gap-1 rounded-full border border-red-500/30 bg-red-500/15 px-2.5 py-[3px] text-xs font-semibold text-red-500">
                                     @svg('heroicon-o-x-circle', 'w-3 h-3') No aprobado
                                 </span>
                                 @endif
@@ -189,76 +198,72 @@
                         </div>
 
                         {{-- COLUMNA DERECHA: Barra de progreso --}}
-                        <div class="mi-modal-info-right">
+                        <div class="w-full flex-1 max-w-[320px] max-[640px]:max-w-full">
                             @php
                             $porcentaje = $modalPuntajeMinimo > 0
                             ? min(100, round(($modalPuntaje / $modalPuntajeMinimo) * 100, 1))
                             : 0;
                             @endphp
-                            <div class="mi-progress-wrap">
-                                <div class="mi-progress-labels">
-                                    <span class="mi-progress-label-left">
-                                        Área: <strong>{{ $modalAreaNombre }}</strong>
-                                    </span>
-                                    <span class="mi-progress-label-right">
-                                        Mínimo: <strong>{{ number_format($modalPuntajeMinimo, 2) }} pts</strong>
-                                    </span>
+                            <div class="w-full">
+                                <div class="mb-1.5 flex justify-between text-[0.78rem] text-[#4a5068] dark:text-[#b6b9d6]">
+                                    <span>Área: <strong>{{ $modalAreaNombre }}</strong></span>
+                                    <span>Mínimo: <strong>{{ number_format($modalPuntajeMinimo, 2) }} pts</strong></span>
                                 </div>
-                                <div class="mi-progress-bar-bg">
+                                <div class="h-2 overflow-hidden rounded-full bg-black/6 dark:bg-white/8">
                                     <div
-                                        class="mi-progress-bar-fill {{ $modalAprobado ? 'mi-progress-green' : 'mi-progress-red' }}"
+                                        class="h-full rounded-full transition-[width] duration-[600ms] ease-in-out {{ $modalAprobado ? 'bg-emerald-500' : 'bg-red-500' }}"
                                         style="width: {{ $porcentaje }}%">
                                     </div>
                                 </div>
-                                <div class="mi-progress-pct">{{ $porcentaje }}% del mínimo requerido</div>
+                                <div class="mt-1 text-right text-[0.72rem] text-[#8890aa] dark:text-[#82859f]">{{ $porcentaje }}% del mínimo requerido</div>
                             </div>
                         </div>
 
                     </div>
 
-                    <button wire:click="cerrarModal" class="eo-modal-close">
+                    <button wire:click="cerrarModal" class="absolute top-0 right-0 z-10 m-[5px] flex h-[30px] w-[30px] items-center justify-center rounded-lg border border-[#6366f1]/12 bg-[#f5f6fd] text-[#4a5068] transition-colors duration-200 hover:bg-[#6366f1]/10 hover:text-[#534ab7] dark:border-[#9482ff]/18 dark:bg-[#21233a] dark:text-[#b6b9d6] dark:hover:bg-[#8b83e8]/18 dark:hover:text-[#8b83e8]">
                         @svg('heroicon-o-x-mark', 'w-5 h-5')
                     </button>
                 </div>
 
                 {{-- Leyenda --}}
-                <div class="mi-leyenda">
-                    <span class="mi-leyenda-item">
-                        <span class="mi-dot mi-dot-correcta"></span> Correcta
+                <div class="mb-1 flex gap-4 border-b border-black/6 p-2.5 dark:border-white/8">
+                    <span class="flex items-center gap-1.5 text-[0.8rem] text-[#4a5068] dark:text-[#b6b9d6]">
+                        <span class="inline-block h-2.5 w-2.5 rounded-full bg-emerald-500"></span> Correcta
                     </span>
-                    <span class="mi-leyenda-item">
-                        <span class="mi-dot mi-dot-incorrecta"></span> Incorrecta
+                    <span class="flex items-center gap-1.5 text-[0.8rem] text-[#4a5068] dark:text-[#b6b9d6]">
+                        <span class="inline-block h-2.5 w-2.5 rounded-full bg-red-500"></span> Incorrecta
                     </span>
                 </div>
 
                 {{-- Tabla de respuestas --}}
-                <div class="eo-rank-list-scroll mi-detalle-scroll">
-                    <table class="mi-detalle-table">
+                <div class="max-h-[55vh] overflow-y-auto [scrollbar-width:thin]">
+                    <table class="w-full border-collapse text-sm">
                         <thead>
                             <tr>
-                                <th>N°</th>
-                                <th>Asignatura</th>
-                                <th>Tu Resp.</th>
-                                <th>Correcta</th>
-                                <th>Puntos</th>
+                                <th class="sticky top-0 border-b border-black/6 bg-white px-3 py-2.5 text-left text-xs tracking-wider text-[#4a5068] uppercase dark:border-white/8 dark:bg-[#1a1c2c] dark:text-[#b6b9d6]">N°</th>
+                                <th class="sticky top-0 border-b border-black/6 bg-white px-3 py-2.5 text-left text-xs tracking-wider text-[#4a5068] uppercase dark:border-white/8 dark:bg-[#1a1c2c] dark:text-[#b6b9d6]">Asignatura</th>
+                                <th class="sticky top-0 border-b border-black/6 bg-white px-3 py-2.5 text-center text-xs tracking-wider text-[#4a5068] uppercase dark:border-white/8 dark:bg-[#1a1c2c] dark:text-[#b6b9d6]">Tu Resp.</th>
+                                <th class="sticky top-0 border-b border-black/6 bg-white px-3 py-2.5 text-center text-xs tracking-wider text-[#4a5068] uppercase dark:border-white/8 dark:bg-[#1a1c2c] dark:text-[#b6b9d6]">Correcta</th>
+                                <th class="sticky top-0 border-b border-black/6 bg-white px-3 py-2.5 text-right text-xs tracking-wider text-[#4a5068] uppercase dark:border-white/8 dark:bg-[#1a1c2c] dark:text-[#b6b9d6]">Puntos</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($modalDetalle as $fila)
-                            <tr class="{{ $fila['es_correcta'] ? 'mi-fila-correcta' : 'mi-fila-incorrecta' }}">
-                                <td class="mi-td-num">{{ str_pad($fila['numero'], 2, '0', STR_PAD_LEFT) }}</td>
-                                <td class="mi-td-asig">{{ ucfirst(str_replace('_', ' ', $fila['asignatura'])) }}</td>
-                                <td class="mi-td-resp">
-                                    <span class="mi-opcion {{ $fila['es_correcta'] ? 'mi-opcion-ok' : 'mi-opcion-fail' }}">
+                            <tr class="border-b border-black/6 transition-colors hover:bg-[#f5f6fd] dark:border-white/8 dark:hover:bg-[#21233a] {{ $fila['es_correcta'] ? 'bg-emerald-500/5' : 'bg-red-500/5' }}">
+                                <td class="w-12 px-3 py-2.5 font-bold text-[#8890aa] dark:text-[#82859f]">{{ str_pad($fila['numero'], 2, '0', STR_PAD_LEFT) }}</td>
+                                <td class="px-3 py-2.5 text-[0.8rem] text-[#4a5068] dark:text-[#b6b9d6]">{{ ucfirst(str_replace('_', ' ', $fila['asignatura'])) }}</td>
+                                <td class="px-3 py-2.5 text-center">
+                                    <span class="inline-flex h-7 w-7 items-center justify-center rounded-full border-2 border-transparent text-[0.8rem] font-bold {{ $fila['es_correcta'] ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white' }}">
                                         {{ $fila['marcada'] }}
                                     </span>
                                 </td>
-                                <td class="mi-td-resp">
-                                    <span class="mi-opcion mi-opcion-correcta">
+                                <td class="px-3 py-2.5 text-center">
+                                    <span class="inline-flex h-7 w-7 items-center justify-center rounded-full border-2 border-emerald-500 bg-transparent text-[0.8rem] font-bold text-emerald-500">
                                         {{ $fila['correcta'] }}
                                     </span>
                                 </td>
-                                <td class="mi-td-pts {{ $fila['puntos'] > 0 ? 'mi-pts-pos' : 'mi-pts-neg' }}">
+                                <td class="px-3 py-2.5 text-right font-bold {{ $fila['puntos'] > 0 ? 'text-emerald-500' : 'text-red-500' }}">
                                     {{ $fila['puntos'] > 0 ? '+' : '' }}{{ number_format($fila['puntos'], 3) }}
                                 </td>
                             </tr>

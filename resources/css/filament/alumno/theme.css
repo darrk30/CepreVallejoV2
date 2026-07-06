@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Handlee&family=Nunito:wght@300;400;600;700;800;900&display=swap');
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+/* Filament alterna la clase .dark en <html> manualmente (no depende del
+   prefers-color-scheme del SO). Sin esto, las utilidades dark: de Tailwind
+   seguirían el tema del sistema operativo en vez del toggle de Filament. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --font-handlee: 'Handlee', cursive;
+    --font-nunito: 'Nunito', sans-serif;
+    --animate-modal-in: modal-in 0.2s ease;
+}
+
+@keyframes modal-in {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@source '../../../../app/Filament/Alumno';
+@source '../../../../resources/views/filament/alumno';

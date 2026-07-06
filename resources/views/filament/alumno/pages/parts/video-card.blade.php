@@ -8,203 +8,26 @@
     }
 @endphp
 
-<style>
-    /* ═══════════════════════════════════════
-       VIDEO CARD — Estilos Integrados
-    ═══════════════════════════════════════ */
-    .video-card {
-        background: var(--surface, #fff);
-        border-radius: 12px;
-        overflow: hidden;
-        border: 1px solid var(--border, rgba(99,102,241,.14));
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        position: relative; /* Crítico para el stretched link */
-        box-shadow: var(--sh-sm, 0 1px 4px rgba(79,70,229,.07));
-        transition: transform .32s cubic-bezier(.4,0,.2,1),
-                    box-shadow .32s cubic-bezier(.4,0,.2,1),
-                    border-color .2s;
-        cursor: pointer;
-    }
-
-    .dark .video-card {
-        background: var(--surface, #151424);
-        border-color: var(--border, rgba(129,140,248,.12));
-    }
-
-    /* Enlace que expande el clic a toda la card */
-    .video-stretched-link {
-        position: absolute;
-        inset: 0;
-        z-index: 1; /* Por debajo del botón de favorito */
-    }
-
-    @media (hover: hover) {
-        .video-card:hover {
-            transform: translateY(-5px) rotate(-.2deg);
-            box-shadow: 0 16px 40px rgba(79,70,229,.13), 0 4px 12px rgba(79,70,229,.07);
-            border-color: var(--accent-bd, rgba(91,94,244,.25));
-        }
-    }
-
-    /* ── Thumbnail ── */
-    .video-thumb-container {
-        aspect-ratio: 16 / 9;
-        position: relative;
-        overflow: hidden;
-        background: var(--surface3, #eeecfb);
-    }
-
-    .video-thumb-img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-        transition: transform .5s cubic-bezier(.4,0,.2,1);
-    }
-
-    .video-card:hover .video-thumb-img { 
-        transform: scale(1.07); 
-    }
-
-    /* Overlay play */
-    .play-overlay {
-        position: absolute;
-        inset: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(11,10,26,.3);
-        opacity: 0;
-        transition: opacity .25s;
-    }
-
-    .video-card:hover .play-overlay { 
-        opacity: 1; 
-    }
-
-    .play-circle {
-        width: 48px;
-        height: 48px;
-        background: var(--accent, #5b5ef4);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 6px 20px var(--accent-gl, rgba(91,94,244,.35));
-        transition: transform .2s;
-    }
-
-    .play-circle svg { 
-        width: 20px; 
-        height: 20px; 
-        color: #fff; 
-        margin-left: 3px; 
-    }
-
-    /* ── Botón Favorito (Independiente) ── */
-    .video-fav-btn {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        z-index: 10; /* Superior al enlace mask */
-        background: rgba(255,255,255,.9);
-        border: none;
-        width: 34px;
-        height: 34px;
-        border-radius: 9px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        backdrop-filter: blur(8px);
-        box-shadow: 0 2px 8px rgba(0,0,0,.12);
-        transition: transform .2s cubic-bezier(.34,1.56,.64,1);
-        padding: 0;
-    }
-
-    .dark .video-fav-btn { 
-        background: rgba(30,28,55,.9); 
-    }
-
-    .video-fav-btn:hover { 
-        transform: scale(1.15); 
-    }
-
-    .video-fav-btn svg { 
-        width: 17px; 
-        height: 17px; 
-    }
-
-    /* ── Cuerpo ── */
-    .video-info {
-        padding: 15px;
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-    }
-
-    .video-area-badge {
-        font-size: 0.58rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: .1em;
-        color: var(--accent, #5b5ef4);
-        background: var(--accent-bg, rgba(91,94,244,.07));
-        border: 1px solid var(--accent-bd, rgba(91,94,244,.2));
-        padding: 2px 8px;
-        border-radius: 5px;
-        width: fit-content;
-        margin-bottom: 4px;
-    }
-
-    .video-card-title {
-        font-family: 'Handlee', serif;
-        font-size: 0.95rem;
-        font-weight: 700;
-        color: var(--text1, #0c0b1a);
-        line-height: 1.35;
-        margin: 0;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        letter-spacing: -.01em;
-    }
-
-    .video-card-description {
-        font-size: 0.73rem;
-        color: var(--muted, #8b88b0);
-        line-height: 1.5;
-        margin-top: 4px;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        font-style: italic;
-    }
-</style>
-
-<div class="video-card">
+{{-- Migrado a Tailwind. Si algo falla, descomenta el <style> de abajo (git
+     historial) y quita las clases Tailwind del <div class="video-card">. --}}
+<div class="group video-card relative flex h-full cursor-pointer flex-col overflow-hidden rounded-xl border border-[#6366f1]/14 bg-white shadow-[0_1px_4px_rgba(79,70,229,0.07),0_1px_2px_rgba(0,0,0,0.04)] transition-[transform,box-shadow,border-color] duration-[320ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:-translate-y-[5px] hover:-rotate-[0.2deg] hover:border-[#5b5ef4]/25 hover:shadow-[0_16px_40px_rgba(79,70,229,0.13),0_4px_12px_rgba(79,70,229,0.07)] dark:border-[#818cf8]/12 dark:bg-[#151424]">
 
     {{-- Enlace que cubre toda la tarjeta --}}
     <a href="{{ \App\Filament\Alumno\Pages\ReproductorVideo::getUrl(['videoSlug' => $video->slug]) }}"
-       class="video-stretched-link"
+       class="absolute inset-0 z-[1]"
        title="Ver {{ $video->titulo }}">
     </a>
 
     {{-- Thumbnail --}}
-    <div class="video-thumb-container">
+    <div class="relative aspect-video overflow-hidden bg-[#eeecfb] dark:bg-[#221f3a]">
         @if($thumbnailUrl)
             <img src="{{ $thumbnailUrl }}"
-                 class="video-thumb-img"
+                 class="block h-full w-full object-cover transition-transform duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:scale-[1.07]"
                  alt="{{ $video->titulo }}"
                  loading="lazy">
         @else
-            <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
-                <svg style="width:36px;height:36px;color:var(--accent);opacity:.25;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="flex h-full w-full items-center justify-center">
+                <svg class="h-9 w-9 text-[#5b5ef4] opacity-25 dark:text-[#818cf8]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
@@ -212,20 +35,20 @@
         @endif
 
         {{-- Icono Play al Hover --}}
-        <div class="play-overlay">
-            <div class="play-circle">
-                <svg fill="currentColor" viewBox="0 0 20 20">
+        <div class="absolute inset-0 flex items-center justify-center bg-[#0b0a1a]/30 opacity-0 transition-opacity duration-[250ms] group-hover:opacity-100">
+            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-[#5b5ef4] shadow-[0_6px_20px_rgba(91,94,244,0.18)] transition-transform duration-200 group-hover:scale-110 dark:bg-[#818cf8] dark:shadow-[0_6px_20px_rgba(129,140,248,0.22)]">
+                <svg class="ml-0.5 h-5 w-5 text-white" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M4.5 2.691l11 7.309-11 7.309V2.691z"/>
                 </svg>
             </div>
         </div>
 
         {{-- Botón Favorito (Independiente) --}}
-        <button class="video-fav-btn"
+        <button class="absolute top-[10px] right-[10px] z-10 flex h-[34px] w-[34px] items-center justify-center rounded-[9px] border-none bg-white/90 p-0 shadow-[0_2px_8px_rgba(0,0,0,0.12)] backdrop-blur-[8px] transition-transform duration-200 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:scale-[1.15] dark:bg-[#1e1c37]/90"
             wire:click.stop="toggleFavorite({{ $video->id }})"
             type="button"
             aria-label="{{ $isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos' }}">
-            <svg fill="{{ $isFavorite ? '#dc2626' : 'none' }}"
+            <svg class="h-[17px] w-[17px]" fill="{{ $isFavorite ? '#dc2626' : 'none' }}"
                  stroke="{{ $isFavorite ? '#dc2626' : '#8b88b0' }}"
                  viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -235,13 +58,13 @@
     </div>
 
     {{-- Información --}}
-    <div class="video-info">
-        <span class="video-area-badge">{{ $video->area?->nombre ?? 'General' }}</span>
+    <div class="flex flex-1 flex-col gap-1 p-[15px]">
+        <span class="mb-1 w-fit rounded-[5px] border border-[#5b5ef4]/25 bg-[#5b5ef4]/7 px-2 py-0.5 text-[0.58rem] font-bold tracking-[0.1em] text-[#5b5ef4] uppercase dark:border-[#818cf8]/25 dark:bg-[#818cf8]/8 dark:text-[#818cf8]">{{ $video->area?->nombre ?? 'General' }}</span>
 
-        <h3 class="video-card-title">{{ $video->titulo }}</h3>
+        <h3 class="m-0 line-clamp-2 font-handlee text-[0.95rem] leading-[1.35] font-bold tracking-[-0.01em] text-[#0c0b1a] dark:text-[#edecf8]">{{ $video->titulo }}</h3>
 
         @if ($video->descripcion)
-            <p class="video-card-description">{{ $video->descripcion }}</p>
+            <p class="mt-1 line-clamp-2 text-[0.73rem] leading-[1.5] text-[#8b88b0] italic dark:text-[#636086]">{{ $video->descripcion }}</p>
         @endif
     </div>
 
