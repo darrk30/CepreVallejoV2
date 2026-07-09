@@ -104,7 +104,7 @@ class InscriptionForm
                                             'password' => bcrypt($data['dni']),
                                         ]);
 
-                                        $user->assignRole('alumno');
+                                        $user->assignRole('Alumno');
 
                                         $student = Student::create([
                                             'user_id' => $user->id,

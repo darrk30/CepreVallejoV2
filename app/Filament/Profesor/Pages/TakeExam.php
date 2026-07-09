@@ -37,7 +37,8 @@ class TakeExam extends Page implements HasActions
         ])->where('estado', 'activo')->findOrFail($examId);
 
         $userId    = Auth::id();
-        $teacherId = Auth::user()?->teacher?->id;
+        $user      = Auth::user();
+        $teacherId = $user?->teacher?->id;
 
         // ── Modo preview ──────────────────────────────────────
         $creadorId          = $this->exam->user_create_id;
@@ -47,6 +48,24 @@ class TakeExam extends Page implements HasActions
             $this->isPreview = true;
             return;
         }
+
+        // Un profesor sin relación con este examen no puede "rendirlo" como alumno
+        abort_if($teacherId, 403);
+
+        // Verificar que el alumno esté matriculado (mismo turno) en el curso
+        // al que pertenece este examen; si no, no puede acceder a él.
+        $turnoExamen = $this->exam->detail?->content?->cicloCourseTeacher?->turno_id;
+
+        $ultimaInscripcion = $user?->student
+            ?->inscriptions()
+            ->where('estado_pago', '!=', 'Cancelado')
+            ->latest()
+            ->first();
+
+        abort_unless(
+            $turnoExamen && $ultimaInscripcion && $ultimaInscripcion->turno_id === $turnoExamen,
+            403
+        );
 
         // ── ¿Ya tiene intento finalizado? → resultados ────────
         $intentoFinalizado = ExamAttempt::where('exam_id', $examId)

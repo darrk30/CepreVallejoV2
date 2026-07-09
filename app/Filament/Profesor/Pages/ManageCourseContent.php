@@ -182,6 +182,11 @@ class ManageCourseContent extends Page implements HasActions
 
     public function moveItem(string $type, int $id, string $direction): void
     {
+        abort_unless(
+            auth()->user()->can($type === 'section' ? 'order_section' : 'order_topic'),
+            403
+        );
+
         $model = $type === 'section'
             ? TeacherCourseContent::find($id)
             : TeacherCourseContentDetail::find($id);
