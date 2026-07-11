@@ -365,9 +365,9 @@ class CreateExamProfesor extends Page implements HasSchemas, HasActions
         $courseSlug = $this->detail?->content?->cicloCourseTeacher?->cicloCourse?->course?->slug;
 
         if ($courseSlug) {
-            $this->redirect(ManageCourseContent::getUrl(['courseSlug' => $courseSlug]));
+            $this->redirect(ManageCourseContent::getUrl(['courseSlug' => $courseSlug]), navigate: true);
         } else {
-            $this->redirect(VirtualClassroom::getUrl());
+            $this->redirect(VirtualClassroom::getUrl(), navigate: true);
         }
     }
 
@@ -377,9 +377,9 @@ class CreateExamProfesor extends Page implements HasSchemas, HasActions
         $courseSlug = $this->detail?->content?->cicloCourseTeacher?->cicloCourse?->course?->slug;
 
         if ($courseSlug) {
-            $this->redirect(ManageCourseContent::getUrl(['courseSlug' => $courseSlug]));
+            $this->redirect(ManageCourseContent::getUrl(['courseSlug' => $courseSlug]), navigate: true);
         } else {
-            $this->redirect(VirtualClassroom::getUrl());
+            $this->redirect(VirtualClassroom::getUrl(), navigate: true);
         }
     }
 }

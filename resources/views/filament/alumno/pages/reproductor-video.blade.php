@@ -66,6 +66,7 @@
                     @endif
 
                     <a href="{{ \App\Filament\Alumno\Pages\ReproductorVideo::getUrl(['videoSlug' => $rec->slug]) }}"
+                       wire:navigate
                        class="group flex gap-3 rounded-[14px] border border-transparent p-2.5 no-underline transition-[background-color,transform,box-shadow] duration-150 hover:translate-x-[3px] hover:border-[#6366f1]/14 hover:bg-[#f9f8ff] hover:shadow-[0_1px_4px_rgba(79,70,229,0.07),0_1px_2px_rgba(0,0,0,0.04)] dark:hover:border-[#818cf8]/12 dark:hover:bg-[#1b1a2e]">
                         <div class="relative aspect-video w-[140px] shrink-0 overflow-hidden rounded-[9px] bg-[#eeecfb] dark:bg-[#221f3a]">
                             @if ($recThumb)

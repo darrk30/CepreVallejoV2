@@ -365,7 +365,7 @@ class ManageCourseContent extends Page implements HasActions
                     403
                 );
 
-                $this->redirect(CreateExamProfesor::getUrl(['detailId' => $detailId]));
+                $this->redirect(CreateExamProfesor::getUrl(['detailId' => $detailId]), navigate: true);
             })
             // ... iconos y colores iguales
             ->iconButton()

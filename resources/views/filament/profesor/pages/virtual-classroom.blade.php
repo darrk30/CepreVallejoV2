@@ -60,7 +60,7 @@
                                     el presente ciclo.</p> --}}
                                 {{-- <a href="{{ route('filament.profesor.resources.teacher-course-contents.index', ['tableFilters[ciclo_course_teacher_id][value]' => $assignment->id]) }}" --}}
                                 <a href="{{ \App\Filament\Profesor\Pages\ManageCourseContent::getUrl(['courseSlug' => $course->slug]) }}"
-                                    class="cr-btn">
+                                    wire:navigate class="cr-btn">
                                     Entrar al Aula
                                     <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none"
                                         viewBox="0 0 24 24" stroke-width="2.2" stroke="currentColor">

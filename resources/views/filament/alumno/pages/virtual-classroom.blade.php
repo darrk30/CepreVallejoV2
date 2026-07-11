@@ -434,6 +434,7 @@
 
                                     {{-- Enlace al contenido del curso (vista solo lectura para alumno) --}}
                                     <a href="{{ \App\Filament\Profesor\Pages\ManageCourseContent::getUrl(['courseSlug' => $course->slug]) }}"
+                                        wire:navigate
                                         class="group/btn inline-flex items-center justify-center gap-2 rounded-[10px] border-none bg-[#5b5ef4] px-[18px] py-2.5 text-[0.81rem] font-medium text-white no-underline shadow-[0_2px_10px_rgba(91,94,244,0.18)] transition-[background-color,transform,box-shadow] duration-[180ms] ease-out hover:-translate-y-px hover:bg-[#4643d4] hover:text-white hover:no-underline hover:shadow-[0_6px_18px_rgba(91,94,244,0.18)] dark:bg-[#818cf8] dark:shadow-[0_2px_10px_rgba(129,140,248,0.22)] dark:hover:bg-[#a5b4fc] dark:hover:shadow-[0_6px_18px_rgba(129,140,248,0.22)]">
                                         Ver curso
                                         <svg class="h-[13px] w-[13px] shrink-0 transition-transform duration-200 group-hover/btn:translate-x-0.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"

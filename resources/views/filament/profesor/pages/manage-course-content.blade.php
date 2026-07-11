@@ -307,7 +307,7 @@
                                                 @php $exam = $detail->exam ?? null; @endphp
                                                 @if ($exam && $exam->estado === 'activo')
                                                     <a href="{{ \App\Filament\Profesor\Pages\TakeExam::getUrl(['examId' => $exam->id]) }}"
-                                                        class="res-exam" title="{{ $exam->titulo }}">
+                                                        wire:navigate class="res-exam" title="{{ $exam->titulo }}">
                                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                                                             viewBox="0 0 24 24" stroke-width="2"
                                                             stroke="currentColor">
@@ -351,7 +351,7 @@
 
                                                     @if ($hasResults)
                                                         <a href="{{ \App\Filament\Profesor\Pages\ExamResults::getUrl(['examId' => $detailExam->id]) }}"
-                                                            class="icon-btn btn-results"
+                                                            wire:navigate class="icon-btn btn-results"
                                                             data-tip="Ver resultados de alumnos"
                                                             style="color: var(--blue); background: var(--blue-bg); border-color: var(--blue-bd);">
                                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -436,7 +436,8 @@
 
                                                         @if ($hasResults)
                                                             <a href="{{ \App\Filament\Profesor\Pages\ExamResults::getUrl(['examId' => $detailExam->id]) }}"
-                                                                class="dropdown-item" style="color: var(--blue);">
+                                                                wire:navigate class="dropdown-item"
+                                                                style="color: var(--blue);">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                                                                     viewBox="0 0 24 24" stroke-width="2"
                                                                     stroke="currentColor">
@@ -530,7 +531,8 @@
                         Por favor, contacte con administración.
                     </p>
 
-                    <a href="{{ \App\Filament\Profesor\Pages\VirtualClassroom::getUrl() }}" class="no-teacher-btn">
+                    <a href="{{ \App\Filament\Profesor\Pages\VirtualClassroom::getUrl() }}" wire:navigate
+                        class="no-teacher-btn">
                         Volver al Aula Virtual
                     </a>
                 </div>

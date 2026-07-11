@@ -86,6 +86,7 @@
 
                             <!-- Botón Primario: Iniciar Examen -->
                             <a href="{{ \App\Filament\Alumno\Pages\RendirExamen::getUrl(['examen_id' => $examen['id']]) }}"
+                                wire:navigate
                                 class="box-border inline-flex h-10 flex-[2] items-center justify-center gap-2 rounded-[10px] border-2 border-[#534ab7] bg-[#534ab7] px-2 py-[5px] text-white no-underline shadow-[0_4px_10px_rgba(99,102,241,0.25)] transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] hover:-translate-y-0.5 hover:border-[#4f46e5] hover:bg-[#4f46e5] hover:shadow-[0_6px_14px_rgba(99,102,241,0.35)] dark:border-[#8b83e8] dark:bg-[#8b83e8]"
                                 title="Iniciar Misión / Rendir Examen">
                                 @svg('heroicon-o-rocket-launch', 'w-5 h-5')

@@ -87,7 +87,7 @@ class TakeExam extends Page implements HasActions
             ->count();
 
         if ($intentosUsados >= $this->exam->intentos_maximos) {
-            $this->redirect($this->getCourseUrl());
+            $this->redirect($this->getCourseUrl(), navigate: true);
             return;
         }
 
@@ -301,7 +301,7 @@ class TakeExam extends Page implements HasActions
     public function submitExam(): void
     {
         if ($this->isPreview) {
-            $this->redirect($this->getCourseUrl());
+            $this->redirect($this->getCourseUrl(), navigate: true);
             return;
         }
         $this->finalizarConPuntaje();
@@ -311,7 +311,7 @@ class TakeExam extends Page implements HasActions
     public function abandonExam(): void
     {
         if ($this->isPreview) {
-            $this->redirect($this->getCourseUrl());
+            $this->redirect($this->getCourseUrl(), navigate: true);
             return;
         }
 
@@ -332,7 +332,7 @@ class TakeExam extends Page implements HasActions
                     'segundos_restantes' => 0,
                     'timer_synced_at'    => now(),
                 ]);
-            $this->redirect($this->getCourseUrl());
+            $this->redirect($this->getCourseUrl(), navigate: true);
         }
     }
 
@@ -345,7 +345,7 @@ class TakeExam extends Page implements HasActions
 
     public function goBackToCourse(): void
     {
-        $this->redirect($this->getCourseUrl());
+        $this->redirect($this->getCourseUrl(), navigate: true);
     }
 
     // ── Computed ──────────────────────────────────────────────
