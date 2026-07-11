@@ -4,11 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
 class CicloCourse extends Pivot
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'ciclo_id',
         'course_id',
@@ -35,6 +38,7 @@ class CicloCourse extends Pivot
 
         static::saved(fn () => Cache::forget('home.page.data'));
         static::deleted(fn () => Cache::forget('home.page.data'));
+        static::restored(fn () => Cache::forget('home.page.data'));
     }
 
 

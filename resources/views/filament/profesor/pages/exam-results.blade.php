@@ -1,6 +1,3 @@
-@push('styles')
-    <link rel="stylesheet" href="{{ asset('css/exam-results.css') }}">
-@endpush
 <x-filament-panels::page>
     @php
         $exam     = $this->exam;

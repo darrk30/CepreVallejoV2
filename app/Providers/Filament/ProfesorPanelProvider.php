@@ -11,7 +11,9 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
+use Filament\Support\Assets\Css;
 use Filament\Support\Colors\Color;
+use Filament\Support\Facades\FilamentAsset;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -89,5 +91,21 @@ class ProfesorPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
+    }
+
+    public function boot(): void
+    {
+        // Registrados como assets del panel (no con @push('styles') en cada
+        // vista): así Filament los mantiene siempre cargados en el <head>
+        // (con data-navigate-track) en cada navegación SPA. Con @push, el
+        // <link> se agregaba recién al llegar a la página y Livewire no
+        // espera a que la hoja de estilos termine de cargar antes de pintar
+        // el contenido — de ahí el "entra sin estilos y luego aparecen".
+        FilamentAsset::register([
+            Css::make('virtual-classroom-styles', asset('css/virtual-classroom.css') . '?v=' . filemtime(public_path('css/virtual-classroom.css'))),
+            Css::make('manager-course-content-styles', asset('css/managerCourseContent.css') . '?v=' . filemtime(public_path('css/managerCourseContent.css'))),
+            Css::make('take-exam-styles', asset('css/take-exam.css') . '?v=' . filemtime(public_path('css/take-exam.css'))),
+            Css::make('exam-results-styles', asset('css/exam-results.css') . '?v=' . filemtime(public_path('css/exam-results.css'))),
+        ], 'profesor');
     }
 }

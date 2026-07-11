@@ -1,6 +1,3 @@
-@push('styles')
-    <link rel="stylesheet" href="{{ asset('css/managerCourseContent.css') }}">
-@endpush
 <x-filament-panels::page>
     <div class="aula">
         @if ($this->assignmentId)

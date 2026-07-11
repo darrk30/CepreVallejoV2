@@ -1,6 +1,3 @@
-@push('styles')
-    <link rel="stylesheet" href="{{ asset('css/virtual-classroom.css') }}?v={{ filemtime(public_path('css/virtual-classroom.css')) }}">
-@endpush
 <x-filament-panels::page>
 
     <div class="cr">

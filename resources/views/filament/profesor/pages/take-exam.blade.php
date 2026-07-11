@@ -1,6 +1,3 @@
-@push('styles')
-    <link rel="stylesheet" href="{{ asset('css/take-exam.css') }}?v={{ filemtime(public_path('css/take-exam.css')) }}">
-@endpush
 <x-filament-panels::page>
     @php
         $prevAnswers = $this->attempt?->respuestas_enviadas ?? [];

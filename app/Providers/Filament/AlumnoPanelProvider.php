@@ -106,6 +106,13 @@ class AlumnoPanelProvider extends PanelProvider
         // páginas del panel, como el reproductor de audio persistente). El resto de
         // CSS/JS específico de cada página se carga con @push('styles') en su propia
         // vista para no descargar estilos que esa página no necesita.
+        //
+        // Nota: managerCourseContent.css / take-exam.css / exam-results.css (usados
+        // por "Mi Aula", exámenes y resultados, compartidos con el panel Profesor)
+        // NO se registran aquí también: FilamentAsset::register() es global — no se
+        // limita al panel donde se declara — así que ya quedan disponibles para
+        // este panel con solo registrarlos una vez desde ProfesorPanelProvider.
+        // Registrarlos en los dos providers los duplicaba (dos <link> idénticos).
         FilamentAsset::register([
             Css::make('play-podcast-styles', asset('css/play-podcast.css')),
             Js::make('podcast-player-script', asset('js/podcast-player.js')),
