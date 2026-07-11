@@ -14,6 +14,10 @@ class AnnouncementsWidget extends Widget
     // Ocupa todo el ancho del dashboard
     protected int | string | array $columnSpan = 'full';
 
+    // Desactivado: con lazy loading el widget se renderiza en una petición
+    // Livewire separada y su @push('styles') nunca llega al <head> de la página.
+    protected static bool $isLazy = false;
+
     /**
      * Definimos qué panel debe filtrar este widget.
      * Puedes cambiarlo manualmente o dejarlo en 'todos' por defecto.

@@ -1,5 +1,5 @@
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/take-exam.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/take-exam.css') }}?v={{ filemtime(public_path('css/take-exam.css')) }}">
 @endpush
 <x-filament-panels::page>
     @php
@@ -291,8 +291,7 @@
                                         <img src="{{ Storage::url($question->imagen_path) }}"
                                             alt="Imagen pregunta {{ $qi + 1 }}" class="q-img" loading="lazy">
                                     @endif
-                                    <div
-                                        class="options {{ $question->options->whereNotNull('imagen_path')->count() > 0 ? 'single-col' : '' }}">
+                                    <div class="options {{ $this->optionsGridClass($question) }}">
                                         @foreach ($question->options as $option)
                                             <button class="opt" id="opt-{{ $option->id }}"
                                                 data-qid="{{ $question->id }}" data-oid="{{ $option->id }}"
@@ -415,8 +414,7 @@
                                         <img src="{{ Storage::url($rd['question']->imagen_path) }}"
                                             alt="Imagen pregunta {{ $rd['numero'] }}" class="q-img" loading="lazy">
                                     @endif
-                                    <div
-                                        class="options {{ $rd['question']->options->whereNotNull('imagen_path')->count() > 0 ? 'single-col' : '' }}">
+                                    <div class="options {{ $this->optionsGridClass($rd['question']) }}">
                                         @foreach ($rd['question']->options as $option)
                                             @php
                                                 $isCorrecta = $rd['correcta'] && $option->id === $rd['correcta']->id;

@@ -394,6 +394,18 @@ class TakeExam extends Page implements HasActions
         return $results;
     }
 
+    // Fuerza una sola columna solo cuando el TEXTO de alguna opción es largo
+    // y necesita todo el ancho. Las imágenes (con su propia altura mínima/
+    // máxima) sí participan del grid flexible de varias columnas.
+    public function optionsGridClass(Question $question): string
+    {
+        $hasLongText = $question->options->contains(
+            fn($option) => mb_strlen((string) $option->texto_opcion) > 70
+        );
+
+        return $hasLongText ? 'single-col' : '';
+    }
+
     private function getCourseUrl(): string
     {
         $slug = $this->exam->detail?->content?->cicloCourseTeacher?->cicloCourse?->course?->slug;

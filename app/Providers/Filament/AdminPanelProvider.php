@@ -14,11 +14,9 @@ use Filament\Pages\Dashboard;
 use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Width;
-use Filament\Support\Facades\FilamentAsset;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -97,16 +95,5 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
-    }
-
-    public function boot(): void
-    {
-        FilamentAsset::register([
-            Css::make('virtual-classroom-styles', asset('css/virtual-classroom.css')),
-            // Css::make('virtual-classroom-styles', asset('css/create-exam.css')),
-            Css::make('virtual-classroom-styles', asset('css/take-exam.css')),
-            Css::make('virtual-classroom-styles', asset('css/exam-results.css')),
-            Css::make('virtual-classroom-styles', asset('css/managerCourseContent.css')),
-        ], 'alumno');
     }
 }
