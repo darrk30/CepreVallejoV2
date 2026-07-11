@@ -24,6 +24,25 @@ class Biblioteca extends Page
     #[Url(history: true)]
     public $areaId = null;
 
+    protected int $perPageStep = 24;
+
+    public int $perPage = 24;
+
+    public function updatedSearch()
+    {
+        $this->perPage = $this->perPageStep;
+    }
+
+    public function updatedAreaId()
+    {
+        $this->perPage = $this->perPageStep;
+    }
+
+    public function loadMoreLibros()
+    {
+        $this->perPage += $this->perPageStep;
+    }
+
     /**
      * Obtener libros favoritos del usuario
      */
@@ -36,10 +55,11 @@ class Biblioteca extends Page
     }
 
     /**
-     * Obtener libros filtrados, EXCLUYENDO los que ya están en favoritos
+     * Query base de libros filtrados, EXCLUYENDO los que ya están en favoritos.
+     * Sin memoizar: se reconstruye cada vez para no arrastrar el ->take()
+     * del listado hacia el conteo total (o viceversa).
      */
-    #[Computed]
-    public function libros()
+    protected function librosBaseQuery()
     {
         return Libro::query()
             ->with('area')
@@ -52,8 +72,26 @@ class Biblioteca extends Page
                     ->orWhere('autor', 'like', "%{$this->search}%")
             ))
             ->when($this->areaId, fn($q) => $q->where('area_id', $this->areaId))
-            ->orderBy('orden')
-            ->get();
+            ->orderBy('orden');
+    }
+
+    /**
+     * Total de libros que coinciden con el filtro actual (para saber si
+     * mostrar el botón "Cargar más" y para el contador visible).
+     */
+    #[Computed]
+    public function librosTotal()
+    {
+        return $this->librosBaseQuery()->count();
+    }
+
+    /**
+     * Libros filtrados, limitados al lote actualmente cargado.
+     */
+    #[Computed]
+    public function libros()
+    {
+        return $this->librosBaseQuery()->take($this->perPage)->get();
     }
 
     #[Computed]
@@ -81,6 +119,7 @@ class Biblioteca extends Page
         // Forzamos a Livewire a recalcular las listas en el mismo request
         unset($this->favoritos);
         unset($this->libros);
+        unset($this->librosTotal);
     }
 
     public function getHeading(): string

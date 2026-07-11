@@ -154,6 +154,7 @@
                                 </div>
 
                                 {{-- ── DROPDOWN MÓVIL ── --}}
+                                @canany(['order_topic', 'create_topic', 'update_section', 'delete_section'])
                                 <div class="aula-actions-mobile">
                                     <button class="btn-more"
                                         onclick="toggleDropdown('sec-drop-{{ $section->id }}', event)"
@@ -233,6 +234,7 @@
                                         @endcan
                                     </div>
                                 </div>
+                                @endcanany
 
                             </div>{{-- /sec-head --}}
 
@@ -406,6 +408,7 @@
                                         </div>
 
                                         {{-- ── DROPDOWN DETALLE MÓVIL ── --}}
+                                        @canany(['update_exam', 'create_exam', 'update_topic', 'delete_topic'])
                                         <div class="aula-actions-mobile" style="padding-top:1px;">
                                             <button class="btn-more"
                                                 onclick="toggleDropdown('det-drop-{{ $detail->id }}', event)"
@@ -496,6 +499,7 @@
                                                 @endcan
                                             </div>
                                         </div>
+                                        @endcanany
 
                                     </div>
                                 @empty

@@ -19,7 +19,7 @@ class ReproductorVideo extends Page
 
     public function mount($videoSlug)
     {
-        $this->video = Video::where('slug', $videoSlug)->firstOrFail();
+        $this->video = Video::where('slug', $videoSlug)->where('estado', 'activo')->firstOrFail();
     }
 
     // 2. Generar las Migas de Pan (Breadcrumbs)

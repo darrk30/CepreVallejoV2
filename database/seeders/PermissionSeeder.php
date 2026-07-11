@@ -78,6 +78,8 @@ class PermissionSeeder extends Seeder
             ['name' => 'view_videoteca', 'label' => 'Ver Videoteca Académica', 'label_model' => 'Recursos'],
             ['name' => 'view_biblioteca', 'label' => 'Ver Biblioteca Digital', 'label_model' => 'Recursos'],
             ['name' => 'view_pagos_teacher', 'label' => 'Ver pagos del profesor', 'label_model' => 'Profesores'],
+            ['name' => 'view_active_sessions', 'label' => 'Ver Sesiones Activas', 'label_model' => 'Seguridad'],
+            ['name' => 'manage_all_course_content', 'label' => 'Gestionar contenido de todos los cursos', 'label_model' => 'Aula Virtual'],
         ];
 
         foreach ($extraPermissions as $p) {
