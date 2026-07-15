@@ -33,9 +33,12 @@ class InscriptionForm
                             ->schema([
                                 Select::make('student_id')
                                     ->label('Estudiante')
-                                    ->relationship('student', 'dni', fn(Builder $query) => $query->with('user'))
+                                    ->relationship('student', 'dni', fn(Builder $query) => $query
+                                        ->with('user')
+                                        ->join('users', 'users.id', '=', 'students.user_id')
+                                        ->select('students.*'))
                                     ->getOptionLabelFromRecordUsing(fn($record) => "{$record->dni} | {$record->apellidos}, {$record->user->name}")
-                                    ->searchable(['dni', 'apellidos', 'user.name'])
+                                    ->searchable(['dni', 'apellidos', 'users.name'])
                                     ->preload()
                                     ->required()
                                     // Esto habilita el botón "+" al lado del buscador
