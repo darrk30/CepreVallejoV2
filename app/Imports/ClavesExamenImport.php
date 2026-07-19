@@ -19,7 +19,7 @@ class ClavesExamenImport implements ToModel, WithHeadingRow
     public function model(array $row)
     {
         // DEBUG — ver qué llega
-        \Log::info('Fila Excel:', $row);
+        //\Log::info('Fila Excel:', $row);
 
         if (!isset($row['pregunta']) || !isset($row['clave']) || !isset($row['asignatura'])) {
             \Log::warning('Fila ignorada — faltan columnas. Keys disponibles: ' . implode(', ', array_keys($row)));

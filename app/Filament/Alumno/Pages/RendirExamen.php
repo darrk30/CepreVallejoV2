@@ -32,6 +32,10 @@ class RendirExamen extends Page
     public $carreras = [];
     public $total_preguntas = 0;
 
+    // true si el alumno ya vio el detalle (respuestas correctas) de algún
+    // intento anterior de este mismo examen: ya no puede volver a rendirlo.
+    public bool $bloqueado = false;
+
     // Formulario de inicio
     public $carrera_seleccionada_id;
 
@@ -56,10 +60,19 @@ class RendirExamen extends Page
 
         $this->total_preguntas = $this->examen->respuestas_correctas_count;
         $this->carreras = Carrera::where('estado', 'activo')->get();
+
+        $this->bloqueado = Intento::where('user_id', Auth::id())
+            ->where('examen_ordinario_id', $this->examen_id)
+            ->whereNotNull('detalles_vistos_at')
+            ->exists();
     }
 
     public function iniciarExamen()
     {
+        if ($this->bloqueado) {
+            return;
+        }
+
         $this->validate([
             'carrera_seleccionada_id' => 'required|exists:carreras,id',
         ], [
@@ -78,6 +91,10 @@ class RendirExamen extends Page
 
     public function finalizarExamen()
     {
+        if ($this->bloqueado || $this->estado_vista !== 'en_progreso') {
+            return;
+        }
+
         $fecha_fin        = now();
         $inicio           = Carbon::parse($this->fecha_inicio);
         $tiempo_utilizado = $inicio->diffInSeconds($fecha_fin);

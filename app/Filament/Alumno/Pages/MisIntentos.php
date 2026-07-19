@@ -4,12 +4,17 @@ namespace App\Filament\Alumno\Pages;
 
 use App\Models\ExamenOrdinario;
 use App\Models\Intento;
+use Filament\Actions\Action;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Url;
 
-class MisIntentos extends Page
+class MisIntentos extends Page implements HasActions
 {
+    use InteractsWithActions;
+
     protected string $view = 'filament.alumno.pages.mis-intentos';
     // protected static ?string $navigationLabel = 'Mis Intentos';
     protected static bool $shouldRegisterNavigation = false;
@@ -31,6 +36,10 @@ class MisIntentos extends Page
     public bool   $modalAprobado     = false;
     public float  $modalPuntajeMinimo = 0;
     public string $modalAreaNombre   = '';
+
+    // true si el alumno ya vio el detalle de algún intento de este examen
+    // (por lo tanto ya no puede volver a rendirlo).
+    public bool $examenBloqueado = false;
 
     // ── Mount ────────────────────────────────────────────────────
     public function mount(): void
@@ -59,6 +68,11 @@ class MisIntentos extends Page
         $this->examenId     = $id;
         $this->examenTitulo = collect($this->examenes)->firstWhere('id', $id)['titulo'] ?? '';
         $this->cargarIntentos();
+
+        $this->examenBloqueado = Intento::where('user_id', Auth::id())
+            ->where('examen_ordinario_id', $id)
+            ->whereNotNull('detalles_vistos_at')
+            ->exists();
     }
 
     // ── Cargar intentos del alumno ───────────────────────────────
@@ -92,6 +106,14 @@ class MisIntentos extends Page
 
         abort_if($intento->user_id !== Auth::id(), 403);
 
+        // Ver el detalle revela las respuestas correctas del examen: a partir
+        // de este momento el alumno ya no puede volver a rendir este examen
+        // (se valida en RendirExamen::mount()/iniciarExamen()).
+        if (!$intento->detalles_vistos_at) {
+            $intento->forceFill(['detalles_vistos_at' => now()])->save();
+        }
+        $this->examenBloqueado = true;
+
         $this->modalIntentoId    = $intentoId;
         $this->modalExamenTitulo = $intento->examen->titulo ?? '';
         $this->modalPuntaje      = (float) $intento->puntaje_obtenido;
@@ -104,25 +126,30 @@ class MisIntentos extends Page
         $this->modalPuntajeMinimo = $area?->puntajeMinimo() ?? 0;
         $this->modalAreaNombre    = $areaRaw ?? 'Sin área';
 
-        // Mapear respuestas correctas para comparar
-        $correctas = $intento->examen->respuestasCorrectas
-            ->keyBy('numero_pregunta');
+        // Mapear respuestas correctas (todas las preguntas del examen) y lo
+        // que marcó el alumno en cada una. Si dejó una en blanco, no tiene
+        // fila en respuestasAlumno: se muestra como "sin marcar", incorrecta
+        // pero sin puntos (no se guardó ninguna resta para esa pregunta).
+        $correctas = $intento->examen->respuestasCorrectas->keyBy('numero_pregunta');
+        $marcadas  = $intento->respuestasAlumno->keyBy('numero_pregunta');
 
-        $this->modalDetalle = $intento->respuestasAlumno // ✅ nombre correcto
-            ->sortBy('numero_pregunta')
-            ->map(function ($r) use ($correctas) {
-                $correcta   = $correctas->get($r->numero_pregunta);
-                $esCorrecta = $correcta && $r->opcion_seleccionada === $correcta->opcion_correcta;
+        $this->modalDetalle = $correctas
+            ->map(function ($correcta, $numero) use ($marcadas) {
+                $respuesta  = $marcadas->get($numero);
+                $marcada    = $respuesta->opcion_seleccionada ?? null;
+                $esCorrecta = $marcada !== null && $marcada === $correcta->opcion_correcta;
 
                 return [
-                    'numero'      => $r->numero_pregunta,
-                    'marcada'     => $r->opcion_seleccionada,
-                    'correcta'    => $correcta->opcion_correcta ?? '—',
-                    'asignatura'  => $correcta->asignatura ?? '—',
+                    'numero'      => $numero,
+                    'marcada'     => $marcada,
+                    'en_blanco'   => is_null($marcada),
+                    'correcta'    => $correcta->opcion_correcta,
+                    'asignatura'  => $correcta->asignatura,
                     'es_correcta' => $esCorrecta,
-                    'puntos'      => (float) $r->puntos_obtenidos,
+                    'puntos'      => $respuesta ? (float) $respuesta->puntos_obtenidos : 0.0,
                 ];
             })
+            ->sortBy('numero')
             ->values()
             ->toArray();
 
@@ -133,5 +160,20 @@ class MisIntentos extends Page
     {
         $this->modalOpen    = false;
         $this->modalDetalle = [];
+    }
+
+    // ── Confirmación antes de revelar las respuestas correctas ────
+    public function confirmVerDetalleAction(): Action
+    {
+        return Action::make('confirmVerDetalle')
+            ->label('Ver detalle')
+            ->modalHeading('¿Ver el detalle de este intento?')
+            ->modalDescription('Vas a ver las respuestas correctas de este examen. Si continúas, ya NO podrás volver a rendirlo.')
+            ->modalSubmitActionLabel('Sí, ver detalle')
+            ->modalCancelActionLabel('Cancelar')
+            ->modalIcon('heroicon-o-exclamation-triangle')
+            ->color('warning')
+            ->requiresConfirmation()
+            ->action(fn(array $arguments) => $this->verDetalle((int) $arguments['intentoId']));
     }
 }

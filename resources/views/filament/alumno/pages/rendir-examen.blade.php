@@ -11,9 +11,30 @@
         <div class="grid grid-cols-1">
 
             {{-- ══════════════════════════════════════════════════
+                 0. PANTALLA BLOQUEADA — ya vio las respuestas correctas
+            ══════════════════════════════════════════════════ --}}
+            @if($bloqueado)
+            <div class="mx-auto w-full max-w-[600px] rounded-2xl border border-[#6366f1]/12 bg-white p-6 text-center shadow-[0_1px_4px_rgba(99,102,241,0.06)] dark:border-[#9482ff]/18 dark:bg-[#1a1c2c]">
+                <div class="px-5 py-10">
+                    <div class="mb-5 flex justify-center text-amber-500">
+                        @svg('heroicon-o-lock-closed', 'w-20 h-20')
+                    </div>
+                    <h2 class="mb-[5px] text-[1.5rem] text-[#4a5068] dark:text-[#b6b9d6]">Examen bloqueado</h2>
+                    <p class="text-[#4a5068] dark:text-[#b6b9d6]">
+                        Ya revisaste el detalle de respuestas de un intento anterior de <strong>{{ $examen->titulo }}</strong>,
+                        por lo que ya conoces las respuestas correctas. Para mantener la evaluación justa para todos,
+                        no puedes volver a rendir este examen.
+                    </p>
+                    <a href="{{ \App\Filament\Alumno\Pages\MisIntentos::getUrl(['examen_id' => $examen_id]) }}" wire:navigate class="mt-[30px] box-border inline-flex h-10 items-center justify-center gap-2 rounded-[10px] border-2 border-[#534ab7] bg-[#534ab7] px-2 py-[5px] text-white no-underline shadow-[0_4px_10px_rgba(99,102,241,0.25)] transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] hover:-translate-y-0.5 hover:border-[#4f46e5] hover:bg-[#4f46e5] hover:shadow-[0_6px_14px_rgba(99,102,241,0.35)] dark:border-[#8b83e8] dark:bg-[#8b83e8]">
+                        @svg('heroicon-o-clipboard-document-list', 'w-5 h-5') Ver mis intentos
+                    </a>
+                </div>
+            </div>
+
+            {{-- ══════════════════════════════════════════════════
                  1. PANTALLA DE CONFIGURACIÓN
             ══════════════════════════════════════════════════ --}}
-            @if($estado_vista === 'configuracion')
+            @elseif($estado_vista === 'configuracion')
             <div class="mx-auto w-full max-w-[600px] rounded-2xl border border-[#6366f1]/12 bg-white p-6 shadow-[0_1px_4px_rgba(99,102,241,0.06)] dark:border-[#9482ff]/18 dark:bg-[#1a1c2c]">
                 <div class="mb-5 flex items-center gap-3">
                     <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-[#6366f1]/10 text-[#534ab7] dark:bg-[#8b83e8]/18 dark:text-[#8b83e8]">

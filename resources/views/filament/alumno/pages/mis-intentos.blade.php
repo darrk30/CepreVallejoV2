@@ -79,6 +79,13 @@
                     </div>
                 </div>
 
+                @if($examenBloqueado)
+                <div class="mb-4 flex items-start gap-2.5 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-[0.85rem] text-amber-700 dark:text-amber-400">
+                    @svg('heroicon-o-lock-closed', 'w-5 h-5 shrink-0 mt-0.5')
+                    <span>Ya viste el detalle de respuestas de este examen, por lo que ya no puedes volver a rendirlo.</span>
+                </div>
+                @endif
+
                 @if(empty($intentos))
                 <div class="flex flex-col items-center justify-center gap-3 px-5 py-[60px] text-center text-[#8890aa] dark:text-[#82859f]">
                     @svg('heroicon-o-inbox', 'w-12 h-12')
@@ -135,7 +142,12 @@
                                 $btnDetalle = 'box-border inline-flex h-9 max-w-[300px] items-center gap-1.5 rounded-lg border border-[#6366f1]/12 bg-transparent px-4 text-[0.8rem] text-[#4a5068] no-underline transition-all duration-200 hover:border-[#534ab7] hover:bg-[#6366f1]/8 hover:text-[#534ab7] dark:border-[#9482ff]/18 dark:text-[#b6b9d6] dark:hover:border-[#8b83e8] dark:hover:bg-[#8b83e8]/8 dark:hover:text-[#8b83e8]';
                             @endphp
                             <button
-                                wire:click="verDetalle({{ $intento['id'] }})"
+                                type="button"
+                                @if($examenBloqueado)
+                                    wire:click="verDetalle({{ $intento['id'] }})"
+                                @else
+                                    wire:click="mountAction('confirmVerDetalle', { intentoId: {{ $intento['id'] }} })"
+                                @endif
                                 class="{{ $btnDetalle }}">
                                 @svg('heroicon-o-magnifying-glass', 'w-4 h-4 shrink-0')
                                 <span class="truncate whitespace-nowrap">Ver detalle</span>
@@ -234,6 +246,9 @@
                     <span class="flex items-center gap-1.5 text-[0.8rem] text-[#4a5068] dark:text-[#b6b9d6]">
                         <span class="inline-block h-2.5 w-2.5 rounded-full bg-red-500"></span> Incorrecta
                     </span>
+                    <span class="flex items-center gap-1.5 text-[0.8rem] text-[#4a5068] dark:text-[#b6b9d6]">
+                        <span class="inline-block h-2.5 w-2.5 rounded-full bg-[#8890aa] dark:bg-[#82859f]"></span> Sin marcar
+                    </span>
                 </div>
 
                 {{-- Tabla de respuestas --}}
@@ -250,20 +265,26 @@
                         </thead>
                         <tbody>
                             @foreach($modalDetalle as $fila)
-                            <tr class="border-b border-black/6 transition-colors hover:bg-[#f5f6fd] dark:border-white/8 dark:hover:bg-[#21233a] {{ $fila['es_correcta'] ? 'bg-emerald-500/5' : 'bg-red-500/5' }}">
+                            <tr class="border-b border-black/6 transition-colors hover:bg-[#f5f6fd] dark:border-white/8 dark:hover:bg-[#21233a] {{ $fila['en_blanco'] ? 'bg-black/2 dark:bg-white/3' : ($fila['es_correcta'] ? 'bg-emerald-500/5' : 'bg-red-500/5') }}">
                                 <td class="w-12 px-3 py-2.5 font-bold text-[#8890aa] dark:text-[#82859f]">{{ str_pad($fila['numero'], 2, '0', STR_PAD_LEFT) }}</td>
                                 <td class="px-3 py-2.5 text-[0.8rem] text-[#4a5068] dark:text-[#b6b9d6]">{{ ucfirst(str_replace('_', ' ', $fila['asignatura'])) }}</td>
                                 <td class="px-3 py-2.5 text-center">
+                                    @if($fila['en_blanco'])
+                                    <span class="inline-flex h-7 w-7 items-center justify-center rounded-full border-2 border-transparent bg-[#8890aa] text-[0.8rem] font-bold text-white dark:bg-[#82859f]" title="Sin marcar">
+                                        —
+                                    </span>
+                                    @else
                                     <span class="inline-flex h-7 w-7 items-center justify-center rounded-full border-2 border-transparent text-[0.8rem] font-bold {{ $fila['es_correcta'] ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white' }}">
                                         {{ $fila['marcada'] }}
                                     </span>
+                                    @endif
                                 </td>
                                 <td class="px-3 py-2.5 text-center">
                                     <span class="inline-flex h-7 w-7 items-center justify-center rounded-full border-2 border-emerald-500 bg-transparent text-[0.8rem] font-bold text-emerald-500">
                                         {{ $fila['correcta'] }}
                                     </span>
                                 </td>
-                                <td class="px-3 py-2.5 text-right font-bold {{ $fila['puntos'] > 0 ? 'text-emerald-500' : 'text-red-500' }}">
+                                <td class="px-3 py-2.5 text-right font-bold {{ $fila['puntos'] > 0 ? 'text-emerald-500' : ($fila['puntos'] < 0 ? 'text-red-500' : 'text-[#8890aa] dark:text-[#82859f]') }}">
                                     {{ $fila['puntos'] > 0 ? '+' : '' }}{{ number_format($fila['puntos'], 3) }}
                                 </td>
                             </tr>
@@ -277,4 +298,6 @@
         @endif
 
     </div>
+
+    <x-filament-actions::modals />
 </x-filament-panels::page>

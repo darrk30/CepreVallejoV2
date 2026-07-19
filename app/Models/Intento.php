@@ -7,20 +7,22 @@ use Illuminate\Database\Eloquent\Model;
 class Intento extends Model
 {
     protected $fillable = [
-        'user_id', 
+        'user_id',
         'examen_ordinario_id',
-        'carrera_id', 
-        'puntaje_obtenido', 
-        'es_aprobado', 
-        'fecha_inicio', 
-        'fecha_fin', 
-        'tiempo_utilizado'
+        'carrera_id',
+        'puntaje_obtenido',
+        'es_aprobado',
+        'fecha_inicio',
+        'fecha_fin',
+        'tiempo_utilizado',
+        'detalles_vistos_at',
     ];
 
     protected $casts = [
         'fecha_inicio' => 'datetime',
         'fecha_fin' => 'datetime',
         'es_aprobado' => 'boolean',
+        'detalles_vistos_at' => 'datetime',
     ];
 
     public function usuario()
