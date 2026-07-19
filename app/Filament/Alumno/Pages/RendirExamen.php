@@ -9,13 +9,19 @@ use App\Models\Intento;
 use App\Models\RespuestasAlumno;
 use BackedEnum;
 use Carbon\Carbon;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
+use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Url;
 
-class RendirExamen extends Page
+class RendirExamen extends Page implements HasForms
 {
+    use InteractsWithForms;
+
     protected string $view = 'filament.alumno.pages.rendir-examen';
 
     protected static bool $shouldRegisterNavigation = false;
@@ -36,7 +42,8 @@ class RendirExamen extends Page
     // intento anterior de este mismo examen: ya no puede volver a rendirlo.
     public bool $bloqueado = false;
 
-    // Formulario de inicio
+    // Formulario de inicio (Select de Filament, ligado a $data['carrera_seleccionada_id'])
+    public ?array $data = [];
     public $carrera_seleccionada_id;
 
     // Datos del Intento en curso
@@ -65,6 +72,29 @@ class RendirExamen extends Page
             ->where('examen_ordinario_id', $this->examen_id)
             ->whereNotNull('detalles_vistos_at')
             ->exists();
+
+        $this->form->fill();
+    }
+
+    public function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                Select::make('carrera_seleccionada_id')
+                    ->label('Selecciona la carrera a la que postulas')
+                    ->placeholder('-- Elige una carrera --')
+                    ->options(fn() => collect($this->carreras)
+                        ->mapWithKeys(fn($carrera) => [
+                            $carrera->id => $carrera->nombre . ($carrera->area ? " ({$carrera->area->value})" : ''),
+                        ]))
+                    ->searchable()
+                    ->native(false)
+                    ->required()
+                    ->validationMessages([
+                        'required' => 'Debes seleccionar la carrera a la que postulas.',
+                    ]),
+            ])
+            ->statePath('data');
     }
 
     public function iniciarExamen()
@@ -73,11 +103,8 @@ class RendirExamen extends Page
             return;
         }
 
-        $this->validate([
-            'carrera_seleccionada_id' => 'required|exists:carreras,id',
-        ], [
-            'carrera_seleccionada_id.required' => 'Debes seleccionar la carrera a la que postulas.',
-        ]);
+        $state = $this->form->getState();
+        $this->carrera_seleccionada_id = $state['carrera_seleccionada_id'];
 
         $this->fecha_inicio = now();
         $this->estado_vista = 'en_progreso';
@@ -105,7 +132,7 @@ class RendirExamen extends Page
         $area     = AreaAcademica::tryFrom($areaRaw);
 
         if (!$area) {
-            $this->addError('carrera_seleccionada_id', "El área '{$areaRaw}' no es válida.");
+            $this->addError('data.carrera_seleccionada_id', "El área '{$areaRaw}' no es válida.");
             return;
         }
 

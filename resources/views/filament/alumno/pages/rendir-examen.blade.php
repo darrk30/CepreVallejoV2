@@ -48,23 +48,7 @@
 
                 <div class="p-5">
                     <div class="mb-5">
-                        <label class="mb-2 block text-[0.9rem] text-[#4a5068] dark:text-[#b6b9d6]">
-                            Selecciona la carrera a la que postulas:
-                        </label>
-                        <select wire:model="carrera_seleccionada_id" class="w-full border-none bg-transparent py-2.5 text-sm text-[#1a1e35] outline-none dark:text-[#f1f2fb]">
-                            <option value="">-- Elige una carrera --</option>
-                            @foreach($carreras as $carrera)
-                            <option value="{{ $carrera->id }}">
-                                {{ $carrera->nombre }}
-                                @if($carrera->area)
-                                ({{ $carrera->area->value }})
-                                @endif
-                            </option>
-                            @endforeach
-                        </select>
-                        @error('carrera_seleccionada_id')
-                        <span class="mt-[5px] block text-[0.8rem] text-[#ff5555]">{{ $message }}</span>
-                        @enderror
+                        {{ $this->form }}
                     </div>
 
                     <div class="mb-5 rounded-lg border border-black/6 bg-[#f5f6fd] p-[15px] text-[0.9rem] text-[#4a5068] dark:border-white/8 dark:bg-[#21233a] dark:text-[#b6b9d6]">
