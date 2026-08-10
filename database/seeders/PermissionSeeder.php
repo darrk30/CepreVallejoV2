@@ -38,6 +38,7 @@ class PermissionSeeder extends Seeder
             'inscription'    => 'Inscripciones',
             'role'           => 'Roles',
             'permission'     => 'Permisos',
+            'review'         => 'Comentarios',
         ];
 
         $actions = array_keys($actionLabels);
@@ -80,6 +81,8 @@ class PermissionSeeder extends Seeder
             ['name' => 'view_pagos_teacher', 'label' => 'Ver pagos del profesor', 'label_model' => 'Profesores'],
             ['name' => 'view_active_sessions', 'label' => 'Ver Sesiones Activas', 'label_model' => 'Seguridad'],
             ['name' => 'manage_all_course_content', 'label' => 'Gestionar contenido de todos los cursos', 'label_model' => 'Aula Virtual'],
+            ['name' => 'view_all_review', 'label' => 'Ver comentarios de los alumnos', 'label_model' => 'Recursos'],
+            
         ];
 
         foreach ($extraPermissions as $p) {
