@@ -325,7 +325,8 @@
                             {{ $item['es_yo']
                                 ? 'border-[#6366f1]/30 bg-[#6366f1]/10 text-[#534ab7] dark:bg-[#8b83e8]/18 dark:text-[#8b83e8]'
                                 : 'border-[#6366f1]/12 bg-[#f5f6fd] text-[#4a5068] dark:border-[#9482ff]/18 dark:bg-[#21233a] dark:text-[#b6b9d6]' }}">
-                            {{ strtoupper(implode('', array_map(fn($w) => $w[0], array_slice(explode(' ', $item['nombre']), 0, 2)))) }}
+
+                            {{ strtoupper(implode('', array_map(fn($w) => $w[0] ?? '',array_slice(array_filter(explode(' ', trim($item['nombre']))), 0, 2)))) }}
                         </div>
                         <div class="min-w-0 flex-1">
                             <div class="truncate text-[13px] font-medium {{ $item['es_yo'] ? 'font-semibold text-[#534ab7] dark:text-[#8b83e8]' : 'text-[#1a1e35] dark:text-[#f1f2fb]' }}">

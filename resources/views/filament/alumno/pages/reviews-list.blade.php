@@ -1,4 +1,17 @@
+@php
+    use App\Support\HtmlTruncator;
+@endphp
+
 <x-filament-panels::page>
+    <style>
+        .rc-content strong, .rc-content b { font-weight: 700; font-style: normal; }
+        .rc-content em, .rc-content i { font-style: italic; }
+        .rc-content ul { list-style: disc; padding-left: 22px; margin: 6px 0; }
+        .rc-content ol { list-style: decimal; padding-left: 22px; margin: 6px 0; }
+        .rc-content li { margin-bottom: 2px; }
+    </style>
+
+
     <div class="font-handlee pb-[60px] text-[#0c0b1a] dark:text-[#edecf8]" x-data="{ modalAbierto: false, modalTitulo: '', modalTexto: '', modalFecha: '' }"
         @keydown.escape.window="modalAbierto = false">
 
@@ -34,7 +47,7 @@
                 @php
                     $mensajeTexto = strip_tags($review->mensaje);
                     $esLargo = mb_strlen($mensajeTexto) > 140;
-                    $mensajeCorto = $esLargo ? mb_substr($mensajeTexto, 0, 140) . '…' : $mensajeTexto;
+                    $mensajeHtml = strip_tags($review->mensaje, '<strong><b><em><i><ul><ol><li><br><p>');
                     $numero = $index + 1 + ($this->getReviews()->currentPage() - 1) * $this->getReviews()->perPage();
                 @endphp
                 <div wire:key="review-{{ $review->id }}"
@@ -51,15 +64,18 @@
                         </h3>
                     </div>
 
-                    <p class="m-0 mb-3 text-[0.90rem] italic leading-[1.70] text-[#5b5875] dark:text-[#9d9ac2]">
-                        {{ $mensajeCorto }}
+                    @php
+                        $mensajeHtml = strip_tags($review->mensaje, '<strong><b><em><i><ul><ol><li><br><p>');
+                    @endphp
+                    <div class="rc-content m-0 mb-3 text-[0.90rem] italic leading-[1.70] text-[#5b5875] dark:text-[#9d9ac2]">
+                        {!! \App\Support\HtmlTruncator::resumen($review->mensaje) !!}
                         @if ($esLargo)
                             <button type="button"
-                                @click="modalAbierto = true; modalTitulo = 'COMENTARIO N°{{ $numero }}'; modalTexto = {{ Illuminate\Support\Js::from($mensajeTexto) }}; modalFecha = '{{ $review->fecha_hora->format('d M, Y') }}'"
+                                @click="modalAbierto = true; modalTitulo = 'COMENTARIO N°{{ $numero }}'; modalTexto = {{ Illuminate\Support\Js::from($mensajeHtml) }}; modalFecha = '{{ $review->fecha_hora->format('d M, Y') }}'"
                                 class="ml-1 inline-block font-bold not-italic text-[#5b5ef4] hover:underline dark:text-[#818cf8]">Leer
                                 más</button>
                         @endif
-                    </p>
+                    </div>
 
                     <div class="mt-auto flex items-center justify-between pt-1">
                         <span
@@ -131,8 +147,7 @@
 
                     {{-- BODY --}}
                     <div style="padding: 20px 28px; overflow-y: auto; flex: 1 1 auto;">
-                        <p class="m-0 whitespace-pre-line text-[0.88rem] italic leading-[1.8] text-[#3b3866] dark:text-[#c1bee0]"
-                            x-text="modalTexto"></p>
+                        <div class="rc-content m-0 text-[0.9rem] italic leading-[1.75] text-[#5b5875] dark:text-[#9d9ac2]" x-html="modalTexto"></div></div>
                     </div>
 
                     {{-- FOOTER --}}
