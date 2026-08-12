@@ -47,6 +47,11 @@ class RoleSeeder extends Seeder
             'view_biblioteca',
             'view_aula_virtual',
             'access_student_panel',
+            'create_review', 
+            'view_any_review',
+            'update_review',
+            'delete_review',
+            
         ]);
     }
 }
