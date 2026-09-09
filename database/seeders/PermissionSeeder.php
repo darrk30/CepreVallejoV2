@@ -39,6 +39,11 @@ class PermissionSeeder extends Seeder
             'role'           => 'Roles',
             'permission'     => 'Permisos',
             'review'         => 'Comentarios',
+            'autor'            => 'Autores',
+            'carrera'          => 'Carreras',
+            'examen_ordinario' => 'Exámenes Ordinarios',
+            'podcast'          => 'Podcasts',
+            'specialty'        => 'Categorías',
         ];
 
         $actions = array_keys($actionLabels);
