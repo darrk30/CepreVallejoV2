@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Inscriptions\Tables;
 
+use App\Enums\EstadoMatricula;
+use App\Models\AcademicCycle;
 use App\Models\Inscription;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
@@ -82,16 +84,32 @@ class InscriptionsTable
                     ->badge()
                     ->color('info')
                     ->sortable(),
+
+                TextColumn::make('estado_matricula')
+                    ->label('Matrícula')
+                    ->badge()
+                    ->formatStateUsing(fn(?EstadoMatricula $state) => $state?->label())
+                    ->color(fn(?EstadoMatricula $state) => $state?->color())
+                    ->sortable(),
             ])
             ->filters([
                 \Filament\Tables\Filters\SelectFilter::make('academic_cycle_id')
                     ->label('Ciclo')
-                    ->relationship('academicCycle', 'nombre'),
+                    ->relationship('academicCycle', 'nombre')
+                    // Por defecto solo muestra el último ciclo (el de fecha_inicio
+                    // más reciente). El admin puede quitar el filtro para ver todos.
+                    ->default(fn() => AcademicCycle::query()->latest('fecha_inicio')->value('id')),
                 \Filament\Tables\Filters\SelectFilter::make('estado_pago')
                     ->options([
                         'pendiente' => 'Pendiente',
                         'parcial' => 'Parcial',
                         'pagado' => 'Pagado',
+                    ]),
+                \Filament\Tables\Filters\SelectFilter::make('estado_matricula')
+                    ->label('Estado de matrícula')
+                    ->options([
+                        EstadoMatricula::ACTIVA->value => EstadoMatricula::ACTIVA->label(),
+                        EstadoMatricula::INACTIVA->value => EstadoMatricula::INACTIVA->label(),
                     ]),
             ])
             ->recordActions([
