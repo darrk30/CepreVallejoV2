@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Alumno\Pages\Auth\Login;
 use App\Filament\Profesor\Pages\ManageCourseContent;
 use App\Filament\Profesor\Pages\TakeExam;
 use App\Http\Middleware\CheckUserStatus;
@@ -35,7 +36,7 @@ class AlumnoPanelProvider extends PanelProvider
         return $panel
             ->id('alumno')
             ->path('alumno')
-            ->login()
+            ->login(Login::class)
             ->sidebarCollapsibleOnDesktop()
             ->brandLogo(function () {
                 return asset('img/logocepre.png');
