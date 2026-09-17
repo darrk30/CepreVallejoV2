@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Inscriptions\Schemas;
 
+use App\Enums\EstadoMatricula;
 use App\Models\AcademicCycle;
 use App\Models\Student;
 use App\Models\Turno;
@@ -166,6 +167,17 @@ class InscriptionForm
                                     ->options(Turno::all()->pluck('nombre', 'id'))
                                     ->searchable()
                                     ->required(),
+
+                                Select::make('estado_matricula')
+                                    ->label('Estado de la matrícula')
+                                    ->options([
+                                        EstadoMatricula::ACTIVA->value => EstadoMatricula::ACTIVA->label(),
+                                        EstadoMatricula::INACTIVA->value => EstadoMatricula::INACTIVA->label(),
+                                    ])
+                                    ->default(EstadoMatricula::ACTIVA->value)
+                                    ->native(false)
+                                    ->required()
+                                    ->helperText('Se pone en "Inactiva" automáticamente cuando el ciclo termina.'),
                             ]),
                     ])->columnSpanFull(),
 

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Route;
 Route::livewire('/', 'pages::home');
 Route::livewire('/curso/{slug}', 'pages::courseview')->name('cursos.show');
 Route::get('/cuenta-suspendida', function () {  return view('errors.suspended'); })->name('suspended');
+Route::get('/no-matriculado', function () {  return view('errors.no-matriculado'); })->name('no-matriculado');
 
 
 Route::get('/podcasts/{podcast}/stream', [PodcastProxyController::class, 'stream'])

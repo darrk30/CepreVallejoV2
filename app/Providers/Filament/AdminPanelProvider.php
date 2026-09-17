@@ -87,8 +87,13 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
-                CheckUserStatus::class,
             ])
+            // isPersistent: true: que se vuelva a evaluar en cada
+            // actualización Livewire (/livewire/update), no solo al cargar
+            // la página — ver el mismo comentario en AlumnoPanelProvider.
+            ->middleware([
+                CheckUserStatus::class,
+            ], isPersistent: true)
             ->spa()
             ->databaseTransactions()
             ->errorNotifications(false)

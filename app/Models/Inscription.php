@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\EstadoMatricula;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
@@ -17,6 +18,7 @@ class Inscription extends Model
         'monto_pagado',
         'saldo',
         'estado_pago',
+        'estado_matricula',
         'user_create_id',
     ];
 
@@ -29,9 +31,15 @@ class Inscription extends Model
             'fecha_inscripcion' => 'datetime',
             'monto_pagado' => 'decimal:2',
             'saldo' => 'decimal:2',
+            'estado_matricula' => EstadoMatricula::class,
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
         ];
+    }
+
+    public function estaActiva(): bool
+    {
+        return $this->estado_matricula === EstadoMatricula::ACTIVA;
     }
 
     /**
