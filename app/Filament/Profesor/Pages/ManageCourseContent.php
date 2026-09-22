@@ -2,6 +2,7 @@
 
 namespace App\Filament\Profesor\Pages;
 
+use App\Enums\EstadoMatricula;
 use App\Models\CicloCourseTeacher;
 use App\Models\TeacherCourseContent;
 use App\Models\TeacherCourseContentDetail;
@@ -40,13 +41,21 @@ class ManageCourseContent extends Page implements HasActions
         $query = CicloCourseTeacher::query()
             ->whereHas('cicloCourse.course', function ($query) use ($courseSlug) {
                 $query->where('slug', $courseSlug);
+            })
+            // Solo el ciclo académico ACTUALMENTE activo. Sin esto, si el
+            // mismo curso+docente+turno existe en dos ciclos (uno ya vencido
+            // y uno nuevo), la consulta era ambigua y first() podía devolver
+            // cualquiera de los dos — en la práctica, casi siempre el más
+            // viejo, mostrando el contenido de un ciclo ya cerrado.
+            ->whereHas('cicloCourse.academicCycle', function ($query) {
+                $query->where('estado', true);
             });
 
         if ($user->teacher) {
             $query->where('teacher_id', $user->teacher->id);
         } elseif ($user->student) {
             $lastInscription = $user->student->inscriptions()
-                ->where('estado_pago', '!=', 'Cancelado') // Filtro de pago
+                ->where('estado_matricula', EstadoMatricula::ACTIVA->value)
                 ->latest()
                 ->first();
 
@@ -59,7 +68,10 @@ class ManageCourseContent extends Page implements HasActions
             }
         }
 
-        $assignment = $query->first();
+        // orderByDesc como red de seguridad extra: si por algún motivo
+        // hubiera más de un ciclo con estado=true al mismo tiempo, nos
+        // quedamos con la asignación más reciente.
+        $assignment = $query->latest('id')->first();
         $this->assignmentId = $assignment?->id;
     }
 
