@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class Banner extends Model
@@ -70,6 +71,19 @@ class Banner extends Model
 
             if ($path) {
                 $banner->imagen_desktop_path = $path;
+
+                return;
+            }
+
+            // No se pudo — el motivo exacto queda en storage/logs/laravel.log.
+            // Igual dejamos guardar el banner (sin imagen), para no bloquear
+            // al admin; puede subirla a mano o reintentar guardando de nuevo.
+            if (class_exists(\Filament\Notifications\Notification::class) && Auth::check()) {
+                \Filament\Notifications\Notification::make()
+                    ->title('No se pudo descargar la miniatura de TikTok')
+                    ->body('Revisa que el link sea correcto y vuelve a guardar para reintentar. Si sigue fallando, puedes subir la imagen a mano.')
+                    ->warning()
+                    ->send();
             }
         });
 
@@ -112,9 +126,22 @@ class Banner extends Model
         try {
             $response = Http::timeout(5)->get('https://www.tiktok.com/oembed', ['url' => $enlace]);
 
-            return $response->successful() ? $response->json('thumbnail_url') : null;
+            if (! $response->successful()) {
+                Log::warning('TikTok oEmbed falló', [
+                    'enlace' => $enlace,
+                    'status' => $response->status(),
+                    'body' => str($response->body())->limit(300)->toString(),
+                ]);
+
+                return null;
+            }
+
+            return $response->json('thumbnail_url');
         } catch (\Throwable $e) {
-            report($e);
+            Log::error('TikTok oEmbed: excepción al llamar', [
+                'enlace' => $enlace,
+                'error' => $e->getMessage(),
+            ]);
 
             return null;
         }
@@ -142,12 +169,19 @@ class Banner extends Model
             $thumbnailUrl = self::fetchTiktokThumbnail($enlace);
 
             if (! $thumbnailUrl) {
+                // Ya se registró el motivo dentro de fetchTiktokThumbnail().
                 return null;
             }
 
             $response = Http::timeout(10)->get($thumbnailUrl);
 
             if (! $response->successful()) {
+                Log::warning('TikTok: no se pudo descargar la imagen de la miniatura', [
+                    'video_id' => $videoId,
+                    'thumbnail_url' => $thumbnailUrl,
+                    'status' => $response->status(),
+                ]);
+
                 return null;
             }
 
@@ -160,10 +194,25 @@ class Banner extends Model
             };
 
             $path = "banners/desktop/tiktok-{$videoId}.{$extension}";
-            Storage::disk('public')->put($path, $response->body());
+            $guardado = Storage::disk('public')->put($path, $response->body());
+
+            if (! $guardado) {
+                Log::error('TikTok: la imagen se descargó pero no se pudo guardar en storage', [
+                    'video_id' => $videoId,
+                    'path' => $path,
+                    'disk_path' => Storage::disk('public')->path($path),
+                ]);
+
+                return null;
+            }
 
             return $path;
-        } catch (\Throwable) {
+        } catch (\Throwable $e) {
+            Log::error('TikTok: excepción al descargar/guardar la miniatura', [
+                'enlace' => $enlace,
+                'error' => $e->getMessage(),
+            ]);
+
             return null;
         }
     }
