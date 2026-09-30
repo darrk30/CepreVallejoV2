@@ -2,12 +2,10 @@
 
 namespace App\Filament\Resources\Banners\Schemas;
 
-use App\Models\Banner;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section; // Asegúrate de usar el namespace correcto de tu arquitectura
-use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
 class BannerForm
@@ -17,14 +15,14 @@ class BannerForm
         return $schema
             ->components([
                 Section::make('Imágenes del Banner')
-                    ->description('Sube las imágenes del banner. Se recomienda mantener una misma proporción. No es necesario si el enlace es un video de TikTok: se usa su miniatura automáticamente.')
+                    ->description('Sube las imágenes del banner. Se recomienda mantener una misma proporción. Si el link es un video de TikTok, sube tú mismo una miniatura (captura de pantalla del video, por ejemplo).')
                     ->columns(2)
                     ->schema([
                         FileUpload::make('imagen_desktop_path')
                             ->label('Imagen Desktop (PC)')
                             ->image()
                             ->directory('banners/desktop')
-                            ->required(fn (Get $get) => ! Banner::tiktokVideoId($get('enlace')))
+                            ->required()
                             ->imageEditor()
                             ->columnSpan(1),
 
@@ -43,8 +41,7 @@ class BannerForm
                             ->label('URL de Destino (Link)')
                             ->url()
                             ->placeholder('https://... o un link de TikTok (tiktok.com/@usuario/video/...)')
-                            ->helperText('Si pegas un link de un video de TikTok, su miniatura se descarga sola al guardar (no hace falta subirla a mano).')
-                            ->live(onBlur: true)
+                            ->helperText('Si es un link de video de TikTok, se reproduce embebido al hacer clic en el banner.')
                             ->prefixIcon('heroicon-m-link')
                             ->columnSpanFull(),
 
