@@ -50,20 +50,26 @@ new class extends Component {
                     ->map(function (Banner $banner) {
                         $data = $banner->toArray();
                         $data['tiktok_video_id'] = Banner::tiktokVideoId($banner->enlace);
-                        $data['tiktok_thumbnail_url'] = $data['tiktok_video_id']
+
+                        // Desde que el admin descarga la miniatura al pegar el
+                        // link (ver BannerForm), imagen_desktop_path ya tiene
+                        // un archivo real guardado — se usa igual que
+                        // cualquier imagen, sin llamar a TikTok. El fetch en
+                        // vivo queda solo de respaldo para banners de TikTok
+                        // creados ANTES de ese cambio, que se quedaron sin
+                        // imagen propia.
+                        $data['tiktok_thumbnail_url'] = ($data['tiktok_video_id'] && ! $banner->imagen_desktop_path)
                             ? Banner::fetchTiktokThumbnail($banner->enlace)
                             : null;
+
                         // Panorámica (ocupa 2 columnas) vs. alta (ocupa 2
                         // filas) en el grid — así una foto/video muy vertical
                         // u horizontal no se recorta de más en una celda casi
-                        // cuadrada. Los videos de TikTok siempre son
-                        // verticales.
-                        $data['es_panoramica'] = $data['tiktok_video_id']
-                            ? false
-                            : Banner::isWideImage($banner->imagen_desktop_path);
-                        $data['es_alta'] = $data['tiktok_video_id']
-                            ? true
-                            : Banner::isTallImage($banner->imagen_desktop_path);
+                        // cuadrada.
+                        $data['es_panoramica'] = Banner::isWideImage($banner->imagen_desktop_path);
+                        $data['es_alta'] = $banner->imagen_desktop_path
+                            ? Banner::isTallImage($banner->imagen_desktop_path)
+                            : (bool) $data['tiktok_video_id']; // sin imagen propia: asumimos vertical, como todo TikTok
 
                         return $data;
                     })
@@ -362,14 +368,22 @@ new class extends Component {
                 <div class="{{ $info->es_panoramica ? 'col-span-2' : ($info->es_alta ? 'row-span-2' : '') }}"
                     @if (! $info->es_visible_inicial) x-show="mostrarTodosAvisos" x-cloak @endif>
                     @if ($info->tiktok_video_id)
-                        {{-- Banner de video: la miniatura viene en vivo de la API
-                             oEmbed de TikTok (no se guarda en el servidor). Al
-                             hacer clic se abre el modal y ahí se reproduce. --}}
-                        <div @click="activeImage = @js($info->tiktok_thumbnail_url); activeLink = @js($info->enlace); activeTiktokId = @js($info->tiktok_video_id); openInfoModal = true"
+                        @php
+                            // Lo normal: ya tiene su miniatura descargada y
+                            // guardada (ver BannerForm) — se usa como
+                            // cualquier imagen. Solo si un banner de TikTok
+                            // viejo se quedó sin imagen propia, se cae al
+                            // link en vivo de respaldo.
+                            $miniaturaTiktok = $info->imagen_desktop_path
+                                ? Storage::url($info->imagen_desktop_path)
+                                : $info->tiktok_thumbnail_url;
+                        @endphp
+                        {{-- Banner de video: al hacer clic se abre el modal y ahí se reproduce. --}}
+                        <div @click="activeImage = @js($miniaturaTiktok); activeLink = @js($info->enlace); activeTiktokId = @js($info->tiktok_video_id); openInfoModal = true"
                             class="group relative h-full rounded-lg overflow-hidden bg-gray-900 shadow-md hover:shadow-2xl transition-shadow duration-500 border border-gray-100 cursor-pointer">
 
-                            @if ($info->tiktok_thumbnail_url)
-                                <img src="{{ $info->tiktok_thumbnail_url }}"
+                            @if ($miniaturaTiktok)
+                                <img src="{{ $miniaturaTiktok }}"
                                     alt="Video de TikTok {{ $loop->iteration }}"
                                     class="w-full h-full object-cover block transform transition-transform duration-500 ease-out group-hover:scale-105">
                             @else
