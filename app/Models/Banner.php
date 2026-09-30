@@ -38,19 +38,34 @@ class Banner extends Model
         });
 
         // Se dispara al Crear y al Editar (justo antes del INSERT/UPDATE),
-        // no mientras se llena el formulario — así "Crear" responde al
-        // toque, sin esperar a que TikTok conteste. Solo baja la miniatura
-        // si el enlace es de TikTok y todavía no hay imagen puesta (a mano
-        // o de un guardado anterior).
+        // no mientras se llena el formulario — así "Crear"/"Guardar"
+        // responde al toque, sin esperar a que TikTok conteste.
         static::saving(function (Banner $banner) {
-            if ($banner->imagen_desktop_path) {
-                return;
-            }
-
             if (! self::tiktokVideoId($banner->enlace)) {
                 return;
             }
 
+            $linkCambio = $banner->isDirty('enlace');
+            $noTieneImagen = ! $banner->imagen_desktop_path;
+
+            // No hay nada que hacer si el link sigue igual Y ya tiene una
+            // imagen puesta — así no se llama a TikTok de nuevo sin
+            // necesidad en cada guardado.
+            if (! $linkCambio && ! $noTieneImagen) {
+                return;
+            }
+
+            // Si en este mismo guardado también subieron una imagen a mano
+            // (junto con el link nuevo, o para rellenar la que faltaba), se
+            // respeta esa elección.
+            if ($banner->imagen_desktop_path && $banner->isDirty('imagen_desktop_path')) {
+                return;
+            }
+
+            // Cambiaste el link a otro video, lo pusiste por primera vez, o
+            // es un banner viejo al que nunca se le pudo bajar la miniatura
+            // (de antes de tener esta función): se descarga la miniatura
+            // del video ACTUAL, reemplazando la que hubiera antes.
             $path = self::downloadTiktokThumbnail($banner->enlace);
 
             if ($path) {
