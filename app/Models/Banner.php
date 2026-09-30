@@ -37,6 +37,27 @@ class Banner extends Model
             }
         });
 
+        // Se dispara al Crear y al Editar (justo antes del INSERT/UPDATE),
+        // no mientras se llena el formulario — así "Crear" responde al
+        // toque, sin esperar a que TikTok conteste. Solo baja la miniatura
+        // si el enlace es de TikTok y todavía no hay imagen puesta (a mano
+        // o de un guardado anterior).
+        static::saving(function (Banner $banner) {
+            if ($banner->imagen_desktop_path) {
+                return;
+            }
+
+            if (! self::tiktokVideoId($banner->enlace)) {
+                return;
+            }
+
+            $path = self::downloadTiktokThumbnail($banner->enlace);
+
+            if ($path) {
+                $banner->imagen_desktop_path = $path;
+            }
+        });
+
         static::saved(fn () => Cache::forget('home.page.data'));
         static::deleted(fn () => Cache::forget('home.page.data'));
     }
@@ -80,6 +101,54 @@ class Banner extends Model
         } catch (\Throwable $e) {
             report($e);
 
+            return null;
+        }
+    }
+
+    /**
+     * Descarga la miniatura del video (vía oEmbed) y la guarda en
+     * storage/banners/desktop, igual que una imagen subida a mano. Devuelve
+     * la ruta relativa (para meterla directo en imagen_desktop_path) o null
+     * si algo falla (link inválido, oEmbed no respondió, etc.).
+     *
+     * Se usa una sola vez, al pegar el link en el formulario del admin —
+     * después de eso el banner ya tiene su propio archivo local y no
+     * depende de una nueva llamada a TikTok para mostrarse.
+     */
+    public static function downloadTiktokThumbnail(string $enlace): ?string
+    {
+        $videoId = self::tiktokVideoId($enlace);
+
+        if (! $videoId) {
+            return null;
+        }
+
+        try {
+            $thumbnailUrl = self::fetchTiktokThumbnail($enlace);
+
+            if (! $thumbnailUrl) {
+                return null;
+            }
+
+            $response = Http::timeout(10)->get($thumbnailUrl);
+
+            if (! $response->successful()) {
+                return null;
+            }
+
+            // TikTok no siempre manda jpg (a veces es png/webp); nos fijamos
+            // en el Content-Type real de la respuesta en vez de asumir.
+            $extension = match (true) {
+                str_contains($response->header('Content-Type') ?? '', 'png') => 'png',
+                str_contains($response->header('Content-Type') ?? '', 'webp') => 'webp',
+                default => 'jpg',
+            };
+
+            $path = "banners/desktop/tiktok-{$videoId}.{$extension}";
+            Storage::disk('public')->put($path, $response->body());
+
+            return $path;
+        } catch (\Throwable) {
             return null;
         }
     }

@@ -43,7 +43,7 @@ class BannerForm
                             ->label('URL de Destino (Link)')
                             ->url()
                             ->placeholder('https://... o un link de TikTok (tiktok.com/@usuario/video/...)')
-                            ->helperText('Si pegas un link de un video de TikTok, se muestra su miniatura y se reproduce dentro del sitio; no hace falta subir imagen.')
+                            ->helperText('Si pegas un link de un video de TikTok, su miniatura se descarga sola al guardar (no hace falta subirla a mano).')
                             ->live(onBlur: true)
                             ->prefixIcon('heroicon-m-link')
                             ->columnSpanFull(),
