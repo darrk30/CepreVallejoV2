@@ -37,10 +37,38 @@ new class extends Component {
                 ->where('tipo', 'publico')
                 ->orderBy('orden')->get()->toArray(),
 
-            'banners_informativos' => Banner::where('estado', 'Activo')
-                ->where('tipo', 'informacion_publica')
-                ->orderBy('orden')
-                ->get()->toArray(),
+            // Los de tipo "video de TikTok" (enlace apunta a un video de
+            // TikTok) no guardan miniatura: se pide a la API oEmbed de
+            // TikTok al vuelo (dentro de esta misma caché de 15 min, así
+            // que no se llama en cada visita) y se usa directo, sin
+            // descargarla ni guardarla en el servidor.
+            'banners_informativos' => $this->markInitialGalleryVisibility(
+                Banner::where('estado', 'Activo')
+                    ->where('tipo', 'informacion_publica')
+                    ->orderBy('orden')
+                    ->get()
+                    ->map(function (Banner $banner) {
+                        $data = $banner->toArray();
+                        $data['tiktok_video_id'] = Banner::tiktokVideoId($banner->enlace);
+                        $data['tiktok_thumbnail_url'] = $data['tiktok_video_id']
+                            ? Banner::fetchTiktokThumbnail($banner->enlace)
+                            : null;
+                        // Panorámica (ocupa 2 columnas) vs. alta (ocupa 2
+                        // filas) en el grid — así una foto/video muy vertical
+                        // u horizontal no se recorta de más en una celda casi
+                        // cuadrada. Los videos de TikTok siempre son
+                        // verticales.
+                        $data['es_panoramica'] = $data['tiktok_video_id']
+                            ? false
+                            : Banner::isWideImage($banner->imagen_desktop_path);
+                        $data['es_alta'] = $data['tiktok_video_id']
+                            ? true
+                            : Banner::isTallImage($banner->imagen_desktop_path);
+
+                        return $data;
+                    })
+                    ->all()
+            ),
 
             // Servicios Académicos
             'servicios' => AcademicService::where('estado', 'Activo')->get()->toArray(),
@@ -64,6 +92,140 @@ new class extends Component {
                 ->where('estado', true)
                 ->get()->toArray(),
         ];
+    }
+
+    /**
+     * Decide qué avisos entran en el grid inicial de 4 columnas x 3 filas
+     * (12 casillas) ANTES de necesitar "Ver más", replicando el mismo
+     * algoritmo de acomodo que usa el navegador con grid-auto-flow:dense,
+     * MÁS una "mirada hacia adelante" de un paso: antes de meter una foto
+     * 1x1 en un hueco de 2 casillas (dejando la otra mitad pendiente), se
+     * fija si LA SIGUIENTE de la lista llenaría ese mismo hueco por
+     * completo (una ancha o una alta) — si es así, se prioriza esa y la
+     * 1x1 se guarda para el próximo hueco. Si en cambio la siguiente
+     * también es 1x1 (o no calza ahí), se usan normalmente en orden — ya
+     * completan el hueco entre las dos. Si un aviso no cabe en ninguna
+     * posición dentro de las 3 filas, se descarta (queda para "Ver más").
+     *
+     * @param  array<int, array<string, mixed>>  $items
+     * @return array<int, array<string, mixed>>
+     */
+    private function markInitialGalleryVisibility(array $items): array
+    {
+        $cols = 4;
+        $maxRows = 3;
+
+        $occupied = array_fill(0, $maxRows, array_fill(0, $cols, false));
+
+        foreach ($items as $i => $item) {
+            $items[$i]['es_visible_inicial'] = false;
+        }
+
+        // Cola de índices pendientes de ubicar, en el orden original.
+        $pending = array_keys($items);
+
+        while (! empty($pending)) {
+            $idxA = $pending[0];
+            [$rowSpanA, $colSpanA] = $this->gridSpanOf($items[$idxA]);
+            $posA = $this->findFirstGridFit($occupied, $rowSpanA, $colSpanA, $maxRows, $cols);
+
+            if ($posA === null) {
+                // No cabe en ninguna parte del espacio restante: se
+                // descarta para esta tanda (queda para "Ver más") y se
+                // sigue probando con el siguiente de la cola.
+                array_shift($pending);
+
+                continue;
+            }
+
+            // ¿La siguiente foto de la cola completaría este MISMO hueco
+            // de forma más entera que la actual? (misma posición de
+            // arranque, pero ocupando más casillas).
+            if (count($pending) > 1) {
+                $idxB = $pending[1];
+                [$rowSpanB, $colSpanB] = $this->gridSpanOf($items[$idxB]);
+                $posB = $this->findFirstGridFit($occupied, $rowSpanB, $colSpanB, $maxRows, $cols);
+
+                $areaA = $rowSpanA * $colSpanA;
+                $areaB = $rowSpanB * $colSpanB;
+
+                if ($posB !== null && $posB === $posA && $areaB > $areaA) {
+                    $this->occupyGridSlot($occupied, $posB, $rowSpanB, $colSpanB);
+                    $items[$idxB]['es_visible_inicial'] = true;
+                    array_splice($pending, 1, 1); // saca a B; A queda de primero para el próximo hueco
+
+                    continue;
+                }
+            }
+
+            $this->occupyGridSlot($occupied, $posA, $rowSpanA, $colSpanA);
+            $items[$idxA]['es_visible_inicial'] = true;
+            array_shift($pending);
+        }
+
+        return $items;
+    }
+
+    /**
+     * [rowSpan, colSpan] que ocupa un aviso en el grid según su forma.
+     *
+     * @param  array<string, mixed>  $item
+     * @return array{0: int, 1: int}
+     */
+    private function gridSpanOf(array $item): array
+    {
+        return [
+            $item['es_alta'] ? 2 : 1,
+            $item['es_panoramica'] ? 2 : 1,
+        ];
+    }
+
+    /**
+     * Marca como ocupadas las casillas que cubre un bloque de
+     * $rowSpan x $colSpan a partir de la posición [$row, $col].
+     *
+     * @param  array<int, array<int, bool>>  $occupied
+     */
+    private function occupyGridSlot(array &$occupied, array $pos, int $rowSpan, int $colSpan): void
+    {
+        [$row, $col] = $pos;
+
+        for ($r = $row; $r < $row + $rowSpan; $r++) {
+            for ($c = $col; $c < $col + $colSpan; $c++) {
+                $occupied[$r][$c] = true;
+            }
+        }
+    }
+
+    /**
+     * Primera posición libre (arriba-abajo, izquierda-derecha) donde cabe
+     * un bloque de $rowSpan x $colSpan sin pisar casillas ya ocupadas ni
+     * salirse del grid. Null si no hay ninguna.
+     *
+     * @param  array<int, array<int, bool>>  $occupied
+     */
+    private function findFirstGridFit(array $occupied, int $rowSpan, int $colSpan, int $maxRows, int $cols): ?array
+    {
+        for ($row = 0; $row <= $maxRows - $rowSpan; $row++) {
+            for ($col = 0; $col <= $cols - $colSpan; $col++) {
+                $fits = true;
+
+                for ($r = $row; $r < $row + $rowSpan && $fits; $r++) {
+                    for ($c = $col; $c < $col + $colSpan; $c++) {
+                        if ($occupied[$r][$c]) {
+                            $fits = false;
+                            break;
+                        }
+                    }
+                }
+
+                if ($fits) {
+                    return [$row, $col];
+                }
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -160,6 +322,170 @@ new class extends Component {
                 class="w-full h-[40px] md:h-[70px]">
                 <path d="M0,50 C300,100 600,0 900,50 C1200,100 1440,20 1440,50 L1440,100 L0,100 Z" fill="#FFFFFF" />
             </svg>
+        </div>
+    </section>
+    @endif
+
+    {{-- ============================================================
+         1.5. BANNERS INFORMATIVOS — Galería adaptable (Con Modal)
+    ============================================================ --}}
+    @if ($banners_informativos->count() > 0)
+    {{-- ¿Hay algún aviso que se quedó fuera de las 4x3 casillas iniciales?
+         (calculado en fetchHomeData()/markInitialGalleryVisibility) --}}
+    @php
+        $hayAvisosOcultos = $banners_informativos->contains(fn ($info) => ! $info->es_visible_inicial);
+    @endphp
+    <section class="py-12 relative overflow-hidden bg-white"
+        x-data="{ openInfoModal: false, activeImage: '', activeLink: '', activeTiktokId: '', mostrarTodosAvisos: false }">
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+
+            {{-- Título de la sección --}}
+            <div class="text-center mb-10 reveal">
+                <span class="section-label">Información adicional</span>
+                <h2 class="hand text-4xl md:text-5xl font-bold mt-4" style="color:var(--blue)">
+                    Anuncios <span class="text-gold">y Novedades</span>
+                </h2>
+                <span class="gold-rule"></span>
+            </div>
+
+            {{-- Grid real (no mosaico): altura de fila FIJA + grid-auto-flow
+                 dense. Esto sí garantiza que nunca quede espacio en blanco,
+                 sin importar cuántas fotos haya ni de qué tamaño sean —
+                 dense reordena los ítems para rellenar cualquier hueco. Las
+                 fotos panorámicas (detectadas por sus dimensiones reales,
+                 ver Banner::isWideImage) ocupan 2 columnas; el resto, 1.
+                 A cambio de esto, la imagen ya no se ve completa: se recorta
+                 (object-cover) para llenar su celda sin dejar huecos. --}}
+            <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 auto-rows-[130px] sm:auto-rows-[160px] lg:auto-rows-[190px] [grid-auto-flow:dense] gap-2 sm:gap-3 reveal stagger">
+                @foreach ($banners_informativos as $info)
+                <div class="{{ $info->es_panoramica ? 'col-span-2' : ($info->es_alta ? 'row-span-2' : '') }}"
+                    @if (! $info->es_visible_inicial) x-show="mostrarTodosAvisos" x-cloak @endif>
+                    @if ($info->tiktok_video_id)
+                        {{-- Banner de video: la miniatura viene en vivo de la API
+                             oEmbed de TikTok (no se guarda en el servidor). Al
+                             hacer clic se abre el modal y ahí se reproduce. --}}
+                        <div @click="activeImage = @js($info->tiktok_thumbnail_url); activeLink = @js($info->enlace); activeTiktokId = @js($info->tiktok_video_id); openInfoModal = true"
+                            class="group relative h-full rounded-lg overflow-hidden bg-gray-900 shadow-md hover:shadow-2xl transition-shadow duration-500 border border-gray-100 cursor-pointer">
+
+                            @if ($info->tiktok_thumbnail_url)
+                                <img src="{{ $info->tiktok_thumbnail_url }}"
+                                    alt="Video de TikTok {{ $loop->iteration }}"
+                                    class="w-full h-full object-cover block transform transition-transform duration-500 ease-out group-hover:scale-105">
+                            @else
+                                {{-- La miniatura no se pudo obtener de TikTok en este momento --}}
+                                <div class="w-full h-full bg-gray-800"></div>
+                            @endif
+
+                            {{-- Ícono de play, para que se note que es un video --}}
+                            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                <div class="bg-black/40 backdrop-blur-sm rounded-full p-4 group-hover:scale-110 transition-transform duration-300">
+                                    <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M8 5v14l11-7z" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    @else
+                        {{-- Al hacer clic, enviamos la data a Alpine y abrimos el modal --}}
+                        <div @click="activeImage = @js(Storage::url($info->imagen_desktop_path)); activeLink = @js($info->enlace); activeTiktokId = ''; openInfoModal = true"
+                            class="group relative h-full rounded-lg overflow-hidden bg-gray-50 shadow-md hover:shadow-2xl transition-shadow duration-500 border border-gray-100 cursor-pointer">
+
+                            <picture>
+                                <source media="(min-width: 768px)" srcset="{{ Storage::url($info->imagen_desktop_path) }}">
+                                <img src="{{ Storage::url($info->imagen_mobile_path ?? $info->imagen_desktop_path) }}"
+                                    alt="Aviso Informativo {{ $loop->iteration }}"
+                                    class="w-full h-full object-cover block transform transition-transform duration-500 ease-out group-hover:scale-105">
+                            </picture>
+                        </div>
+                    @endif
+                </div>
+                @endforeach
+            </div>
+
+            {{-- Botón "Ver más": solo aparece si algún aviso quedó fuera del 4x3 inicial --}}
+            @if ($hayAvisosOcultos)
+            <div class="text-center mt-10">
+                <button @click="mostrarTodosAvisos = !mostrarTodosAvisos"
+                    class="inline-flex items-center gap-2 px-8 py-3 rounded-xl text-sm font-extrabold text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_20px_rgba(201,168,76,0.4)]"
+                    style="background:linear-gradient(135deg,var(--gold),#92400e);">
+                    <span x-text="mostrarTodosAvisos ? 'Ver menos' : 'Ver más'"></span>
+                    <svg class="w-4 h-4 transition-transform duration-300" :class="mostrarTodosAvisos ? 'rotate-180' : ''"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+            </div>
+            @endif
+        </div>
+
+        {{-- MODAL DE IMAGEN EXPANDIDA (Lightbox) --}}
+        <div x-show="openInfoModal" x-cloak class="fixed inset-0 z-[10000] flex items-center justify-center p-4 sm:p-6" style="display:none">
+
+            {{-- Fondo oscuro difuminado --}}
+            <div @click="openInfoModal = false; activeTiktokId = ''" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md transition-opacity"></div>
+
+            {{-- Contenedor principal del modal. pointer-events-none: este
+                 div es más ancho que el video/imagen que contiene (sobre
+                 todo con el reproductor de TikTok, angosto); sin esto, el
+                 espacio "vacío" alrededor absorbía el clic y no dejaba
+                 cerrar al hacer clic "afuera". Cada hijo interactivo
+                 recupera el clic con pointer-events-auto. --}}
+            <div x-show="openInfoModal"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 scale-95 translate-y-8"
+                x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                class="relative w-full max-w-5xl z-10 flex flex-col items-center pointer-events-none">
+
+                {{-- Botón Cerrar --}}
+                <button @click="openInfoModal = false; activeTiktokId = ''" class="absolute -top-12 right-0 md:-right-8 text-white hover:text-red-400 transition-colors z-50 pointer-events-auto">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+
+                {{-- Video de TikTok: reproductor OFICIAL y documentado de TikTok
+                     (developers.tiktok.com/doc/embed-player). "embed/v2" es un
+                     endpoint interno que ellos usan para armar el oEmbed, no
+                     pensado para llamarlo directo desde un iframe de terceros
+                     — por eso disparaba su protección "overload-protect". --}}
+                <template x-if="activeTiktokId">
+                    <iframe :src="'https://www.tiktok.com/player/v1/' + activeTiktokId + '?music_info=1&description=1&autoplay=1&muted=0'"
+                        class="w-full max-w-[325px] sm:max-w-[400px] rounded-2xl shadow-2xl border-4 border-white/10 pointer-events-auto"
+                        style="height:min(80vh,738px)"
+                        allow="autoplay; encrypted-media; picture-in-picture"
+                        allowfullscreen></iframe>
+                </template>
+
+                {{-- Imagen en grande: si el aviso tiene enlace, un clic más te lleva ahí.
+                     Usamos un <a> real (no window.open) para que no lo bloquee
+                     el bloqueador de pop-ups del navegador. Sin enlace, el clic
+                     no hace nada (preventDefault) y el cursor no cambia. --}}
+                <template x-if="!activeTiktokId">
+                    <a :href="activeLink || '#'"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        @click.stop="if (!activeLink) $event.preventDefault()"
+                        :class="activeLink ? 'cursor-pointer' : 'cursor-default'"
+                        class="pointer-events-auto">
+                        <img :src="activeImage" alt="Aviso ampliado"
+                            class="max-h-[80vh] w-auto max-w-full rounded-2xl shadow-2xl object-contain border-4 border-white/10">
+                    </a>
+                </template>
+
+                {{-- Botón de enlace externo (Solo se muestra si el banner tiene un enlace configurado en BD) --}}
+                <template x-if="activeLink">
+                    <a :href="activeLink" target="_blank"
+                        class="mt-6 px-8 py-3 rounded-xl text-sm font-extrabold text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_20px_rgba(201,168,76,0.4)] flex items-center gap-2 pointer-events-auto"
+                        style="background:linear-gradient(135deg,var(--gold),#92400e);">
+                        <span x-text="activeTiktokId ? 'Ver en TikTok' : 'Ver más información'"></span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                    </a>
+                </template>
+
+            </div>
         </div>
     </section>
     @endif
@@ -629,94 +955,6 @@ new class extends Component {
                 style="height:90px">
                 <path d="M0,20 C360,90 720,0 1080,65 C1260,95 1380,30 1440,50 L1440,90 L0,90 Z" fill="#FFFFFF" />
             </svg>
-        </div>
-    </section>
-    @endif
-
-    {{-- ============================================================
-         1.5. BANNERS INFORMATIVOS — Grilla de avisos (Con Modal)
-    ============================================================ --}}
-    @if ($banners_informativos->count() > 0)
-    <section class="py-12 relative overflow-hidden bg-white"
-        x-data="{ openInfoModal: false, activeImage: '', activeLink: '' }">
-
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-
-            {{-- Título de la sección --}}
-            <div class="text-center mb-10 reveal">
-                <span class="section-label">Información adicional</span>
-                <h2 class="hand text-4xl md:text-5xl font-bold mt-4" style="color:var(--blue)">
-                    Post <span class="text-gold">Comunicativos</span>
-                </h2>
-                <span class="gold-rule"></span>
-            </div>
-
-            {{-- Grilla CSS --}}
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 reveal stagger">
-                @foreach ($banners_informativos as $info)
-                {{-- Al hacer clic, enviamos la data a Alpine y abrimos el modal --}}
-                <div @click="activeImage = '{{ Storage::url($info->imagen_desktop_path) }}'; activeLink = '{{ $info->enlace }}'; openInfoModal = true"
-                    class="relative group rounded-3xl overflow-hidden bg-gray-50 shadow-md hover:shadow-2xl transition-all duration-500 border border-gray-100 cursor-pointer">
-
-                    {{-- Capa oscura con ícono de lupa al hacer hover --}}
-                    <div class="absolute inset-0 bg-blue-900/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 flex items-center justify-center backdrop-blur-[2px]">
-                        <div class="bg-white/20 p-3 rounded-full text-white transform scale-50 group-hover:scale-100 transition-transform duration-300">
-                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
-                            </svg>
-                        </div>
-                    </div>
-
-                    {{-- Contenedor de la imagen --}}
-                    <div class="relative aspect-[4/3] w-full overflow-hidden flex items-center justify-center">
-                        <picture class="w-full h-full block">
-                            <source media="(min-width: 768px)" srcset="{{ Storage::url($info->imagen_desktop_path) }}">
-                            <img src="{{ Storage::url($info->imagen_mobile_path ?? $info->imagen_desktop_path) }}"
-                                alt="Aviso Informativo {{ $loop->iteration }}"
-                                class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700">
-                        </picture>
-                    </div>
-                </div>
-                @endforeach
-            </div>
-        </div>
-
-        {{-- MODAL DE IMAGEN EXPANDIDA (Lightbox) --}}
-        <div x-show="openInfoModal" x-cloak class="fixed inset-0 z-[10000] flex items-center justify-center p-4 sm:p-6" style="display:none">
-
-            {{-- Fondo oscuro difuminado --}}
-            <div @click="openInfoModal = false" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md transition-opacity"></div>
-
-            {{-- Contenedor principal del modal --}}
-            <div x-show="openInfoModal"
-                x-transition:enter="transition ease-out duration-300"
-                x-transition:enter-start="opacity-0 scale-95 translate-y-8"
-                x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-                class="relative w-full max-w-5xl z-10 flex flex-col items-center">
-
-                {{-- Botón Cerrar --}}
-                <button @click="openInfoModal = false" class="absolute -top-12 right-0 md:-right-8 text-white hover:text-red-400 transition-colors z-50">
-                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-
-                {{-- Imagen en grande --}}
-                <img :src="activeImage" alt="Aviso ampliado" class="max-h-[80vh] w-auto max-w-full rounded-2xl shadow-2xl object-contain border-4 border-white/10">
-
-                {{-- Botón de enlace externo (Solo se muestra si el banner tiene un enlace configurado en BD) --}}
-                <template x-if="activeLink">
-                    <a :href="activeLink" target="_blank"
-                        class="mt-6 px-8 py-3 rounded-xl text-sm font-extrabold text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_20px_rgba(201,168,76,0.4)] flex items-center gap-2"
-                        style="background:linear-gradient(135deg,var(--gold),#92400e);">
-                        Ver más información
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                        </svg>
-                    </a>
-                </template>
-
-            </div>
         </div>
     </section>
     @endif
