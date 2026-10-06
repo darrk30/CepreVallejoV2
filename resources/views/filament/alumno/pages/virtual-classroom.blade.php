@@ -352,12 +352,16 @@
     <div class="pt-1.5 pb-12 font-handlee">
 
         {{-- Header --}}
-        <div class="mb-[38px] flex flex-wrap items-end justify-between gap-3.5 border-b border-[#6366f1]/13 pb-[22px] max-[600px]:flex-col max-[600px]:items-start dark:border-[#818cf8]/13">
+        <div class="mb-[38px] flex flex-wrap max-[600px]:flex-nowrap items-end justify-between gap-3.5 border-b border-[#6366f1]/13 pb-[22px] max-[600px]:items-center dark:border-[#818cf8]/13">
             <div>
                 <h1 class="m-0 text-[1.85rem] leading-none font-extrabold tracking-[-0.03em] text-[#0f0e17] max-[600px]:text-[1.45rem] dark:text-[#eeedf8]">Mi Aula <em class="text-[#5b5ef4] not-italic dark:text-[#818cf8]">Virtual</em></h1>
-                <p class="mt-[5px] text-[0.82rem] text-[#8e8bac] dark:text-[#6a678a]">Tus cursos del ciclo académico activo</p>
+                <p class="mt-[5px] text-[0.82rem] text-[#8e8bac] dark:text-[#6a678a]">Tus cursos del ciclo que elijas</p>
             </div>
-            @if ($this->inscripcion)
+            @if ($this->ciclosOrdenados->count() > 1)
+                <div class="w-[150px] shrink-0 sm:w-[240px]">
+                    {{ $this->form }}
+                </div>
+            @elseif ($this->inscripcion)
                 <div class="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border border-[#6366f1]/28 bg-[#5b5ef4]/9 px-3.5 py-1.5 text-[0.73rem] font-medium text-[#4643d4] dark:border-[#818cf8]/30 dark:bg-[#818cf8]/13 dark:text-[#a5b4fc]">
                     <svg class="h-[13px] w-[13px]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8"
                         stroke="currentColor">
@@ -383,10 +387,12 @@
             </div>
         @else
             {{-- Ciclos con cursos --}}
-            @foreach ($this->cycles as $cycleName => $inscriptions)
+            @php $asignaciones = $this->asignacionesMap; @endphp
+            @foreach ($this->cicloSeleccionadoGrupo as $cycleName => $inscriptions)
                 @php
-                    // Tomamos el ciclo de la primera inscripción del grupo
+                    // Tomamos el ciclo y el turno de la primera inscripción del grupo
                     $cycleId = $inscriptions->first()->academic_cycle_id;
+                    $turnoId = $inscriptions->first()->turno_id;
                     $courses = $this->getCoursesForCycle($cycleId);
                 @endphp
 
@@ -433,7 +439,9 @@
                                     @endif
 
                                     {{-- Enlace al contenido del curso (vista solo lectura para alumno) --}}
-                                    <a href="{{ \App\Filament\Profesor\Pages\ManageCourseContent::getUrl(['courseSlug' => $course->slug]) }}"
+                                    @php $asignacionId = $asignaciones->get($cycleId . '|' . $turnoId . '|' . $course->id); @endphp
+                                    @if ($asignacionId)
+                                    <a href="{{ \App\Filament\Profesor\Pages\ManageCourseContent::getUrl(['courseSlug' => $course->slug, 'asignacion' => $asignacionId]) }}"
                                         wire:navigate
                                         class="group/btn inline-flex items-center justify-center gap-2 rounded-[10px] border-none bg-[#5b5ef4] px-[18px] py-2.5 text-[0.81rem] font-medium text-white no-underline shadow-[0_2px_10px_rgba(91,94,244,0.18)] transition-[background-color,transform,box-shadow] duration-[180ms] ease-out hover:-translate-y-px hover:bg-[#4643d4] hover:text-white hover:no-underline hover:shadow-[0_6px_18px_rgba(91,94,244,0.18)] dark:bg-[#818cf8] dark:shadow-[0_2px_10px_rgba(129,140,248,0.22)] dark:hover:bg-[#a5b4fc] dark:hover:shadow-[0_6px_18px_rgba(129,140,248,0.22)]">
                                         Ver curso
@@ -443,6 +451,9 @@
                                                 d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                                         </svg>
                                     </a>
+                                    @else
+                                    <span class="text-[0.78rem] text-[#8e8bac] dark:text-[#6a678a]">Sin docente asignado en tu turno</span>
+                                    @endif
                                 </div>
                             </div>
                         @endforeach

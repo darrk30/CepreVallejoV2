@@ -74,6 +74,8 @@ new class extends Component {
                 },
             ])
                 ->where('estado', true)
+                // "estado" es el uso interno; esto decide solo si se muestra en la landing
+                ->where('mostrar_en_landing', true)
                 ->orderBy('fecha_inicio', 'asc')
                 ->get()->toArray(),
             // Convenios Activos

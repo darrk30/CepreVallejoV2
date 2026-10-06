@@ -16,6 +16,7 @@ class AcademicCycle extends Model
         'numero',
         'precio',
         'estado',
+        'mostrar_en_landing',
         'user_create_id'
     ];
 
@@ -31,6 +32,7 @@ class AcademicCycle extends Model
             'fecha_inicio' => 'date',
             'fecha_fin' => 'date',
             'estado' => 'boolean',
+            'mostrar_en_landing' => 'boolean',
         ];
     }
 

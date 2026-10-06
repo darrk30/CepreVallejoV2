@@ -38,6 +38,23 @@ class ManageCourseContent extends Page implements HasActions
         $this->courseSlug = $courseSlug;
         $user = auth()->user();
 
+        // Asignación elegida desde la tarjeta (ciclo + turno + curso). Así el
+        // mismo curso en dos ciclos o turnos abre SU contenido, no el de otro.
+        $asignacionId = request()->integer('asignacion') ?: null;
+
+        if ($asignacionId) {
+            $asignacion = CicloCourseTeacher::with('cicloCourse')->find($asignacionId);
+
+            abort_unless(
+                $asignacion && $asignacion->cicloCourse?->course?->slug === $courseSlug
+                    && $this->puedeVerAsignacion($asignacion, $user),
+                403
+            );
+
+            $this->assignmentId = $asignacion->id;
+            return;
+        }
+
         $query = CicloCourseTeacher::query()
             ->whereHas('cicloCourse.course', function ($query) use ($courseSlug) {
                 $query->where('slug', $courseSlug);
@@ -73,6 +90,27 @@ class ManageCourseContent extends Page implements HasActions
         // quedamos con la asignación más reciente.
         $assignment = $query->latest('id')->first();
         $this->assignmentId = $assignment?->id;
+    }
+
+    /**
+     * Profesor: solo sus propias asignaciones.
+     * Alumno: solo si tiene matrícula activa en ese mismo ciclo y turno.
+     */
+    private function puedeVerAsignacion(CicloCourseTeacher $asignacion, $user): bool
+    {
+        if ($user->teacher) {
+            return $asignacion->teacher_id === $user->teacher->id;
+        }
+
+        if ($user->student) {
+            return $user->student->inscriptions()
+                ->where('estado_matricula', EstadoMatricula::ACTIVA->value)
+                ->where('academic_cycle_id', $asignacion->cicloCourse->ciclo_id)
+                ->where('turno_id', $asignacion->turno_id)
+                ->exists();
+        }
+
+        return false;
     }
 
     // ── Breadcrumb ────────────────────────────────────────────

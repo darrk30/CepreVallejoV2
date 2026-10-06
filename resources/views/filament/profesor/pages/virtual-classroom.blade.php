@@ -56,7 +56,7 @@
                                 {{-- <p class="cr-desc">Gestiona lecciones, material educativo y exámenes para este curso en
                                     el presente ciclo.</p> --}}
                                 {{-- <a href="{{ route('filament.profesor.resources.teacher-course-contents.index', ['tableFilters[ciclo_course_teacher_id][value]' => $assignment->id]) }}" --}}
-                                <a href="{{ \App\Filament\Profesor\Pages\ManageCourseContent::getUrl(['courseSlug' => $course->slug]) }}"
+                                <a href="{{ \App\Filament\Profesor\Pages\ManageCourseContent::getUrl(['courseSlug' => $course->slug, 'asignacion' => $assignment->id]) }}"
                                     wire:navigate class="cr-btn">
                                     Entrar al Aula
                                     <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none"

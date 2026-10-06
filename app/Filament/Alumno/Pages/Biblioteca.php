@@ -14,6 +14,11 @@ class Biblioteca extends Page
 {
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBookOpen;
     protected string $view = 'filament.alumno.pages.biblioteca';
+
+    public static function canAccess(): bool
+    {
+        return \Illuminate\Support\Facades\Auth::user()?->can('view_biblioteca') ?? false;
+    }
     protected static ?string $title = 'Mi Biblioteca Digital';
     protected static ?string $navigationLabel = 'Biblioteca';
     protected static ?int $navigationSort = 9;

@@ -11,6 +11,9 @@ class PodcastProxyController extends Controller
 {
     public function stream(Request $request, Podcast $podcast)
     {
+        // Solo usuarios con permiso para ver podcasts (no es una ruta pública)
+        abort_unless($request->user()?->can('view_podcasts'), 403);
+
         // Extraemos el ID del archivo de Drive desde url_audio
         if (! preg_match('/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/', $podcast->url_audio, $matches)) {
             abort(404, 'Enlace de audio inválido.');

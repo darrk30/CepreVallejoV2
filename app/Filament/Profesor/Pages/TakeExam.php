@@ -410,7 +410,7 @@ class TakeExam extends Page implements HasActions
     {
         $slug = $this->exam->detail?->content?->cicloCourseTeacher?->cicloCourse?->course?->slug;
         return $slug
-            ? ManageCourseContent::getUrl(['courseSlug' => $slug])
+            ? ManageCourseContent::getUrl(['courseSlug' => $slug, 'asignacion' => $this->exam->detail?->content?->ciclo_course_teacher_id])
             : VirtualClassroom::getUrl();
     }
 }

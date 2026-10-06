@@ -24,6 +24,11 @@ class Podcasts extends Page
 
     public int $perPage = 20;
 
+    public static function canAccess(): bool
+    {
+        return Auth::user()?->can('view_podcasts') ?? false;
+    }
+
     public function loadMorePodcasts()
     {
         $this->perPage += $this->perPageStep;

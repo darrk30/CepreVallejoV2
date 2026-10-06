@@ -14,6 +14,11 @@ class Videos extends Page
 {
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedVideoCamera;
     protected string $view = 'filament.alumno.pages.videos';
+
+    public static function canAccess(): bool
+    {
+        return \Illuminate\Support\Facades\Auth::user()?->can('view_videoteca') ?? false;
+    }
     protected static ?string $title = 'Videoteca';
     protected static ?int $navigationSort = 11;
 

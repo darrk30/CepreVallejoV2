@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Support\PanelPermissions;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
@@ -22,36 +23,12 @@ class RoleSeeder extends Seeder
         $profesor = Role::firstOrCreate(
             ['name' => 'Profesor', 'guard_name' => 'web']
         );
-        $profesor->syncPermissions([
-            'view_aula_virtual',
-            'create_section',
-            'update_section',
-            'order_section',
-            'create_topic',
-            'update_topic',
-            'order_topic',
-            'create_exam',
-            'delete_topic',
-            'delete_section',
-            'view_pagos_teacher',
-            'update_exam',
-            'access_teacher_panel',
-        ]);
+        $profesor->syncPermissions(PanelPermissions::profesor());
 
         // 3. ROL ALUMNO
         $alumno = Role::firstOrCreate(
             ['name' => 'Alumno', 'guard_name' => 'web']
         );
-        $alumno->syncPermissions([
-            'view_videoteca',
-            'view_biblioteca',
-            'view_aula_virtual',
-            'access_student_panel',
-            'create_review', 
-            'view_any_review',
-            'update_review',
-            'delete_review',
-            
-        ]);
+        $alumno->syncPermissions(PanelPermissions::alumno());
     }
 }
