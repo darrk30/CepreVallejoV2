@@ -62,7 +62,7 @@ class ExamResults extends Page implements HasActions
         return [
             VirtualClassroom::getUrl()                                             => 'Mi Aula Virtual',
             $courseSlug
-                ? ManageCourseContent::getUrl(['courseSlug' => $courseSlug])
+                ? ManageCourseContent::getUrl(['courseSlug' => $courseSlug, 'asignacion' => $this->exam->detail?->content?->ciclo_course_teacher_id])
                 : '#'                                                              => $courseName,
             '#'                                                                    => 'Resultados: ' . $this->exam->titulo,
         ];

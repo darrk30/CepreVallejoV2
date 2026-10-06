@@ -91,6 +91,7 @@ class ProfesorPanelProvider extends PanelProvider
             ->middleware([
                 CheckUserStatus::class,
             ], isPersistent: true)
+            ->viteTheme('resources/css/filament/profesor/theme.css')
             ->spa()
             ->databaseTransactions()
             ->authMiddleware([

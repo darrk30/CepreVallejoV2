@@ -14,7 +14,7 @@
             $courseSlug = $exam->detail?->content?->cicloCourseTeacher?->cicloCourse?->course?->slug;
         @endphp
         @if ($courseSlug)
-            <a href="{{ \App\Filament\Profesor\Pages\ManageCourseContent::getUrl(['courseSlug' => $courseSlug]) }}"
+            <a href="{{ \App\Filament\Profesor\Pages\ManageCourseContent::getUrl(['courseSlug' => $courseSlug, 'asignacion' => $exam->detail?->content?->ciclo_course_teacher_id]) }}"
                wire:navigate class="er-back-btn">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/>

@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Route;
 class ReproductorVideo extends Page
 {
     protected string $view = 'filament.alumno.pages.reproductor-video';
+
+    public static function canAccess(): bool
+    {
+        return \Illuminate\Support\Facades\Auth::user()?->can('view_videoteca') ?? false;
+    }
     protected static bool $shouldRegisterNavigation = false;
     protected static ?string $slug = 'ver-video/{videoSlug}';
 
