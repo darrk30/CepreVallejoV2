@@ -20,6 +20,9 @@ class ReviewResource extends Resource
     protected static ?string $pluralModelLabel = 'Comentarios';
     protected static ?string $navigationLabel = 'Comentarios';
 
+    // Debajo de Podcasts (navigationSort 13) en el menú del alumno
+    protected static ?int $navigationSort = 15;
+
     protected static ?string $model = Review::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;

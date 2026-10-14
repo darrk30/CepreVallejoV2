@@ -368,7 +368,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 3.741-1.234" />
                     </svg>
-                    {{ $this->inscripcion->academicCycle->nombre }}
+                    {{ $this->inscripcion->academicCycle->nombre }} · {{ $this->inscripcion->turno->nombre ?? 'Sin turno' }}
                 </div>
             @endif
         </div>
@@ -388,11 +388,12 @@
         @else
             {{-- Ciclos con cursos --}}
             @php $asignaciones = $this->asignacionesMap; @endphp
-            @foreach ($this->cicloSeleccionadoGrupo as $cycleName => $inscriptions)
+            @foreach ($this->cicloSeleccionadoGrupo as $clave => $inscriptions)
                 @php
                     // Tomamos el ciclo y el turno de la primera inscripción del grupo
                     $cycleId = $inscriptions->first()->academic_cycle_id;
                     $turnoId = $inscriptions->first()->turno_id;
+                    $cycleName = $inscriptions->first()->academicCycle->nombre . ' · ' . ($inscriptions->first()->turno->nombre ?? 'Sin turno');
                     $courses = $this->getCoursesForCycle($cycleId);
                 @endphp
 
@@ -413,10 +414,22 @@
                             @php
                                 $course = $cicloCourse->course;
                                 $hasImage = !empty($course->imagen_path);
+                                $asignacion = $asignaciones->get($cycleId . '|' . $turnoId . '|' . $course->id);
                             @endphp
 
-                            <div class="group relative flex flex-col overflow-hidden rounded-2xl border border-[#6366f1]/13 bg-white shadow-[0_2px_10px_rgba(79,70,229,0.07),0_1px_3px_rgba(0,0,0,0.04)] transition-[transform,box-shadow,border-color] duration-[220ms] ease-[cubic-bezier(0.34,1.56,0.64,1)] before:absolute before:inset-x-0 before:top-0 before:z-[1] before:h-0.5 before:origin-left before:scale-x-0 before:bg-gradient-to-r before:from-[#5b5ef4] before:to-transparent before:opacity-0 before:transition-[opacity,transform] before:duration-300 before:ease-out hover:-translate-y-[5px] hover:border-[#6366f1]/28 hover:shadow-[0_16px_40px_rgba(79,70,229,0.15),0_4px_14px_rgba(0,0,0,0.07)] hover:before:scale-x-100 hover:before:opacity-100 dark:border-[#818cf8]/13 dark:bg-[#141320] dark:hover:border-[#818cf8]/30 dark:shadow-[0_2px_14px_rgba(0,0,0,0.3)] dark:hover:shadow-[0_20px_48px_rgba(0,0,0,0.45),0_6px_18px_rgba(0,0,0,0.3)]">
-                                <div class="h-[152px] shrink-0 overflow-hidden bg-[#e4e2f8] dark:bg-[#22203a]">
+                            <div class="group relative flex flex-col overflow-hidden rounded-2xl border border-[#6366f1]/13 bg-white shadow-[0_2px_10px_rgba(79,70,229,0.07),0_1px_3px_rgba(0,0,0,0.04)] transition-[transform,box-shadow,border-color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] before:absolute before:inset-x-0 before:top-0 before:z-[1] before:h-0.5 before:origin-left before:scale-x-0 before:bg-gradient-to-r before:from-[#5b5ef4] before:to-transparent before:opacity-0 before:transition-[opacity,transform] before:duration-300 before:ease-out hover:-translate-y-[2px] hover:border-[#6366f1]/28 hover:shadow-[0_10px_26px_rgba(79,70,229,0.12),0_2px_8px_rgba(0,0,0,0.05)] hover:before:scale-x-100 hover:before:opacity-100 dark:border-[#818cf8]/13 dark:bg-[#141320] dark:hover:border-[#818cf8]/30 dark:shadow-[0_2px_14px_rgba(0,0,0,0.3)] dark:hover:shadow-[0_12px_30px_rgba(0,0,0,0.35),0_3px_10px_rgba(0,0,0,0.25)]">
+                                {{-- Tarjeta completa clicable: un enlace invisible cubre toda la tarjeta --}}
+                                @if ($asignacion)
+                                    <a href="{{ \App\Filament\Profesor\Pages\ManageCourseContent::getUrl(['courseSlug' => $course->slug, 'asignacion' => $asignacion['id']]) }}"
+                                        wire:navigate
+                                        class="absolute inset-0 z-[2] cursor-pointer"
+                                        aria-label="Ver curso {{ $course->nombre }}"></a>
+                                @endif
+
+                                <div class="relative h-[152px] shrink-0 overflow-hidden bg-[#e4e2f8] dark:bg-[#22203a]">
+                                    @if ($course->codigo)
+                                        <span class="absolute left-2 top-2 z-[1] rounded-md bg-black/55 px-2 py-0.5 text-[0.62rem] font-bold tracking-[0.08em] text-white uppercase backdrop-blur-sm">{{ $course->codigo }}</span>
+                                    @endif
                                     @if ($hasImage)
                                         <img src="{{ Storage::url($course->imagen_path) }}" alt="{{ $course->nombre }}"
                                             loading="lazy" class="block h-full w-full object-cover transition-transform duration-400 ease-out group-hover:scale-105">
@@ -432,28 +445,17 @@
                                 </div>
 
                                 <div class="flex flex-1 flex-col bg-white pt-[18px] pr-5 pb-5 pl-5 dark:bg-[#141320]">
-                                    <span class="mb-2.5 inline-flex w-fit items-center rounded-full bg-[#5b5ef4]/9 px-[9px] py-[3px] text-[0.63rem] font-bold tracking-[0.1em] text-[#4643d4] uppercase dark:bg-[#818cf8]/13 dark:text-[#a5b4fc]">{{ $course->codigo }}</span>
-                                    <h3 class="m-0 mb-2 text-[1.2rem] leading-[1.28] font-extrabold text-[#0f0e17] dark:text-[#eeedf8]">{{ $course->nombre }}</h3>
+                                    <h3 class="m-0 mb-1 text-[1.2rem] leading-[1.28] font-extrabold text-[#0f0e17] dark:text-[#eeedf8]">{{ $course->nombre }}</h3>
+                                    @if ($asignacion && $asignacion['docente'])
+                                        <p class="m-0 mb-2 text-[0.78rem] text-[#9b98b8] italic dark:text-[#75729c]">Prof. {{ $asignacion['docente'] }}</p>
+                                    @endif
                                     @if ($course->descripcion)
-                                        <p class="mb-[18px] flex-1 text-[0.79rem] leading-[1.55] text-[#3d3b5c] dark:text-[#aba8cc]">{{ Str::limit($course->descripcion, 80) }}</p>
+                                        <p class="mb-[6px] flex-1 text-[0.79rem] leading-[1.55] text-[#3d3b5c] dark:text-[#aba8cc]">{{ Str::limit($course->descripcion, 80) }}</p>
                                     @endif
 
-                                    {{-- Enlace al contenido del curso (vista solo lectura para alumno) --}}
-                                    @php $asignacionId = $asignaciones->get($cycleId . '|' . $turnoId . '|' . $course->id); @endphp
-                                    @if ($asignacionId)
-                                    <a href="{{ \App\Filament\Profesor\Pages\ManageCourseContent::getUrl(['courseSlug' => $course->slug, 'asignacion' => $asignacionId]) }}"
-                                        wire:navigate
-                                        class="group/btn inline-flex items-center justify-center gap-2 rounded-[10px] border-none bg-[#5b5ef4] px-[18px] py-2.5 text-[0.81rem] font-medium text-white no-underline shadow-[0_2px_10px_rgba(91,94,244,0.18)] transition-[background-color,transform,box-shadow] duration-[180ms] ease-out hover:-translate-y-px hover:bg-[#4643d4] hover:text-white hover:no-underline hover:shadow-[0_6px_18px_rgba(91,94,244,0.18)] dark:bg-[#818cf8] dark:shadow-[0_2px_10px_rgba(129,140,248,0.22)] dark:hover:bg-[#a5b4fc] dark:hover:shadow-[0_6px_18px_rgba(129,140,248,0.22)]">
-                                        Ver curso
-                                        <svg class="h-[13px] w-[13px] shrink-0 transition-transform duration-200 group-hover/btn:translate-x-0.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="2.2" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                                        </svg>
-                                    </a>
-                                    @else
-                                    <span class="text-[0.78rem] text-[#8e8bac] dark:text-[#6a678a]">Sin docente asignado en tu turno</span>
-                                    @endif
+                                    @unless ($asignacion)
+                                        <span class="text-[0.78rem] text-[#8e8bac] dark:text-[#6a678a]">Sin docente asignado en tu turno</span>
+                                    @endunless
                                 </div>
                             </div>
                         @endforeach

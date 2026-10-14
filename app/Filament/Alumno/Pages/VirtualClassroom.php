@@ -31,8 +31,8 @@ class VirtualClassroom extends Page implements HasForms
 
     public function mount(): void
     {
-        // Por defecto se muestra el ciclo más reciente
-        $this->form->fill(['ciclo' => $this->cicloSeleccionadoId]);
+        // Por defecto se muestra el ciclo (y turno) más reciente
+        $this->form->fill(['ciclo' => $this->cicloSeleccionadoClave]);
     }
 
     public function form(Schema $schema): Schema
@@ -43,12 +43,15 @@ class VirtualClassroom extends Page implements HasForms
                     ->label('Ciclo')
                     // Array (no closure): Filament trata un closure como opciones dinámicas
                     // y pide las opciones al servidor cada vez que se abre el select.
+                    // La clave es "ciclo_id|turno_id": un alumno puede estar matriculado
+                    // en el MISMO ciclo en turnos distintos, así que el ciclo solo no basta
+                    // para identificar una matrícula.
                     ->options($this->ciclosOrdenados
-                        ->mapWithKeys(fn ($grupo) => [
-                            $grupo->first()->academic_cycle_id => $grupo->first()->academicCycle->nombre,
+                        ->mapWithKeys(fn ($grupo, $clave) => [
+                            $clave => $grupo->first()->academicCycle->nombre . ' · ' . ($grupo->first()->turno->nombre ?? 'Sin turno'),
                         ])
                         ->all())
-                    ->default(fn () => $this->cicloSeleccionadoId)
+                    ->default(fn () => $this->cicloSeleccionadoClave)
                     ->selectablePlaceholder(false)
                     ->native(false)
                     ->live(),
@@ -57,8 +60,9 @@ class VirtualClassroom extends Page implements HasForms
     }
 
     /**
-     * Matrículas del alumno agrupadas por ciclo. Se consulta UNA sola vez por
-     * petición (#[Computed]); antes cada acceso a la propiedad repetía la consulta.
+     * Matrículas del alumno agrupadas por ciclo + turno (un alumno puede tener
+     * varias matrículas en el mismo ciclo, cada una en un turno distinto). Se
+     * consulta UNA sola vez por petición (#[Computed]).
      */
     #[Computed]
     public function cycles(): Collection
@@ -71,31 +75,32 @@ class VirtualClassroom extends Page implements HasForms
             return collect();
         }
 
-        return Inscription::with(['academicCycle'])
+        return Inscription::with(['academicCycle', 'turno'])
             ->where('student_id', $student->id)
             ->whereIn('estado_pago', ['pagado', 'parcial', 'pendiente'])
             ->whereHas('academicCycle', fn($q) => $q->where('estado', true))
             ->get()
-            ->groupBy(fn($ins) => $ins->academicCycle->nombre);
+            ->groupBy(fn($ins) => $ins->academic_cycle_id . '|' . $ins->turno_id);
     }
 
     /**
-     * Ciclos del alumno (un grupo por ciclo), del más recientemente creado al más antiguo.
+     * Ciclos+turno del alumno, del más recientemente creado al más antiguo.
      */
     #[Computed]
     public function ciclosOrdenados(): Collection
     {
         // Desempate por id: dos ciclos creados en el mismo segundo siguen un orden estable
         return $this->cycles->sortByDesc(
-            fn($grupo) => [$grupo->first()->academicCycle->created_at?->timestamp ?? 0, $grupo->first()->academic_cycle_id]
+            fn($grupo) => [$grupo->first()->academicCycle->created_at?->timestamp ?? 0, $grupo->first()->academic_cycle_id, $grupo->first()->turno_id]
         );
     }
 
     /**
-     * ID del ciclo que se muestra: el elegido en el select o, por defecto, el último creado.
+     * Clave "ciclo_id|turno_id" que se muestra: la elegida en el select o,
+     * por defecto, la más recientemente creada.
      */
     #[Computed]
-    public function cicloSeleccionadoId(): ?int
+    public function cicloSeleccionadoClave(): ?string
     {
         $ciclos = $this->ciclosOrdenados;
 
@@ -103,23 +108,24 @@ class VirtualClassroom extends Page implements HasForms
             return null;
         }
 
-        $elegidoId = (int) ($this->data['ciclo'] ?? 0);
-        $elegido = $ciclos->first(fn($grupo) => (int) $grupo->first()->academic_cycle_id === $elegidoId);
+        $elegida = (string) ($this->data['ciclo'] ?? '');
 
-        return (int) ($elegido ?? $ciclos->first())->first()->academic_cycle_id;
+        return $ciclos->has($elegida) ? $elegida : $ciclos->keys()->first();
     }
 
     /**
-     * Grupo (nombre => inscripciones) del ciclo seleccionado. Solo se pinta uno.
+     * Grupo (clave => inscripciones) del ciclo+turno seleccionado. Solo se pinta uno.
      */
     #[Computed]
     public function cicloSeleccionadoGrupo(): Collection
     {
-        $id = $this->cicloSeleccionadoId;
+        $clave = $this->cicloSeleccionadoClave;
 
-        return $this->ciclosOrdenados
-            ->filter(fn($grupo) => (int) $grupo->first()->academic_cycle_id === $id)
-            ->mapWithKeys(fn($grupo, $nombre) => [$nombre => $grupo]);
+        if ($clave === null) {
+            return collect();
+        }
+
+        return collect([$clave => $this->ciclosOrdenados->get($clave)]);
     }
 
     // Los cursos de TODOS los ciclos se traen en una sola consulta (coursesByCycle)
@@ -149,9 +155,9 @@ class VirtualClassroom extends Page implements HasForms
     }
 
     /**
-     * Mapa "ciclo|turno|curso" => id de la asignación (ciclo_course_teacher).
+     * Mapa "ciclo|turno|curso" => ['id' => id de la asignación, 'docente' => nombre].
      * Cada tarjeta abre la asignación de SU ciclo y SU turno, aunque el mismo
-     * curso exista en otros ciclos o turnos.
+     * curso exista en otros ciclos o turnos, y muestra quién lo dicta.
      */
     #[Computed]
     public function asignacionesMap(): Collection
@@ -165,11 +171,14 @@ class VirtualClassroom extends Page implements HasForms
         return CicloCourseTeacher::query()
             ->whereIn('turno_id', $inscripciones->pluck('turno_id')->unique())
             ->whereHas('cicloCourse', fn($q) => $q->whereIn('ciclo_id', $inscripciones->pluck('academic_cycle_id')->unique()))
-            ->with('cicloCourse:id,ciclo_id,course_id')
+            ->with(['cicloCourse:id,ciclo_id,course_id', 'teacher.user:id,name'])
             ->orderBy('id')
             ->get()
             // Si hubiera varias asignaciones iguales, gana la más reciente
-            ->mapWithKeys(fn($a) => [$a->cicloCourse->ciclo_id . '|' . $a->turno_id . '|' . $a->cicloCourse->course_id => $a->id]);
+            ->mapWithKeys(fn($a) => [$a->cicloCourse->ciclo_id . '|' . $a->turno_id . '|' . $a->cicloCourse->course_id => [
+                'id' => $a->id,
+                'docente' => $a->teacher?->user?->name,
+            ]]);
     }
 
     #[Computed]
@@ -178,7 +187,7 @@ class VirtualClassroom extends Page implements HasForms
         $student = Auth::user()->student;
         if (!$student || !$student->estado) return null;
 
-        return Inscription::with('academicCycle')
+        return Inscription::with(['academicCycle', 'turno'])
             ->whereIn('estado_pago', ['pagado', 'parcial', 'pendiente'])
             ->where('student_id', $student->id)
             ->whereHas('academicCycle', fn($q) => $q->where('estado', true))

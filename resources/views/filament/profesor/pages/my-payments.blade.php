@@ -1,181 +1,107 @@
 <x-filament-panels::page>
-    <div class="payments-container">
-        
-        {{-- Estadísticas --}}
-        @php $stats = $this->getStats(); @endphp
-        <div class="stats-grid">
-            <div class="stat-card">
-                <span class="stat-label">Total Percibido</span>
-                <h2 class="stat-value primary">S/ {{ number_format($stats['total'], 2) }}</h2>
+    @php $stats = $this->getStats(); @endphp
+
+    <div class="font-handlee pb-[60px] text-[#0c0b1a] dark:text-[#edecf8]">
+
+        {{-- MASTHEAD ── --}}
+        <div class="mb-[5px] flex flex-wrap items-center justify-between gap-5 border-b border-[#6366f1]/14 pb-2.5 dark:border-[#818cf8]/12">
+            <div class="min-w-0 flex-1">
+                <p class="m-0 mb-1.5 text-[0.62rem] font-bold uppercase tracking-[0.15em] text-[#5b5ef4] dark:text-[#818cf8]">Cepre Vallejo · Panel Docente</p>
+                <h1 class="m-0 text-[clamp(1.8rem,4vw,2.8rem)] font-extrabold leading-[1.1] tracking-[-0.02em] text-[#0c0b1a] dark:text-[#edecf8]">Mis <em class="italic text-[#5b5ef4] dark:text-[#818cf8]">Pagos</em></h1>
+                <p class="mt-2 text-[0.72rem] font-semibold text-[#8b88b0] dark:text-[#636086]">
+                    {{ $stats['count'] }} comprobante{{ $stats['count'] !== 1 ? 's' : '' }} registrado{{ $stats['count'] !== 1 ? 's' : '' }}
+                </p>
             </div>
-            <div class="stat-card">
-                <span class="stat-label">Último Pago</span>
-                <h2 class="stat-value">S/ {{ number_format($stats['last_amount'], 2) }}</h2>
-                <p class="stat-footer">Recibido el {{ $stats['last_date'] }}</p>
-            </div>
-            <div class="stat-card">
-                <span class="stat-label">Pagos Registrados</span>
-                <h2 class="stat-value">{{ $stats['count'] }}</h2>
+            <div class="flex h-[60px] w-[60px] shrink-0 items-center justify-center rounded-2xl border border-[#5b5ef4]/22 bg-[#5b5ef4]/7 dark:border-[#818cf8]/22 dark:bg-[#818cf8]/9">
+                <svg class="h-7 w-7 text-[#5b5ef4] dark:text-[#818cf8]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6"
+                        d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-4.5-9.75h16.5a1.5 1.5 0 0 1 1.5 1.5v9a1.5 1.5 0 0 1-1.5 1.5H3.75a1.5 1.5 0 0 1-1.5-1.5v-9a1.5 1.5 0 0 1 1.5-1.5Z" />
+                </svg>
             </div>
         </div>
 
-        {{-- Título de Sección --}}
-        <div class="section-header">
-            <svg class="header-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 3.741-1.234" />
-            </svg>
-            <h3>Mis Comprobantes de Pago</h3>
+        {{-- ESTADÍSTICAS ── --}}
+        <div class="mt-7 grid grid-cols-1 gap-3.5 sm:grid-cols-3">
+            <div class="rounded-[16px] border border-[#6366f1]/14 bg-[#f9f8ff] p-[18px] dark:border-[#818cf8]/12 dark:bg-[#1b1a2e]">
+                <span class="text-[0.63rem] font-bold uppercase tracking-[0.12em] text-[#8b88b0] dark:text-[#636086]">Total Percibido</span>
+                <h2 class="m-0 mt-1 text-[1.5rem] font-extrabold text-[#5b5ef4] dark:text-[#818cf8]">S/ {{ number_format($stats['total'], 2) }}</h2>
+            </div>
+            <div class="rounded-[16px] border border-[#6366f1]/14 bg-[#f9f8ff] p-[18px] dark:border-[#818cf8]/12 dark:bg-[#1b1a2e]">
+                <span class="text-[0.63rem] font-bold uppercase tracking-[0.12em] text-[#8b88b0] dark:text-[#636086]">Último Pago</span>
+                <h2 class="m-0 mt-1 text-[1.5rem] font-extrabold text-[#0c0b1a] dark:text-[#edecf8]">S/ {{ number_format($stats['last_amount'], 2) }}</h2>
+                <p class="m-0 mt-1 text-[0.7rem] text-[#8b88b0] dark:text-[#636086]">Recibido el {{ $stats['last_date'] }}</p>
+            </div>
+            <div class="rounded-[16px] border border-[#6366f1]/14 bg-[#f9f8ff] p-[18px] dark:border-[#818cf8]/12 dark:bg-[#1b1a2e]">
+                <span class="text-[0.63rem] font-bold uppercase tracking-[0.12em] text-[#8b88b0] dark:text-[#636086]">Pagos Registrados</span>
+                <h2 class="m-0 mt-1 text-[1.5rem] font-extrabold text-[#0c0b1a] dark:text-[#edecf8]">{{ $stats['count'] }}</h2>
+            </div>
         </div>
 
-        {{-- Listado de Tarjetas --}}
-        <div class="payments-list">
+        {{-- TÍTULO DE SECCIÓN ── --}}
+        <div class="mt-11 mb-[18px] flex items-center gap-3.5">
+            <h2 class="m-0 whitespace-nowrap text-[1.2rem] font-bold text-[#0c0b1a] dark:text-[#edecf8]">🧾 Mis Comprobantes de Pago</h2>
+            <span class="h-px flex-1 bg-[#6366f1]/14 dark:bg-[#818cf8]/12"></span>
+        </div>
+
+        {{-- LISTADO ── --}}
+        <div class="flex flex-col gap-3.5">
             @forelse($this->getPayments() as $payment)
-                <div class="payment-card">
-                    <div class="card-main">
-                        {{-- Lado Izquierdo: Fecha e Info --}}
-                        <div class="card-left">
-                            <div class="date-badge">
-                                <span class="month">{{ $payment->fecha_pago->format('M') }}</span>
-                                <span class="day">{{ $payment->fecha_pago->format('d') }}</span>
+                <div class="overflow-hidden rounded-[16px] border border-[#6366f1]/14 bg-white transition-colors duration-200 hover:border-[#5b5ef4]/30 dark:border-[#818cf8]/12 dark:bg-[#151424] dark:hover:border-[#818cf8]/30">
+                    <div class="flex flex-wrap items-center justify-between gap-4 p-[18px] max-[600px]:flex-col max-[600px]:items-start">
+                        {{-- Izquierda: fecha e info --}}
+                        <div class="flex items-center gap-4">
+                            <div class="flex h-[52px] w-[52px] shrink-0 flex-col items-center justify-center rounded-[12px] bg-[#5b5ef4]/9 text-[#5b5ef4] dark:bg-[#818cf8]/13 dark:text-[#818cf8]">
+                                <span class="text-[0.6rem] font-extrabold uppercase">{{ $payment->fecha_pago->format('M') }}</span>
+                                <span class="text-[1.2rem] leading-none font-extrabold">{{ $payment->fecha_pago->format('d') }}</span>
                             </div>
-                            <div class="info-group">
-                                <h4>Pago por Honorarios</h4>
-                                <p class="method">{{ $payment->metodo_pago }} • <span class="op-number">N° {{ $payment->numero_operacion ?? 'S/N' }}</span></p>
+                            <div class="min-w-0">
+                                <h4 class="m-0 text-[0.95rem] font-extrabold text-[#0c0b1a] dark:text-[#edecf8]">Pago por Honorarios</h4>
+                                <p class="m-0 mt-0.5 text-[0.8rem] text-[#8b88b0] dark:text-[#636086]">
+                                    {{ $payment->metodo_pago }} · <span class="font-semibold">N° {{ $payment->numero_operacion ?? 'S/N' }}</span>
+                                </p>
                                 @if ($payment->academicCycle)
-                                    <span class="cycle-tag">{{ $payment->academicCycle->nombre }}</span>
+                                    <span class="mt-1.5 inline-block rounded-[5px] bg-[#f3f4f6] px-2 py-0.5 text-[0.57rem] font-extrabold text-[#4b5563] dark:bg-[#221f3a] dark:text-[#a9a6cc]">{{ $payment->academicCycle->nombre }}</span>
                                 @endif
                             </div>
                         </div>
 
-                        {{-- Lado Derecho: Monto y Acciones --}}
-                        <div class="card-right">
-                            <div class="amount-group">
-                                <span class="amount">S/ {{ number_format($payment->monto, 2) }}</span>
-                                <span class="status">COMPLETADO</span>
+                        {{-- Derecha: monto y acciones --}}
+                        <div class="flex items-center gap-7 max-[600px]:w-full max-[600px]:justify-between max-[600px]:border-t max-[600px]:border-dashed max-[600px]:border-[#6366f1]/20 max-[600px]:pt-3.5 dark:max-[600px]:border-[#818cf8]/18">
+                            <div class="text-right max-[600px]:text-left">
+                                <span class="block text-[1.3rem] font-extrabold text-emerald-600 dark:text-emerald-400">S/ {{ number_format($payment->monto, 2) }}</span>
+                                <span class="rounded-[4px] bg-emerald-50 px-1.5 py-[1px] text-[0.57rem] font-extrabold text-emerald-700 dark:bg-emerald-400/10 dark:text-emerald-300">COMPLETADO</span>
                             </div>
-                            <div class="action-group">
-                                @if ($payment->comprobante_path)
-                                    <a href="{{ Storage::url($payment->comprobante_path) }}" target="_blank" class="btn-download">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="btn-icon">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                                        </svg>
-                                        Voucher
-                                    </a>
-                                @else
-                                    <span class="no-file">Sin archivo</span>
-                                @endif
-                            </div>
+                            @if ($payment->comprobante_path)
+                                <a href="{{ Storage::url($payment->comprobante_path) }}" target="_blank"
+                                    class="inline-flex items-center gap-1.5 rounded-[10px] bg-[#5b5ef4] px-[18px] py-2.5 text-[0.81rem] font-bold text-white no-underline transition-colors duration-150 hover:bg-[#4643d4] hover:text-white hover:no-underline dark:bg-[#818cf8] dark:hover:bg-[#a5b4fc]">
+                                    <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                                    </svg>
+                                    Voucher
+                                </a>
+                            @else
+                                <span class="text-[0.8rem] text-[#8b88b0] italic dark:text-[#636086]">Sin archivo</span>
+                            @endif
                         </div>
                     </div>
 
-                    {{-- Descripción / Observaciones (Opcional) --}}
-                    @if($payment->observaciones)
-                        <div class="card-description">
-                            <strong>Nota:</strong> {{ $payment->observaciones }}
+                    @if ($payment->observaciones)
+                        <div class="border-t border-[#6366f1]/14 bg-[#f9f8ff] px-[18px] py-3 text-[0.8rem] text-[#4b5563] dark:border-[#818cf8]/12 dark:bg-[#1b1a2e] dark:text-[#a9a6cc]">
+                            <strong class="text-[#0c0b1a] dark:text-[#edecf8]">Nota:</strong> {{ $payment->observaciones }}
                         </div>
                     @endif
                 </div>
             @empty
-                <div class="empty-container">
-                    <p>No se encontraron registros de pagos.</p>
+                <div class="col-span-full rounded-[14px] border-[1.5px] border-dashed border-[#6366f1]/28 bg-[#f9f8ff] px-8 py-[72px] text-center dark:border-[#818cf8]/28 dark:bg-[#1b1a2e]">
+                    <svg class="mx-auto mb-3.5 h-11 w-11 text-[#5b5ef4] opacity-[0.22] dark:text-[#818cf8]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3"
+                            d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-4.5-9.75h16.5a1.5 1.5 0 0 1 1.5 1.5v9a1.5 1.5 0 0 1-1.5 1.5H3.75a1.5 1.5 0 0 1-1.5-1.5v-9a1.5 1.5 0 0 1 1.5-1.5Z" />
+                    </svg>
+                    <h3 class="m-0 mb-1 text-[0.9rem] font-bold text-[#3b3866] dark:text-[#a9a6cc]">Sin registros</h3>
+                    <p class="m-0 text-[0.75rem] text-[#8b88b0] dark:text-[#636086]">No se encontraron pagos registrados todavía.</p>
                 </div>
             @endforelse
         </div>
+
     </div>
-
-    <style>
-/* --- CONFIGURACIÓN GENERAL --- */
-.payments-container { display: flex; flex-direction: column; gap: 1.5rem; color: #1f2937; }
-
-/* --- STATS (IGUAL) --- */
-.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
-.stat-card { background: white; padding: 1.2rem; border-radius: 1rem; border: 1px solid #e5e7eb; }
-.stat-label { font-size: 0.7rem; font-weight: 700; color: #6b7280; text-transform: uppercase; }
-.stat-value { font-size: 1.5rem; font-weight: 900; margin-top: 0.2rem; }
-.stat-value.primary { color: #2563eb; }
-
-/* --- HEADER --- */
-.section-header { display: flex; align-items: center; gap: 0.5rem; margin-top: 1rem; }
-.header-icon { width: 22px; height: 22px; color: #2563eb; }
-.section-header h3 { font-size: 1.1rem; font-weight: 800; margin: 0; }
-
-/* --- LAS TARJETAS (CARDS) --- */
-.payments-list { display: flex; flex-direction: column; gap: 1rem; }
-
-.payment-card {
-    background: white;
-    border-radius: 1.2rem;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-    transition: all 0.3s ease;
-    overflow: hidden;
-}
-
-.payment-card:hover {
-    border-color: #3b82f6;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
-}
-
-.card-main {
-    padding: 1.2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
-}
-
-/* Lado Izquierdo */
-.card-left { display: flex; align-items: center; gap: 1rem; }
-.date-badge {
-    width: 52px; height: 52px; background: #f0f7ff; color: #2563eb;
-    border-radius: 0.8rem; display: flex; flex-direction: column;
-    align-items: center; justify-content: center; flex-shrink: 0;
-}
-.date-badge .month { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; }
-.date-badge .day { font-size: 1.2rem; font-weight: 900; line-height: 1; }
-
-.info-group h4 { font-size: 1rem; font-weight: 800; margin: 0; }
-.method { font-size: 0.85rem; color: #6b7280; margin: 2px 0; }
-.cycle-tag {
-    display: inline-block; padding: 2px 8px; background: #f3f4f6;
-    color: #4b5563; font-size: 9px; font-weight: 800; border-radius: 5px;
-}
-
-/* Lado Derecho */
-.card-right { display: flex; align-items: center; gap: 2rem; }
-.amount-group { text-align: right; }
-.amount { display: block; font-size: 1.4rem; font-weight: 900; color: #10b981; }
-.status { font-size: 9px; font-weight: 800; color: #059669; background: #ecfdf5; padding: 1px 6px; border-radius: 4px; }
-
-/* Botón */
-.btn-download {
-    display: flex; align-items: center; gap: 0.4rem;
-    padding: 0.6rem 1.2rem; background: #1e293b; color: white;
-    font-size: 0.85rem; font-weight: 700; border-radius: 0.7rem;
-    text-decoration: none; transition: 0.2s;
-}
-.btn-download:hover { background: #000; }
-.btn-icon { width: 16px; height: 16px; }
-.no-file { font-size: 0.8rem; color: #9ca3af; font-style: italic; }
-
-/* Descripción */
-.card-description {
-    background: #f9fafb; padding: 0.8rem 1.2rem;
-    font-size: 0.85rem; color: #4b5563; border-top: 1px solid #f3f4f6;
-    line-height: 1.5;
-}
-
-/* --- RESPONSIVE (MÓVIL) --- */
-@media (max-width: 768px) {
-    .card-main { flex-direction: column; align-items: flex-start; gap: 1.2rem; }
-    .card-right { width: 100%; justify-content: space-between; border-top: 1px dashed #e5e7eb; padding-top: 1rem; }
-    .amount-group { text-align: left; }
-    .amount { font-size: 1.2rem; }
-    .btn-download { padding: 0.5rem 1rem; }
-}
-
-@media (min-width: 769px) {
-    .payment-card { margin: 0 0.5rem; }
-}
-    </style>
 </x-filament-panels::page>

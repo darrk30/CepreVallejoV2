@@ -128,12 +128,16 @@ class InscriptionForm
                                         table: 'inscriptions', // Asegúrate de que este sea el nombre real de tu tabla en BD
                                         column: 'academic_cycle_id',
                                         ignoreRecord: true,
+                                        // Un alumno SÍ puede matricularse en el mismo ciclo en un turno
+                                        // distinto (por ejemplo, Mañana y Noche). Lo que no se permite es
+                                        // repetir ciclo + turno para el mismo alumno.
                                         modifyRuleUsing: function (Unique $rule, Get $get) {
-                                            return $rule->where('student_id', $get('student_id'));
+                                            return $rule->where('student_id', $get('student_id'))
+                                                ->where('turno_id', $get('turno_id'));
                                         }
                                     )
                                     ->validationMessages([
-                                        'unique' => 'El estudiante seleccionado ya se encuentra inscrito en este ciclo académico.',
+                                        'unique' => 'El estudiante seleccionado ya se encuentra matriculado en este ciclo académico, en ese mismo turno.',
                                     ])
                                     // SOLUCIÓN: Cargar el total al editar (Hydration)
                                     ->afterStateHydrated(function (Set $set, $state) {
