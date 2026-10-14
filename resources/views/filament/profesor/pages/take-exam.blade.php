@@ -519,6 +519,25 @@
     <x-filament-actions::modals />
 
     <script>
+    // Todo envuelto en un IIFE: Livewire (wire:navigate) vuelve a insertar y
+    // ejecutar este <script> completo cada vez que se entra a esta página sin
+    // recargar el navegador (no tiene data-navigate-once). Si las variables de
+    // arriba fueran "let"/"const" sueltas, la SEGUNDA visita chocaría con las
+    // declaraciones de la primera ("ya ha sido declarado") y el script entero
+    // fallaría en silencio, dejando vivo el intervalo de la visita ANTERIOR
+    // escribiendo un tiempo desactualizado encima del que el servidor acaba de
+    // calcular de nuevo — eso era lo que hacía que el contador se congelara, o
+    // incluso pareciera "subir" al volver a entrar al examen. El IIFE le da a
+    // cada visita su propio scope aislado, y limpiamos explícitamente lo que
+    // dejó la visita anterior (intervalo + listeners) antes de arrancar.
+    (function () {
+    function boot() {
+        if (window.__takeExamCleanup) {
+            window.__takeExamCleanup();
+            window.__takeExamCleanup = null;
+        }
+        window._resultsShown = false;
+
         // ── Constantes ───────────────────────────────────────────
         const TOTAL = {{ $this->exam->questions->count() }};
         const IS_PREVIEW = {{ $isPreview ? 'true' : 'false' }};
@@ -530,11 +549,6 @@
         const ATTEMPT_ID = {{ $this->attempt?->id ?? 'null' }};
         const STORAGE_KEY = `exam_timer_${ATTEMPT_ID}`;
         const SERVER_TIME = {{ $remaining }};
-
-        // ── Si ya cargamos en modo resultados ───────────────────
-        if (SHOW_RESULTS) {
-            document.addEventListener('DOMContentLoaded', () => switchToResults());
-        }
 
         // ── localStorage timer ───────────────────────────────────
         function getInitialRemaining() {
@@ -652,6 +666,12 @@
         }
 
         // ── Seleccionar opción ───────────────────────────────────
+        // Expuestas en window: se llaman desde atributos onclick="" del HTML,
+        // que siempre resuelven el nombre en el scope global.
+        window.selectOption = selectOption;
+        window.clearAnswer = clearAnswer;
+        window.showProcessingOverlay = showProcessingOverlay;
+
         function selectOption(qId, optId, el) {
             if (IS_PREVIEW) return;
             document.querySelectorAll(`.opt[data-qid="${qId}"]`).forEach(b => b.classList.remove('selected'));
@@ -720,26 +740,25 @@
         }
 
         // ── Eventos Livewire ─────────────────────────────────────
-        document.addEventListener('livewire:initialized', () => {
-
-            // PHP dispara 'exam-processing' justo antes de calcular → mostrar overlay
-            Livewire.on('exam-processing', () => {
-                _activateProcessingOverlay();
-            });
-
-            // PHP dispara 'exam-submitted' cuando ya terminó de calcular → switch UI
-            Livewire.on('exam-submitted', () => {
-                switchToResults();
-            });
+        // Para cuando este script se ejecuta (primera carga o re-ejecución por
+        // wire:navigate) Livewire ya está activo, así que no hace falta
+        // esperar 'livewire:initialized' (que, como DOMContentLoaded, solo
+        // dispara una vez por sesión de navegador, nunca en visitas repetidas).
+        const offExamProcessing = Livewire.on('exam-processing', () => {
+            _activateProcessingOverlay();
+        });
+        const offExamSubmitted = Livewire.on('exam-submitted', () => {
+            switchToResults();
         });
 
         // Fallback: detectar cambio de DOM si los eventos JS no llegaron
-        document.addEventListener('livewire:updated', () => {
+        const onLivewireUpdated = () => {
             const resBlock = document.getElementById('results-block');
             if (resBlock && resBlock.querySelector('.results-hero')) {
                 switchToResults();
             }
-        });
+        };
+        document.addEventListener('livewire:updated', onLivewireUpdated);
 
         // ── Online / Offline ─────────────────────────────────────
         function setOnlineStatus(online) {
@@ -747,27 +766,56 @@
             if (badge) badge.classList.toggle('visible', !online);
             if (online && !IS_PREVIEW) @this.call('syncTimer', remaining);
         }
-        window.addEventListener('online', () => setOnlineStatus(true));
-        window.addEventListener('offline', () => setOnlineStatus(false));
+        const onOnline = () => setOnlineStatus(true);
+        const onOffline = () => setOnlineStatus(false);
+        window.addEventListener('online', onOnline);
+        window.addEventListener('offline', onOffline);
 
-        document.addEventListener('visibilitychange', () => {
+        const onVisibilityChange = () => {
             if (!IS_PREVIEW && document.visibilityState === 'hidden' && remaining > 0) {
                 saveLocalTime();
                 @this.call('syncTimer', remaining);
             }
-        });
+        };
+        document.addEventListener('visibilitychange', onVisibilityChange);
 
-        window.addEventListener('beforeunload', e => {
+        const onBeforeUnload = e => {
             saveLocalTime();
             if (!IS_PREVIEW && !exitingControlled) {
                 e.preventDefault();
                 e.returnValue = 'Si cierras la página el tiempo seguirá corriendo. ¿Deseas salir?';
             }
-        });
+        };
+        window.addEventListener('beforeunload', onBeforeUnload);
 
-        document.addEventListener('livewire:navigating', () => {
+        const onNavigating = () => {
             exitingControlled = true;
-        });
+            // Apagar ya mismo el intervalo y los listeners de ESTA visita, en
+            // vez de esperar a que la próxima visita a esta página los limpie.
+            if (window.__takeExamCleanup) {
+                window.__takeExamCleanup();
+                window.__takeExamCleanup = null;
+            }
+        };
+        document.addEventListener('livewire:navigating', onNavigating);
+
+        // ── Limpieza: se llama al salir de esta página (vía wire:navigate)
+        // y también al INICIO de la próxima vez que este script se ejecute,
+        // por si el usuario se fue sin pasar por 'livewire:navigating'.
+        window.__takeExamCleanup = function () {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            window.removeEventListener('online', onOnline);
+            window.removeEventListener('offline', onOffline);
+            document.removeEventListener('visibilitychange', onVisibilityChange);
+            window.removeEventListener('beforeunload', onBeforeUnload);
+            document.removeEventListener('livewire:navigating', onNavigating);
+            document.removeEventListener('livewire:updated', onLivewireUpdated);
+            offExamProcessing();
+            offExamSubmitted();
+        };
 
         // ── Restaurar respuestas previas ─────────────────────────
         function restorePrevAnswers() {
@@ -784,17 +832,39 @@
             updateProgress();
         }
 
-        // ── Init ─────────────────────────────────────────────────
-        document.addEventListener('DOMContentLoaded', () => {
-            if (!SHOW_RESULTS) {
-                restorePrevAnswers();
-                if (!IS_PREVIEW) {
-                    timerInterval = setInterval(tick, 1000);
-                    tick();
-                }
-                setOnlineStatus(navigator.onLine);
+        // ── Init ───────────────────────────────────────────────
+        // Sin esperar DOMContentLoaded/livewire:navigated: este <script> está
+        // al final del body, después de todo lo que consulta, así que el DOM
+        // ya existe en el momento en que se ejecuta (tanto en la carga normal
+        // como en la re-ejecución forzada por wire:navigate).
+        if (SHOW_RESULTS) {
+            switchToResults();
+        } else {
+            restorePrevAnswers();
+            if (!IS_PREVIEW) {
+                timerInterval = setInterval(tick, 1000);
+                tick();
             }
-        });
+            setOnlineStatus(navigator.onLine);
+        }
+    }
+
+    // En una recarga REAL de la página (F5 / URL directa), este script —
+    // dentro del contenido de la página — se ejecuta ANTES de que el bundle
+    // de Livewire/Alpine (que Filament coloca al final del <body>) haya
+    // corrido, así que "Livewire" todavía no existe aquí y boot() reventaría
+    // en el "Livewire.on(...)" de más arriba, dejando el contador congelado
+    // (nunca llega a crear el intervalo). Por eso: si Livewire ya existe
+    // (siempre es el caso al llegar por wire:navigate, porque para navegar
+    // dentro de la SPA Livewire ya tuvo que estar cargado) arrancamos ya
+    // mismo; si no (recarga real), esperamos a que Livewire avise que ya
+    // está listo con 'livewire:init'.
+    if (window.Livewire) {
+        boot();
+    } else {
+        document.addEventListener('livewire:init', boot, { once: true });
+    }
+    })();
     </script>
 
 </x-filament-panels::page>

@@ -149,28 +149,18 @@ class ManageCourseContent extends Page implements HasActions
             return collect();
         }
 
-        $user = auth()->user();
-
-        // Iniciamos la consulta para las secciones de ESTA asignación
-        $query = TeacherCourseContent::where('ciclo_course_teacher_id', $this->assignmentId);
-
-        // IMPORTANTE:
-        // Si es PROFESOR, solo mostramos lo que ÉL creó (para que no vea lo de otros profes del mismo curso)
-        // Si es ALUMNO, mostramos TODO lo que el profesor asignado a su turno haya subido
-        if ($user->teacher) {
-            $query->where('user_create_id', $user->id);
-        }
-
-        return $query->with([
-            'details' => function ($q) use ($user) {
-                // Aplicamos la misma lógica a los temas (subtopics)
-                if ($user->teacher) {
-                    $q->where('user_create_id', $user->id);
-                }
-                $q->orderBy('orden');
-            },
-            'details.exam',
-        ])
+        // Mostramos TODO el contenido de ESTA asignación (ciclo + curso + turno),
+        // lo haya subido el profesor asignado o un administrador desde el panel
+        // admin ("Cursos del ciclo"). Antes se filtraba por user_create_id ===
+        // el profesor logueado, así que lo que el admin creaba (con su propio
+        // user_create_id) quedaba invisible para el profesor. Filtrar por
+        // ciclo_course_teacher_id ya es suficiente: esa asignación pertenece a
+        // un solo profesor, así que nunca se mezcla con la de otro.
+        return TeacherCourseContent::where('ciclo_course_teacher_id', $this->assignmentId)
+            ->with([
+                'details' => fn($q) => $q->orderBy('orden'),
+                'details.exam',
+            ])
             ->orderBy('orden')
             ->get();
     }
