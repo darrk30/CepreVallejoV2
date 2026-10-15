@@ -7,10 +7,15 @@
 --}}
 <x-filament-panels::page>
     <div class="pb-12 font-handlee text-[#0c0b1a] dark:text-[#edecf8]">
-        <div class="grid grid-cols-1 gap-7 lg:grid-cols-[1fr_380px]">
+        {{-- En escritorio (lg+): 2 columnas, video/info arriba-izquierda,
+             sugeridos a la derecha (ocupa las 2 filas), comentarios abajo-
+             izquierda — con "order" + ubicación explícita en la grilla.
+             Antes de lg (tablet/móvil): 1 sola columna, todo apilado en
+             orden de lectura: video → sugeridos → comentarios. --}}
+        <div class="grid grid-cols-1 gap-7 lg:grid-cols-[1fr_380px] lg:items-start">
 
             {{-- ══ REPRODUCTOR + INFO ══ --}}
-            <div>
+            <div class="order-1 lg:order-none lg:col-start-1 lg:row-start-1">
                 <div class="relative h-0 overflow-hidden rounded-[14px] bg-black pb-[56.25%] shadow-[0_12px_40px_rgba(79,70,229,0.13),0_4px_12px_rgba(0,0,0,0.07)] dark:shadow-[0_12px_40px_rgba(0,0,0,0.5)]">
                     <iframe src="{{ $this->getEmbedUrl() }}" frameborder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -49,51 +54,124 @@
                 </div>
             </div>
 
-            {{-- ══ SIDEBAR RECOMENDADOS ══ --}}
-            <div class="flex flex-col gap-0">
+            {{-- ══ SUGERIDOS: grilla en tablet/móvil (3/2/1 columnas), lista
+                 lateral en escritorio ══ --}}
+            <div class="order-2 lg:order-none lg:col-start-2 lg:row-start-1 lg:row-span-2 flex flex-col gap-0">
                 <h2 class="after:h-px after:flex-1 after:bg-[#6366f1]/14 m-0 mb-3.5 flex items-center gap-2.5 text-[1.1rem] font-bold text-[#0c0b1a] after:content-[''] dark:text-[#edecf8] dark:after:bg-[#818cf8]/12">A continuación</h2>
 
-                @foreach($this->recommended_videos as $i => $rec)
-                    @php
-                        $recThumb = $rec->image_path ? asset('storage/' . $rec->image_path) : null;
-                        if (preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/', $rec->url, $match)) {
-                            $recThumb = "https://img.youtube.com/vi/{$match[1]}/mqdefault.jpg";
-                        }
-                    @endphp
+                <div class="grid grid-cols-1 gap-3.5 sm:grid-cols-2 md:grid-cols-3 lg:flex lg:flex-col lg:gap-0">
+                    @foreach($this->recommended_videos as $i => $rec)
+                        @php
+                            $recThumb = $rec->image_path ? asset('storage/' . $rec->image_path) : null;
+                            if (preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/', $rec->url, $match)) {
+                                $recThumb = "https://img.youtube.com/vi/{$match[1]}/mqdefault.jpg";
+                            }
+                        @endphp
 
-                    @if ($i > 0)
-                        <div class="my-1 mx-2.5 h-px bg-[#6366f1]/14 dark:bg-[#818cf8]/12"></div>
-                    @endif
+                        {{-- El divisor solo tiene sentido en la lista vertical de escritorio --}}
+                        @if ($i > 0)
+                            <div class="my-1 mx-2.5 hidden h-px bg-[#6366f1]/14 lg:block dark:bg-[#818cf8]/12"></div>
+                        @endif
 
-                    <a href="{{ \App\Filament\Alumno\Pages\ReproductorVideo::getUrl(['videoSlug' => $rec->slug]) }}"
-                       wire:navigate
-                       class="group flex gap-3 rounded-[14px] border border-transparent p-2.5 no-underline transition-[background-color,transform,box-shadow] duration-150 hover:translate-x-[3px] hover:border-[#6366f1]/14 hover:bg-[#f9f8ff] hover:shadow-[0_1px_4px_rgba(79,70,229,0.07),0_1px_2px_rgba(0,0,0,0.04)] dark:hover:border-[#818cf8]/12 dark:hover:bg-[#1b1a2e]">
-                        <div class="relative aspect-video w-[140px] shrink-0 overflow-hidden rounded-[9px] bg-[#eeecfb] dark:bg-[#221f3a]">
-                            @if ($recThumb)
-                                <img src="{{ $recThumb }}" class="block h-full w-full object-cover transition-transform duration-400 group-hover:scale-[1.06]" alt="{{ $rec->titulo }}" loading="lazy">
-                            @else
-                                <div class="flex h-full w-full items-center justify-center bg-[#eeecfb] dark:bg-[#221f3a]">
-                                    <svg class="h-5 w-5 text-[#8b88b0] dark:text-[#636086]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                </div>
-                            @endif
-                            <div class="absolute inset-0 flex items-center justify-center bg-[#0b0a1a]/35 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-                                <div class="flex h-[30px] w-[30px] items-center justify-center rounded-full bg-[#5b5ef4] shadow-[0_4px_12px_rgba(91,94,244,0.18)] dark:bg-[#818cf8] dark:shadow-[0_4px_12px_rgba(129,140,248,0.22)]">
-                                    <svg class="ml-0.5 h-3.5 w-3.5 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M4.5 2.691l11 7.309-11 7.309V2.691z"/></svg>
+                        <a href="{{ \App\Filament\Alumno\Pages\ReproductorVideo::getUrl(['videoSlug' => $rec->slug]) }}"
+                           wire:navigate
+                           class="group flex flex-col gap-3 rounded-[14px] border border-transparent p-2.5 no-underline transition-[background-color,transform,box-shadow] duration-150 hover:-translate-y-[2px] hover:border-[#6366f1]/14 hover:bg-[#f9f8ff] hover:shadow-[0_1px_4px_rgba(79,70,229,0.07),0_1px_2px_rgba(0,0,0,0.04)] lg:flex-row lg:hover:translate-x-[3px] lg:hover:translate-y-0 dark:hover:border-[#818cf8]/12 dark:hover:bg-[#1b1a2e]">
+                            <div class="relative aspect-video w-full shrink-0 overflow-hidden rounded-[9px] bg-[#eeecfb] lg:w-[140px] dark:bg-[#221f3a]">
+                                @if ($recThumb)
+                                    <img src="{{ $recThumb }}" class="block h-full w-full object-cover transition-transform duration-400 group-hover:scale-[1.06]" alt="{{ $rec->titulo }}" loading="lazy">
+                                @else
+                                    <div class="flex h-full w-full items-center justify-center bg-[#eeecfb] dark:bg-[#221f3a]">
+                                        <svg class="h-5 w-5 text-[#8b88b0] dark:text-[#636086]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    </div>
+                                @endif
+                                <div class="absolute inset-0 flex items-center justify-center bg-[#0b0a1a]/35 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                                    <div class="flex h-[30px] w-[30px] items-center justify-center rounded-full bg-[#5b5ef4] shadow-[0_4px_12px_rgba(91,94,244,0.18)] dark:bg-[#818cf8] dark:shadow-[0_4px_12px_rgba(129,140,248,0.22)]">
+                                        <svg class="ml-0.5 h-3.5 w-3.5 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M4.5 2.691l11 7.309-11 7.309V2.691z"/></svg>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="flex min-w-0 flex-1 flex-col gap-1 pt-0.5">
-                            <span class="text-[0.58rem] font-bold tracking-[0.1em] text-[#5b5ef4] uppercase dark:text-[#818cf8]">{{ $rec->area?->nombre ?? 'General' }}</span>
-                            <h4 class="m-0 line-clamp-2 text-[0.84rem] leading-[1.3] font-bold text-[#0c0b1a] dark:text-[#edecf8]">{{ $rec->titulo }}</h4>
-                            @if ($rec->descripcion)
-                                <p class="m-0 line-clamp-2 text-[0.73rem] leading-[1.45] text-[#8b88b0] dark:text-[#636086]">{{ $rec->descripcion }}</p>
-                            @endif
-                        </div>
-                    </a>
-                @endforeach
+                            <div class="flex min-w-0 flex-1 flex-col gap-1 pt-0.5">
+                                <span class="text-[0.58rem] font-bold tracking-[0.1em] text-[#5b5ef4] uppercase dark:text-[#818cf8]">{{ $rec->area?->nombre ?? 'General' }}</span>
+                                <h4 class="m-0 line-clamp-2 text-[0.84rem] leading-[1.3] font-bold text-[#0c0b1a] dark:text-[#edecf8]">{{ $rec->titulo }}</h4>
+                                @if ($rec->descripcion)
+                                    <p class="m-0 line-clamp-2 text-[0.73rem] leading-[1.45] text-[#8b88b0] dark:text-[#636086]">{{ $rec->descripcion }}</p>
+                                @endif
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
+
+                @if ($this->recommended_videos->count() < $this->recommended_videos_total)
+                    <div class="mt-3 flex justify-center">
+                        <button type="button" wire:click="loadMoreRecommended" wire:loading.attr="disabled" wire:target="loadMoreRecommended"
+                            class="rounded-full border border-[#5b5ef4]/25 bg-[#5b5ef4]/7 px-6 py-2.5 text-[0.78rem] font-bold text-[#5b5ef4] transition-colors duration-150 hover:bg-[#5b5ef4]/14 disabled:opacity-60 dark:border-[#818cf8]/25 dark:bg-[#818cf8]/8 dark:text-[#818cf8] dark:hover:bg-[#818cf8]/16">
+                            <span wire:loading.remove wire:target="loadMoreRecommended">Cargar más</span>
+                            <span wire:loading wire:target="loadMoreRecommended">Cargando…</span>
+                        </button>
+                    </div>
+                @endif
+            </div>
+
+            {{-- ══ COMENTARIOS: al final en tablet/móvil, vuelve a la columna
+                 izquierda (debajo del video) en escritorio ══ --}}
+            <div class="order-3 lg:order-none lg:col-start-1 lg:row-start-2">
+                <div class="rounded-[14px] border border-[#6366f1]/14 bg-white px-6 py-[22px] shadow-[0_1px_4px_rgba(79,70,229,0.07),0_1px_2px_rgba(0,0,0,0.04)] dark:border-[#818cf8]/12 dark:bg-[#151424]">
+                    <livewire:comments :model="$video" :key="'comments-'.$video->getKey()" />
+                </div>
             </div>
 
         </div>
+
+        <style>
+            /* Resalte momentáneo del comentario al llegar desde el botón
+               "Ver comentario" de una notificación de mención. */
+            .comment-highlight { animation: comment-highlight-flash 2.4s ease; }
+            @keyframes comment-highlight-flash {
+                0%, 100% { background-color: transparent; }
+                15% { background-color: rgb(99 102 241 / .14); }
+            }
+            .dark .comment-highlight { animation-name: comment-highlight-flash-dark; }
+            @keyframes comment-highlight-flash-dark {
+                0%, 100% { background-color: transparent; }
+                15% { background-color: rgb(129 140 248 / .16); }
+            }
+        </style>
+
+        <script>
+            // Cuando se entra desde el botón "Ver comentario" de una
+            // notificación de mención (ver App\Notifications\
+            // UserMentionedNotification), la URL trae ?comentario={id}. Esto
+            // despliega las respuestas ocultas de todos los comentarios
+            // ancestros (si el mencionado está dentro de una respuesta) y
+            // hace scroll hasta él con un resaltado momentáneo.
+            function irAComentarioMencionado() {
+                const id = new URLSearchParams(window.location.search).get('comentario');
+                if (!id) return;
+
+                const objetivo = document.getElementById('comment-' + id);
+                if (!objetivo) return;
+
+                let el = objetivo.parentElement;
+                while (el) {
+                    if (window.Alpine && el.hasAttribute('x-data')) {
+                        const datos = window.Alpine.$data(el);
+                        if (datos && 'showReplies' in datos) {
+                            datos.showReplies = true;
+                        }
+                    }
+                    el = el.parentElement;
+                }
+
+                requestAnimationFrame(() => {
+                    objetivo.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    objetivo.classList.add('comment-highlight');
+                    setTimeout(() => objetivo.classList.remove('comment-highlight'), 2500);
+                });
+            }
+
+            document.addEventListener('DOMContentLoaded', irAComentarioMencionado);
+            document.addEventListener('livewire:navigated', irAComentarioMencionado);
+        </script>
     </div>
 </x-filament-panels::page>
