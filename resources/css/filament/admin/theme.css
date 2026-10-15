@@ -1,0 +1,12 @@
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+/* Filament alterna la clase .dark en <html> manualmente (no depende del
+   prefers-color-scheme del SO). Sin esto, las utilidades dark: de Tailwind
+   seguirían el tema del sistema operativo en vez del toggle de Filament. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@source '../../../../app/Filament/Resources';
+@source '../../../../app/Filament/Pages';
+@source '../../../../resources/views/filament/pages';
+@source '../../../../resources/views/filament/inscriptions';
+@source '../../../../resources/views/vendor/comments';

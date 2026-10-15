@@ -52,6 +52,14 @@ class VideosTable
                         'inactivo' => 'danger',
                         default => 'gray',
                     }),
+
+                TextColumn::make('comments_count')
+                    ->label('Comentarios')
+                    ->counts('comments')
+                    ->badge()
+                    ->color('gray')
+                    ->icon('heroicon-m-chat-bubble-left-right')
+                    ->sortable(),
             ])
             ->groups([
                 Group::make('area.nombre')

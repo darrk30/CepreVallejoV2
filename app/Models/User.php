@@ -12,15 +12,18 @@ use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Relaticle\Comments\Concerns\CanComment;
+use Relaticle\Comments\Contracts\Commentator;
 use Spatie\Permission\Traits\HasRoles;
 
 #[Fillable(['name', 'email', 'password', 'estado'])]
 #[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable implements FilamentUser
+class User extends Authenticatable implements FilamentUser, Commentator
 {
     /** @use HasFactory<UserFactory> */
     use HasRoles;
     use HasFactory, Notifiable;
+    use CanComment;
 
     /**
      * Get the attributes that should be cast.

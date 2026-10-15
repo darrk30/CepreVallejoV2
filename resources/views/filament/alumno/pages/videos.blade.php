@@ -104,6 +104,16 @@
             @endforelse
         </div>
 
+        @if ($this->videos->count() < $this->videosTotal)
+            <div class="mt-9 flex justify-center">
+                <button type="button" wire:click="loadMoreVideos" wire:loading.attr="disabled" wire:target="loadMoreVideos"
+                    class="rounded-full border border-[#5b5ef4]/25 bg-[#5b5ef4]/7 px-6 py-2.5 text-[0.78rem] font-bold text-[#5b5ef4] transition-colors duration-150 hover:bg-[#5b5ef4]/14 disabled:opacity-60 dark:border-[#818cf8]/25 dark:bg-[#818cf8]/8 dark:text-[#818cf8] dark:hover:bg-[#818cf8]/16">
+                    <span wire:loading.remove wire:target="loadMoreVideos">Cargar más</span>
+                    <span wire:loading wire:target="loadMoreVideos">Cargando…</span>
+                </button>
+            </div>
+        @endif
+
     </div>
 
     {{-- MODAL PLAYER ── --}}

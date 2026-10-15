@@ -8,11 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Relaticle\Comments\Concerns\HasComments;
+use Relaticle\Comments\Contracts\Commentable;
 
-class Video extends Model
+class Video extends Model implements Commentable
 {
     use Favoritable;
     use HasFactory;
+    use HasComments;
 
     protected $fillable = [
         'titulo',

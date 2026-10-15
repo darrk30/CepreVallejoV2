@@ -8,6 +8,9 @@ use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Livewire;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
@@ -20,6 +23,29 @@ class VideoForm
     {
         return $schema
             ->components([
+                Tabs::make('Video')
+                    ->columnSpanFull()
+                    ->tabs([
+                        Tab::make('Datos del video')
+                            ->schema(static::datosDelVideo()),
+
+                        // Solo tiene sentido al editar: al crear todavía no
+                        // existe un video al que pueda pertenecer un comentario.
+                        Tab::make('Comentarios')
+                            ->icon('heroicon-o-chat-bubble-left-right')
+                            ->visible(fn (?Video $record) => $record !== null)
+                            ->badge(fn (?Video $record) => $record?->commentCount() ?: null)
+                            ->schema([
+                                Livewire::make('comments', fn (?Video $record) => ['model' => $record])
+                                    ->columnSpanFull(),
+                            ]),
+                    ]),
+            ]);
+    }
+
+    protected static function datosDelVideo(): array
+    {
+        return [
                 TextInput::make('url')
                     ->label('Enlace de YouTube')
                     ->url()
@@ -124,8 +150,6 @@ class VideoForm
                             </div>
                         ");
                     })->columnSpanFull(),
-
-
-            ]);
+        ];
     }
 }

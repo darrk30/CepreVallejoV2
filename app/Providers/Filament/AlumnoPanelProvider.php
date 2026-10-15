@@ -28,6 +28,7 @@ use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Relaticle\Comments\CommentsPlugin;
 
 class AlumnoPanelProvider extends PanelProvider
 {
@@ -37,6 +38,11 @@ class AlumnoPanelProvider extends PanelProvider
             ->id('alumno')
             ->path('alumno')
             ->login(Login::class)
+            ->plugins([
+                CommentsPlugin::make(),
+            ])
+            ->databaseNotifications()
+            ->databaseNotificationsPolling('60s')
             ->sidebarCollapsibleOnDesktop()
             ->brandLogo(function () {
                 return asset('img/logocepre.png');

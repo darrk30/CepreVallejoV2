@@ -22,6 +22,7 @@ use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
+use Relaticle\Comments\CommentsPlugin;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
@@ -33,6 +34,10 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->id('admin')
             ->path('admin')
+            ->plugins([
+                CommentsPlugin::make(),
+            ])
+            ->viteTheme('resources/css/filament/admin/theme.css')
             ->profile(isSimple: false)
             ->login()
             ->sidebarCollapsibleOnDesktop()

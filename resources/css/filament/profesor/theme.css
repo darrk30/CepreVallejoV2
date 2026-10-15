@@ -23,5 +23,6 @@
 
 @source '../../../../app/Filament/Profesor';
 @source '../../../../resources/views/filament/profesor';
+@source '../../../../resources/views/vendor/comments';
 /* Videoteca, biblioteca y podcasts se reutilizan desde el panel del alumno */
 @source '../../../../resources/views/filament/alumno/pages';
