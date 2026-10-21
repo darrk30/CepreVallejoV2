@@ -14,7 +14,7 @@ class CreateRole extends CreateRecord
         $data = $this->form->getRawState();
 
         $permissionIds = collect($data)
-            ->filter(fn($value, $key) => str_starts_with($key, 'permissions_group_'))
+            ->filter(fn($value, $key) => str_starts_with($key, 'permissions_'))
             ->flatten()
             ->filter()
             ->map(fn($id) => (int) $id)

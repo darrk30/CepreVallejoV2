@@ -2,6 +2,7 @@
 
 namespace App\Filament\Profesor\Pages;
 
+use App\Enums\EstadoMatricula;
 use App\Models\CicloCourseTeacher;
 use App\Models\TeacherCourseContent;
 use App\Models\TeacherCourseContentDetail;
@@ -37,16 +38,41 @@ class ManageCourseContent extends Page implements HasActions
         $this->courseSlug = $courseSlug;
         $user = auth()->user();
 
+        // Asignación elegida desde la tarjeta (ciclo + turno + curso). Así el
+        // mismo curso en dos ciclos o turnos abre SU contenido, no el de otro.
+        $asignacionId = request()->integer('asignacion') ?: null;
+
+        if ($asignacionId) {
+            $asignacion = CicloCourseTeacher::with('cicloCourse')->find($asignacionId);
+
+            abort_unless(
+                $asignacion && $asignacion->cicloCourse?->course?->slug === $courseSlug
+                    && $this->puedeVerAsignacion($asignacion, $user),
+                403
+            );
+
+            $this->assignmentId = $asignacion->id;
+            return;
+        }
+
         $query = CicloCourseTeacher::query()
             ->whereHas('cicloCourse.course', function ($query) use ($courseSlug) {
                 $query->where('slug', $courseSlug);
+            })
+            // Solo el ciclo académico ACTUALMENTE activo. Sin esto, si el
+            // mismo curso+docente+turno existe en dos ciclos (uno ya vencido
+            // y uno nuevo), la consulta era ambigua y first() podía devolver
+            // cualquiera de los dos — en la práctica, casi siempre el más
+            // viejo, mostrando el contenido de un ciclo ya cerrado.
+            ->whereHas('cicloCourse.academicCycle', function ($query) {
+                $query->where('estado', true);
             });
 
         if ($user->teacher) {
             $query->where('teacher_id', $user->teacher->id);
         } elseif ($user->student) {
             $lastInscription = $user->student->inscriptions()
-                ->where('estado_pago', '!=', 'Cancelado') // Filtro de pago
+                ->where('estado_matricula', EstadoMatricula::ACTIVA->value)
                 ->latest()
                 ->first();
 
@@ -59,8 +85,32 @@ class ManageCourseContent extends Page implements HasActions
             }
         }
 
-        $assignment = $query->first();
+        // orderByDesc como red de seguridad extra: si por algún motivo
+        // hubiera más de un ciclo con estado=true al mismo tiempo, nos
+        // quedamos con la asignación más reciente.
+        $assignment = $query->latest('id')->first();
         $this->assignmentId = $assignment?->id;
+    }
+
+    /**
+     * Profesor: solo sus propias asignaciones.
+     * Alumno: solo si tiene matrícula activa en ese mismo ciclo y turno.
+     */
+    private function puedeVerAsignacion(CicloCourseTeacher $asignacion, $user): bool
+    {
+        if ($user->teacher) {
+            return $asignacion->teacher_id === $user->teacher->id;
+        }
+
+        if ($user->student) {
+            return $user->student->inscriptions()
+                ->where('estado_matricula', EstadoMatricula::ACTIVA->value)
+                ->where('academic_cycle_id', $asignacion->cicloCourse->ciclo_id)
+                ->where('turno_id', $asignacion->turno_id)
+                ->exists();
+        }
+
+        return false;
     }
 
     // ── Breadcrumb ────────────────────────────────────────────
@@ -99,28 +149,18 @@ class ManageCourseContent extends Page implements HasActions
             return collect();
         }
 
-        $user = auth()->user();
-
-        // Iniciamos la consulta para las secciones de ESTA asignación
-        $query = TeacherCourseContent::where('ciclo_course_teacher_id', $this->assignmentId);
-
-        // IMPORTANTE:
-        // Si es PROFESOR, solo mostramos lo que ÉL creó (para que no vea lo de otros profes del mismo curso)
-        // Si es ALUMNO, mostramos TODO lo que el profesor asignado a su turno haya subido
-        if ($user->teacher) {
-            $query->where('user_create_id', $user->id);
-        }
-
-        return $query->with([
-            'details' => function ($q) use ($user) {
-                // Aplicamos la misma lógica a los temas (subtopics)
-                if ($user->teacher) {
-                    $q->where('user_create_id', $user->id);
-                }
-                $q->orderBy('orden');
-            },
-            'details.exam',
-        ])
+        // Mostramos TODO el contenido de ESTA asignación (ciclo + curso + turno),
+        // lo haya subido el profesor asignado o un administrador desde el panel
+        // admin ("Cursos del ciclo"). Antes se filtraba por user_create_id ===
+        // el profesor logueado, así que lo que el admin creaba (con su propio
+        // user_create_id) quedaba invisible para el profesor. Filtrar por
+        // ciclo_course_teacher_id ya es suficiente: esa asignación pertenece a
+        // un solo profesor, así que nunca se mezcla con la de otro.
+        return TeacherCourseContent::where('ciclo_course_teacher_id', $this->assignmentId)
+            ->with([
+                'details' => fn($q) => $q->orderBy('orden'),
+                'details.exam',
+            ])
             ->orderBy('orden')
             ->get();
     }

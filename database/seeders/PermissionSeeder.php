@@ -44,6 +44,7 @@ class PermissionSeeder extends Seeder
             'examen_ordinario' => 'Exámenes Ordinarios',
             'podcast'          => 'Podcasts',
             'specialty'        => 'Categorías',
+            'tarea_programada' => 'Tareas Programadas',
         ];
 
         $actions = array_keys($actionLabels);
@@ -83,11 +84,13 @@ class PermissionSeeder extends Seeder
             ['name' => 'update_exam', 'label' => 'Editar Evaluaciones', 'label_model' => 'Exámenes'],
             ['name' => 'view_videoteca', 'label' => 'Ver Videoteca Académica', 'label_model' => 'Recursos'],
             ['name' => 'view_biblioteca', 'label' => 'Ver Biblioteca Digital', 'label_model' => 'Recursos'],
+            ['name' => 'view_podcasts', 'label' => 'Ver Podcasts Académicos', 'label_model' => 'Recursos'],
             ['name' => 'view_pagos_teacher', 'label' => 'Ver pagos del profesor', 'label_model' => 'Profesores'],
             ['name' => 'view_active_sessions', 'label' => 'Ver Sesiones Activas', 'label_model' => 'Seguridad'],
             ['name' => 'manage_all_course_content', 'label' => 'Gestionar contenido de todos los cursos', 'label_model' => 'Aula Virtual'],
             ['name' => 'view_all_review', 'label' => 'Ver comentarios de los alumnos', 'label_model' => 'Recursos'],
-            
+            ['name' => 'run_tarea_programada', 'label' => 'Ejecutar tareas programadas manualmente', 'label_model' => 'Tareas Programadas'],
+
         ];
 
         foreach ($extraPermissions as $p) {

@@ -209,6 +209,51 @@ html {
     transition-delay: 0.55s;
 }
 
+.stagger.visible > *:nth-child(7) {
+    opacity: 1;
+    transform: none;
+    transition-delay: 0.65s;
+}
+
+.stagger.visible > *:nth-child(8) {
+    opacity: 1;
+    transform: none;
+    transition-delay: 0.75s;
+}
+
+.stagger.visible > *:nth-child(9) {
+    opacity: 1;
+    transform: none;
+    transition-delay: 0.85s;
+}
+
+.stagger.visible > *:nth-child(10) {
+    opacity: 1;
+    transform: none;
+    transition-delay: 0.95s;
+}
+
+.stagger.visible > *:nth-child(11) {
+    opacity: 1;
+    transform: none;
+    transition-delay: 1.05s;
+}
+
+.stagger.visible > *:nth-child(12) {
+    opacity: 1;
+    transform: none;
+    transition-delay: 1.15s;
+}
+
+/* Red de seguridad: cualquier ítem más allá del 12 (ej. una galería de
+   banners con muchas imágenes) igual se vuelve visible, sin escalón de
+   retraso adicional, en vez de quedarse en opacity:0 para siempre. */
+.stagger.visible > *:nth-child(n+13) {
+    opacity: 1;
+    transform: none;
+    transition-delay: 1.15s;
+}
+
 /* ---- Utils ---- */
 .gold-rule {
     display: block;

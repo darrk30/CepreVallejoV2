@@ -23,9 +23,20 @@ class MyPayments extends Page implements HasTable
     protected static ?string $title = 'Mis Pagos';
     protected static ?string $slug = 'mis-pagos';
 
+    // Al final del menú: el resto de páginas del panel no define un orden
+    // propio (quedan en 0/null), así que cualquier número alto las deja atrás.
+    protected static ?int $navigationSort = 100;
+
     public static function canAccess(): bool
     {
         return Auth::user()->can('view_pagos_teacher');
+    }
+
+    // La vista ya pinta su propio encabezado ("Mis Pagos"); sin esto, Filament
+    // agregaba el suyo encima con el mismo título, duplicado.
+    public function getHeading(): string
+    {
+        return '';
     }
 
     public function getPayments()

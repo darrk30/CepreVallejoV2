@@ -22,6 +22,7 @@ use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
+use Relaticle\Comments\CommentsPlugin;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
@@ -33,6 +34,10 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->id('admin')
             ->path('admin')
+            ->plugins([
+                CommentsPlugin::make(),
+            ])
+            ->viteTheme('resources/css/filament/admin/theme.css')
             ->profile(isSimple: false)
             ->login()
             ->sidebarCollapsibleOnDesktop()
@@ -87,8 +92,13 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
-                CheckUserStatus::class,
             ])
+            // isPersistent: true: que se vuelva a evaluar en cada
+            // actualización Livewire (/livewire/update), no solo al cargar
+            // la página — ver el mismo comentario en AlumnoPanelProvider.
+            ->middleware([
+                CheckUserStatus::class,
+            ], isPersistent: true)
             ->spa()
             ->databaseTransactions()
             ->errorNotifications(false)

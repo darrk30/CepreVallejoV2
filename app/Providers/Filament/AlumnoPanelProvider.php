@@ -2,8 +2,11 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Alumno\Pages\Auth\Login;
 use App\Filament\Profesor\Pages\ManageCourseContent;
 use App\Filament\Profesor\Pages\TakeExam;
+use App\Http\Middleware\CheckUserStatus;
+use App\Http\Middleware\EnsureStudentHasActiveEnrollment;
 use App\Livewire\AnnouncementsWidget;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -25,6 +28,7 @@ use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Relaticle\Comments\CommentsPlugin;
 
 class AlumnoPanelProvider extends PanelProvider
 {
@@ -33,7 +37,12 @@ class AlumnoPanelProvider extends PanelProvider
         return $panel
             ->id('alumno')
             ->path('alumno')
-            ->login()
+            ->login(Login::class)
+            ->plugins([
+                CommentsPlugin::make(),
+            ])
+            ->databaseNotifications()
+            ->databaseNotificationsPolling('60s')
             ->sidebarCollapsibleOnDesktop()
             ->brandLogo(function () {
                 return asset('img/logocepre.png');
@@ -93,6 +102,16 @@ class AlumnoPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
+            // isPersistent: true hace que Livewire vuelva a correr este
+            // middleware en CADA petición AJAX a /livewire/update, no solo
+            // en la carga inicial de la página. Sin esto, un componente ya
+            // montado (ej. el alumno tenía el aula virtual abierta) sigue
+            // respondiendo a wire:click aunque se le quite la matrícula o
+            // se suspenda la cuenta, hasta que recargue o navegue.
+            ->middleware([
+                CheckUserStatus::class,
+                EnsureStudentHasActiveEnrollment::class,
+            ], isPersistent: true)
             ->databaseTransactions()
             ->spa()
             ->authMiddleware([

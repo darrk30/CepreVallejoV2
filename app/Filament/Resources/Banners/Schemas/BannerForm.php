@@ -15,7 +15,7 @@ class BannerForm
         return $schema
             ->components([
                 Section::make('Imágenes del Banner')
-                    ->description('Sube las imágenes del banner. Se recomienda mantener una misma proporción.')
+                    ->description('Sube las imágenes del banner. Se recomienda mantener una misma proporción. Si el link es un video de TikTok, sube tú mismo una miniatura (captura de pantalla del video, por ejemplo).')
                     ->columns(2)
                     ->schema([
                         FileUpload::make('imagen_desktop_path')
@@ -40,7 +40,8 @@ class BannerForm
                         TextInput::make('enlace')
                             ->label('URL de Destino (Link)')
                             ->url()
-                            ->placeholder('https://...')
+                            ->placeholder('https://... o un link de TikTok (tiktok.com/@usuario/video/...)')
+                            ->helperText('Si es un link de video de TikTok, se reproduce embebido al hacer clic en el banner.')
                             ->prefixIcon('heroicon-m-link')
                             ->columnSpanFull(),
 

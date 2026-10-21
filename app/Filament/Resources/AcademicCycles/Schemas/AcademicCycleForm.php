@@ -76,6 +76,12 @@ class AcademicCycleForm
                                     ->default(true)
                                     ->helperText('Habilite este ciclo para permitir nuevas matrículas.')
                                     ->inline(false),
+
+                                Toggle::make('mostrar_en_landing')
+                                    ->label('Mostrar en la landing')
+                                    ->default(true)
+                                    ->helperText('Si está apagado, el ciclo sigue activo internamente pero no aparece en la página principal.')
+                                    ->inline(false),
                             ]),
 
                         // PESTAÑA 2: DETALLES / CARACTERÍSTICAS (REPEATER)

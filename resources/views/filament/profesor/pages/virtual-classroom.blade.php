@@ -35,7 +35,14 @@
                         @endphp
 
                         <div class="cr-card">
+                            {{-- Tarjeta completa clicable: un enlace invisible cubre toda la tarjeta --}}
+                            <a href="{{ \App\Filament\Profesor\Pages\ManageCourseContent::getUrl(['courseSlug' => $course->slug, 'asignacion' => $assignment->id]) }}"
+                                wire:navigate class="cr-card-link" aria-label="Entrar al aula de {{ $course->nombre }}"></a>
+
                             <div class="cr-img">
+                                @if ($course->codigo)
+                                    <span class="cr-code-badge">{{ $course->codigo }}</span>
+                                @endif
                                 @if ($hasImage)
                                     <img src="{{ Storage::url($course->imagen_path) }}" alt="{{ $course->nombre }}"
                                         loading="lazy">
@@ -51,20 +58,9 @@
                             </div>
 
                             <div class="cr-body">
-                                <span class="cr-tag">{{ $course->codigo }}</span>
                                 <h3 class="cr-name">{{ $course->nombre }}</h3>
                                 {{-- <p class="cr-desc">Gestiona lecciones, material educativo y exámenes para este curso en
                                     el presente ciclo.</p> --}}
-                                {{-- <a href="{{ route('filament.profesor.resources.teacher-course-contents.index', ['tableFilters[ciclo_course_teacher_id][value]' => $assignment->id]) }}" --}}
-                                <a href="{{ \App\Filament\Profesor\Pages\ManageCourseContent::getUrl(['courseSlug' => $course->slug]) }}"
-                                    wire:navigate class="cr-btn">
-                                    Entrar al Aula
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none"
-                                        viewBox="0 0 24 24" stroke-width="2.2" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                                    </svg>
-                                </a>
                             </div>
                         </div>
                     @endforeach

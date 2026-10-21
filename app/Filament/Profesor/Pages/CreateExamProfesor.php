@@ -116,7 +116,7 @@ class CreateExamProfesor extends Page implements HasSchemas, HasActions
         return [
             VirtualClassroom::getUrl()                                          => 'Mi Aula Virtual',
             $courseSlug
-                ? ManageCourseContent::getUrl(['courseSlug' => $courseSlug])
+                ? ManageCourseContent::getUrl(['courseSlug' => $courseSlug, 'asignacion' => $this->detail?->content?->ciclo_course_teacher_id])
                 : '#'                                                           => $courseName,
             '#'                                                                 => $this->existingExam
                 ? 'Editar Examen'
@@ -365,7 +365,7 @@ class CreateExamProfesor extends Page implements HasSchemas, HasActions
         $courseSlug = $this->detail?->content?->cicloCourseTeacher?->cicloCourse?->course?->slug;
 
         if ($courseSlug) {
-            $this->redirect(ManageCourseContent::getUrl(['courseSlug' => $courseSlug]), navigate: true);
+            $this->redirect(ManageCourseContent::getUrl(['courseSlug' => $courseSlug, 'asignacion' => $this->detail?->content?->ciclo_course_teacher_id]), navigate: true);
         } else {
             $this->redirect(VirtualClassroom::getUrl(), navigate: true);
         }
@@ -377,7 +377,7 @@ class CreateExamProfesor extends Page implements HasSchemas, HasActions
         $courseSlug = $this->detail?->content?->cicloCourseTeacher?->cicloCourse?->course?->slug;
 
         if ($courseSlug) {
-            $this->redirect(ManageCourseContent::getUrl(['courseSlug' => $courseSlug]), navigate: true);
+            $this->redirect(ManageCourseContent::getUrl(['courseSlug' => $courseSlug, 'asignacion' => $this->detail?->content?->ciclo_course_teacher_id]), navigate: true);
         } else {
             $this->redirect(VirtualClassroom::getUrl(), navigate: true);
         }

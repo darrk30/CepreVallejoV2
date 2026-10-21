@@ -12,8 +12,10 @@ use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Assets\Css;
+use Filament\Support\Assets\Js;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentAsset;
+use Filament\View\PanelsRenderHook;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -22,6 +24,7 @@ use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Relaticle\Comments\CommentsPlugin;
 
 class ProfesorPanelProvider extends PanelProvider
 {
@@ -30,6 +33,9 @@ class ProfesorPanelProvider extends PanelProvider
         return $panel
             ->id('profesor')
             ->path('profesor')
+            ->plugins([
+                CommentsPlugin::make(),
+            ])
             ->profile(isSimple: false)
             ->login()
             ->sidebarCollapsibleOnDesktop()
@@ -48,6 +54,11 @@ class ProfesorPanelProvider extends PanelProvider
             ->pages([
                 Dashboard::class,
             ])
+            // Barra del reproductor de podcasts (la página de Podcasts la usa en este panel)
+            ->renderHook(
+                PanelsRenderHook::BODY_END,
+                fn(): string => view('components.global-audio-player')->render(),
+            )
             ->renderHook('panels::body.start', fn() => '
                 <style>
                     /* Aplicamos la sombra al contenedor principal de la barra lateral */
@@ -84,8 +95,14 @@ class ProfesorPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
-                CheckUserStatus::class,
             ])
+            // isPersistent: true: que se vuelva a evaluar en cada
+            // actualización Livewire (/livewire/update), no solo al cargar
+            // la página — ver el mismo comentario en AlumnoPanelProvider.
+            ->middleware([
+                CheckUserStatus::class,
+            ], isPersistent: true)
+            ->viteTheme('resources/css/filament/profesor/theme.css')
             ->spa()
             ->databaseTransactions()
             ->authMiddleware([
@@ -106,6 +123,9 @@ class ProfesorPanelProvider extends PanelProvider
             Css::make('manager-course-content-styles', asset('css/managerCourseContent.css') . '?v=' . filemtime(public_path('css/managerCourseContent.css'))),
             Css::make('take-exam-styles', asset('css/take-exam.css') . '?v=' . filemtime(public_path('css/take-exam.css'))),
             Css::make('exam-results-styles', asset('css/exam-results.css') . '?v=' . filemtime(public_path('css/exam-results.css'))),
+            // Reproductor de podcasts: el panel del alumno los registra con su propio ID de panel
+            Css::make('play-podcast-styles', asset('css/play-podcast.css')),
+            Js::make('podcast-player-script', asset('js/podcast-player.js')),
         ], 'profesor');
     }
 }

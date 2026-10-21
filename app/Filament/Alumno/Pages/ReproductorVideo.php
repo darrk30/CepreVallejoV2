@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Route;
 class ReproductorVideo extends Page
 {
     protected string $view = 'filament.alumno.pages.reproductor-video';
+
+    public static function canAccess(): bool
+    {
+        return \Illuminate\Support\Facades\Auth::user()?->can('view_videoteca') ?? false;
+    }
     protected static bool $shouldRegisterNavigation = false;
     protected static ?string $slug = 'ver-video/{videoSlug}';
 
@@ -17,9 +22,18 @@ class ReproductorVideo extends Page
 
     public $video;
 
+    protected int $recommendedPerPageStep = 10;
+
+    public int $recommendedPerPage = 10;
+
     public function mount($videoSlug)
     {
         $this->video = Video::where('slug', $videoSlug)->where('estado', 'activo')->firstOrFail();
+    }
+
+    public function loadMoreRecommended(): void
+    {
+        $this->recommendedPerPage += $this->recommendedPerPageStep;
     }
 
     // 2. Generar las Migas de Pan (Breadcrumbs)
@@ -33,11 +47,22 @@ class ReproductorVideo extends Page
         ];
     }
 
-    public function getRecommendedVideosProperty()
+    protected function recommendedVideosBaseQuery()
     {
         return Video::where('id', '!=', $this->video->id)
             ->where('area_id', $this->video->area_id)
-            ->limit(10)
+            ->where('estado', 'activo');
+    }
+
+    public function getRecommendedVideosTotalProperty()
+    {
+        return $this->recommendedVideosBaseQuery()->count();
+    }
+
+    public function getRecommendedVideosProperty()
+    {
+        return $this->recommendedVideosBaseQuery()
+            ->take($this->recommendedPerPage)
             ->get();
     }
 
