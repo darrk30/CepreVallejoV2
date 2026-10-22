@@ -38,7 +38,9 @@
     @endphp
 
     {{-- Llamada al componente --}}
-    <x-wsp-mobile :phone="$whatsapp" message="Hola, vengo desde la web principal y necesito información." />
+    <x-wsp-mobile type="whatsapp" :to="$whatsapp"  message="Hola, deseo realizar una consulta." />
+
+    <x-wsp-mobile type="tiktok" to="_ceprevallejo" bottom="100px" show="all" />
     {{-- ----------------------------------- --}}
     @livewireScripts
     <script src="{{ asset('js/home.js') }}"></script>
